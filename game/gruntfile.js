@@ -31,27 +31,25 @@ module.exports = function (grunt) {
 		},
 		copy: {
 			options: {
-				noProcess: ['**/*.{png,gif,jpg,ico,psd,ttf,otf,woff,svg}'],
-				process: function (content, srcpath) {
-					console.log(srcpath);
-					if (srcpath.endsWith(".ejs")) {
+				processContentExclude: ['**/*.{png,gif,jpg,ico,psd,ttf,otf,woff,svg}']
+			},
+			main: {
+				options: {
+					process: function (content, srcpath) {
 						return grunt.template.process(content);
 					}
-					return content;
 				}
-			},
-			dev: {
+				,
 				files: [
 					{
-						src: './src/index.html.ejs',
-						dest: './dist/index.html',
+						src: './circle/index.html.ejs',
+						dest: './dist/circle/index.html',
 					},
 					{
-						cwd: './src/Asset/',
+						cwd: './circle/asset/',
+						dest: './dist/circle/asset',
 						src: '**',
-						dest: './dist/asset/',
-						expand: true,
-						flatten: true
+						expand: true
 					},
 					{
 						expand: true,
@@ -79,11 +77,11 @@ module.exports = function (grunt) {
 		watch: {
 			remote: {
 				files: ['./src/**/*.ts', './src/**/*.html.ejs'],
-				tasks: ['readpkg', 'clean:dev', 'ts', 'copy:dev', 'clean:cleanup', 'deploy']
+				tasks: ['readpkg', 'clean:dev', 'ts', 'copy', 'clean:cleanup', 'deploy']
 			},
 			local: {
 				files: ['./src/**/*.ts', './src/**/*.html.ejs'],
-				tasks: ['readpkg', 'clean:dev', 'ts', 'copy:dev', 'clean:cleanup'],
+				tasks: ['readpkg', 'clean:dev', 'ts', 'copy', 'clean:cleanup'],
 			}
 		},
 		bump: {
@@ -97,20 +95,18 @@ module.exports = function (grunt) {
 			options: {
 				accessKeyId: "<%= aws.accessKeyId %>",
 				secretAccessKey: "<%= aws.secretAccessKey %>",
-				bucket: "play.wc2js.com"
+				bucket: "play.landlgames.com"
 			},
-			dev: {
-				cwd: "./dist",
-				src: "**",
-				dest: "/"
+			build: {
+				cwd: "./dist/",
+				src: "**"
 			}
 		}
-
 	});
 	grunt.registerTask('readpkg', 'Read in the package.json file', function () {
 		grunt.config.set('pkg', grunt.file.readJSON('./package.json'));
 	});
-	grunt.registerTask('deploy', ['gitinfo', 's3:dev']);
+	grunt.registerTask('deploy', ['gitinfo', 's3']);
 	grunt.registerTask('default', ['connect', 'open', 'watch']);
 	grunt.registerTask('local', ['connect', 'open', 'watch:local']);
 }

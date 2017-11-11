@@ -4,13 +4,13 @@
 <head>
 	<title></title>
 	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-title" content="James" />
+	<meta name="apple-mobile-web-app-title" content="Circle" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	<meta name="viewport" content="user-scalable = no" />
-	<link rel="shortcut icon" href="asset/favicon.gif">
-	<script src="./require.js"></script>
-	<script src="./game.js"></script>
-	<script src="./fpsmeter.js"></script>
+	<link rel="shortcut icon" href="asset/fav.png">
+	<script src="../require.js"></script>
+	<script src="../game.js"></script>
+	<script src="../fpsmeter.js"></script>
 	<style>
 		html,
 		body {
@@ -29,7 +29,7 @@
 	</style>
 	<script>
 		require(["Game"], function (start) {
-			start.Game.init(function () {
+			start.Game.init('circle', function () {
 				var diff = new Date() - new Date("<%= grunt.template.today() %>");
 				document.title = "<%= pkg.version %> compiled " + Math.floor(diff / 1000) + " seconds ago";
 				return document.title;
