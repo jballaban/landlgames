@@ -1,0 +1,5 @@
+/game/node_modules
+/**/node_modules
+aws-credentials.json
+/doc
+/game/dist
