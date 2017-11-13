@@ -18,16 +18,16 @@ export class StaticThing extends Element {
 	private win: boolean = false;
 
 	constructor(container: ElementContainer, private color: string, area: Circle) {
-		super(container, ElementType.StaticThing, area, 4, ElementType.Thing);
+		super(container, ElementType.StaticThing, area, area, 4, ElementType.Thing);
 	}
 
 	public onCollide(element: Element, on: boolean): void {
 		if (on && this.win) {
 			this.win = false;
-			this.container.update(this, false);
+			this.container.change(this, false);
 		} else if (!on && !this.win && this.collisions.length === 0) {
 			this.win = true;
-			this.container.update(this, false);
+			this.container.change(this, false);
 		}
 	}
 
@@ -49,7 +49,7 @@ export class Thing extends Element {
 
 	constructor(container: ElementContainer, private color: string, area: IShape) {
 		// tslint:disable-next-line:no-bitwise
-		super(container, ElementType.Thing, area, 5, ElementType.StaticThing | ElementType.Mouse);
+		super(container, ElementType.Thing, area, area, 5, ElementType.StaticThing | ElementType.Mouse);
 		this._color = color;
 		this.direction = new Vector(0, 0);
 		this.minSpeed = this.speed = 0;
@@ -73,10 +73,10 @@ export class Thing extends Element {
 	public onCollide(element: Element, on: boolean): void {
 		if (this.color === this._color && this.collisions.length > 0) {
 			this.color = "rgba(255,0,0,0.8)";
-			this.container.update(this, false);
+			this.container.change(this, false);
 		} else if (this.color !== this._color && this.collisions.length === 0) {
 			this.color = this._color;
-			this.container.update(this, false);
+			this.container.change(this, false);
 		}
 		if (on && (
 			element.type === ElementType.Mouse

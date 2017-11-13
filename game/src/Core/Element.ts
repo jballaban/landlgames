@@ -11,22 +11,16 @@ import { Screen } from "../Core/Screen";
 import { Circle } from "../Shape/Circle";
 
 export abstract class Element {
-	public renderArea: IShape;
 	public collisions: Element[] = new Array<Element>();
-	public zIndex: number;
-	public type: ElementType;
 
 	constructor(
 		protected container: ElementContainer,
-		type: ElementType,
-		area: IShape,
-		zIndex: number,
+		public type: ElementType,
+		public renderArea: IShape,
+		public collisionArea: IShape,
+		public zIndex: number,
 		public collisionFilter: ElementType
-	) {
-		this.type = type;
-		this.renderArea = area;
-		this.zIndex = zIndex;
-	}
+	) { }
 
 	public ready(): boolean {
 		return true;
@@ -49,9 +43,10 @@ export abstract class Element {
 		// to override
 	}
 
+	// todo this feels like the element should call when they change.. that's what we do with colors
 	public postUpdate(): void {
 		if (this.renderArea.changed()) {
-			this.container.update(this, true);
+			this.container.change(this, true);
 		}
 	}
 

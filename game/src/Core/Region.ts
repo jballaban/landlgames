@@ -1,6 +1,7 @@
 import { Rectangle } from "../Shape/Rectangle";
 import { Point } from "../Shape/Point";
 import { IShape } from "../Shape/IShape";
+import { Recoverable } from "repl";
 
 export abstract class Region {
 	public area: Rectangle;
@@ -8,6 +9,7 @@ export abstract class Region {
 
 export class RegionContainer<T extends Region> {
 	public regions: Map<Rectangle, T> = new Map<Rectangle, T>();
+	public areas: Rectangle[] = new Array<Rectangle>();
 
 	public constructor(public len: number, public area: Rectangle, private regionType: new () => T) {
 		this.area = area;
@@ -21,12 +23,16 @@ export class RegionContainer<T extends Region> {
 				var region: T = new this.regionType();
 				region.area = rect;
 				this.regions.set(rect, region);
+				this.areas.push(rect);
 			}
 		}
 	}
 
 	public getRegions(area: IShape): Array<T> {
 		var result: T[] = new Array<T>();
+		if (area == null) {
+			return result;
+		}
 		for (var rect of this.regions.keys()) {
 			if (area.intersects(rect)) {
 				result.push(this.regions.get(rect));

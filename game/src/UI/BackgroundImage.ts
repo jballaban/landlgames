@@ -4,7 +4,7 @@ import { Viewport } from "../Core/Viewport";
 import { Element } from "../Core/Element";
 import { ElementType } from "../Core/ElementType";
 import { Point, MidPoint } from "../Shape/Point";
-import { Rectangle } from "../Shape/Rectangle";
+import { Rectangle, PointRectangle } from "../Shape/Rectangle";
 import { Logger } from "../Util/Logger";
 
 export class BackgroundImage extends Element {
@@ -14,7 +14,7 @@ export class BackgroundImage extends Element {
 	private resized: boolean = false;
 
 	constructor(image: Sprite, container: ElementContainer, viewport: Viewport) {
-		super(container, ElementType.backgroundImage, BackgroundImage.getArea(viewport), 1, null);
+		super(container, ElementType.backgroundImage, BackgroundImage.getArea(viewport), null, 1, null);
 		this.image = image;
 		this.viewport = viewport;
 	}

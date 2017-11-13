@@ -17,7 +17,8 @@ export class BasicMouse extends Mouse {
 	private color: string;
 
 	public constructor(container: ElementContainer, x: number, y: number) {
-		super(container, new Circle(new Point(x, y), 50), 10);
+		var area = new Circle(new Point(x, y), 50);
+		super(container, area, area, 10);
 		this.color = this._color = "rgba(255,255,255,1)";
 	}
 

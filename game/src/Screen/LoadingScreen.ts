@@ -51,7 +51,7 @@ export class LoadingScreen extends Screen {
 				this.container.register(this.assets[i]);
 				this.assets.splice(i--, 1);
 				if (this.assets.length === 0) {
-					this.actions.push(new Action(new Duration(2), this.loadScreen.bind(this)))
+					this.actions.push(new Action(new Duration(0), this.loadScreen.bind(this)))
 				}
 			}
 		}
