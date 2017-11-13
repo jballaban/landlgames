@@ -19,11 +19,12 @@ export class CircleScreen extends Screen {
 
 	public constructor() {
 		super(256, new Rectangle(new Point(0, 0), new Point(1024, 768)));
+		this.backgroundColor = "rgb(10,10,10)";
 	}
 
 	public activate(): void {
 		super.activate();
-		for (var i: number = 0; i < 2000; i++) {
+		for (var i: number = 0; i < 1000; i++) {
 			var position: Point = new Point(Math.random() * this.container.area.width(), Math.random() * this.container.area.height());
 			var thing: Thing = new Thing(
 				this.container,
@@ -65,6 +66,10 @@ export class CircleScreen extends Screen {
 			}
 		}
 		super.update(dt);
+	}
+
+	public render(): void {
+		super.render();
 	}
 
 }

@@ -8,8 +8,8 @@ export class Sprite {
 		this.image.onload = this.onLoad.bind(this);
 	}
 
-	public render(ctx: CanvasRenderingContext2D, screenX: number, screenY: number, width: number, height: number) {
-		ctx.drawImage(this.image, screenX, screenY, width, height);
+	public render(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number) {
+		ctx.drawImage(this.image, x, y, width, height);
 	}
 
 	private onLoad(): void {

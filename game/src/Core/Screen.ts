@@ -22,9 +22,10 @@ export abstract class Screen {
 	public actions: Action[] = new Array<Action>();
 	public camera: Camera;
 	protected viewport: Viewport;
-	private layer: ContextLayer;
+	protected layer: ContextLayer;
 	public visibleRegionCache: ElementRegion[];
 	public static debug_showRedraws = false;
+	public backgroundColor: string = "rgb(255,255,255)";
 
 	constructor(regionsize: number, area: Rectangle) {
 		this.visibleRegionCache = new Array<ElementRegion>();
@@ -150,8 +151,11 @@ export abstract class Screen {
 	public render(): void {
 		for (var region of this.visibleRegionCache) {
 			if (!region.requiresRedraw) { continue; }
-			this.layer.ctx.clearRect(region.area.x(), region.area.y(), region.area.width(), region.area.height());
+			this.layer.ctx.fillStyle = this.backgroundColor;
+			this.layer.ctx.fillRect(region.area.x(), region.area.y(), region.area.width(), region.area.height());
 			this.layer.ctx.save();
+			this.layer.ctx.shadowColor = 'white';
+			this.layer.ctx.shadowBlur = 5;
 			// clip a rectangular area
 			this.layer.ctx.beginPath();
 			this.layer.ctx.rect(region.area.x(), region.area.y(), region.area.width(), region.area.height());
