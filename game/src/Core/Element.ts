@@ -11,7 +11,7 @@ import { Screen } from "../Core/Screen";
 import { Circle } from "../Shape/Circle";
 
 export abstract class Element {
-	public area: IShape;
+	public renderArea: IShape;
 	public collisions: Element[] = new Array<Element>();
 	public zIndex: number;
 	public type: ElementType;
@@ -19,10 +19,12 @@ export abstract class Element {
 	constructor(
 		protected container: ElementContainer,
 		type: ElementType,
-		area: IShape, zIndex: number,
-		public collisionFilter: ElementType) {
+		area: IShape,
+		zIndex: number,
+		public collisionFilter: ElementType
+	) {
 		this.type = type;
-		this.area = area;
+		this.renderArea = area;
 		this.zIndex = zIndex;
 	}
 
@@ -35,12 +37,12 @@ export abstract class Element {
 	}
 
 	public inc(offsetx: number, offsety: number): void {
-		this.move(this.area.origin.offsetX + offsetx, this.area.origin.offsetY + offsety);
+		this.move(this.renderArea.origin.offsetX + offsetx, this.renderArea.origin.offsetY + offsety);
 	}
 
 	public move(offsetX: number, offsetY: number): void {
-		if (offsetX === this.area.origin.offsetX && offsetY === this.area.origin.offsetY) { return; }
-		this.area.origin.move(offsetX, offsetY);
+		if (offsetX === this.renderArea.origin.offsetX && offsetY === this.renderArea.origin.offsetY) { return; }
+		this.renderArea.origin.move(offsetX, offsetY);
 	}
 
 	public update(step: number): void {
@@ -48,13 +50,13 @@ export abstract class Element {
 	}
 
 	public postUpdate(): void {
-		if (this.area.changed()) {
+		if (this.renderArea.changed()) {
 			this.container.update(this, true);
 		}
 	}
 
 	public postRender(): void {
-		this.area.clearChanged();
+		this.renderArea.clearChanged();
 	}
 
 	public abstract render(ctx: CanvasRenderingContext2D): void;

@@ -103,8 +103,8 @@ export abstract class Screen {
 		for (var k: number = startindex + 1; k < elements.length; k++) {
 			if (
 				(
-					element.area.changed()
-					|| elements[k].area.changed()
+					element.renderArea.changed()
+					|| elements[k].renderArea.changed()
 				) && (
 					// tslint:disable-next-line:no-bitwise
 					(element.collisionFilter & elements[k].type) !== 0
@@ -112,7 +112,7 @@ export abstract class Screen {
 					|| (elements[k].collisionFilter & element.type) !== 0
 				)
 				&& !ArrayUtil.exists<Element>(elements[k], element.collisions)
-				&& Collision.intersects(element.area, elements[k].area)
+				&& Collision.intersects(element.renderArea, elements[k].renderArea)
 			) {
 				// tslint:disable-next-line:no-bitwise
 				if ((element.collisionFilter & elements[k].type) !== 0) {
@@ -130,11 +130,11 @@ export abstract class Screen {
 
 	private checkExistingCollisions(element: Element): void {
 		for (var k: number = 0; k < element.collisions.length; k++) {
-			if (!element.area.changed() && !element.collisions[k].area.changed()) {
+			if (!element.renderArea.changed() && !element.collisions[k].renderArea.changed()) {
 				continue; // if neither object moved they are still colliding!
 			}
 			if (
-				!Collision.intersects(element.area, element.collisions[k].area)
+				!Collision.intersects(element.renderArea, element.collisions[k].renderArea)
 			) {
 				var other: Element = element.collisions[k];
 				var index: number = ArrayUtil.indexOf<Element>(element, other.collisions);
@@ -151,19 +151,13 @@ export abstract class Screen {
 	public render(): void {
 		for (var region of this.visibleRegionCache) {
 			if (!region.requiresRedraw) { continue; }
-			this.layer.ctx.fillStyle = this.backgroundColor;
+			this.layer.ctx.fillStyle = Screen.debug_showRedraws ? Color.getRandomColor() : this.backgroundColor;
 			this.layer.ctx.fillRect(region.area.x(), region.area.y(), region.area.width(), region.area.height());
 			this.layer.ctx.save();
-			this.layer.ctx.shadowColor = 'white';
-			this.layer.ctx.shadowBlur = 5;
 			// clip a rectangular area
 			this.layer.ctx.beginPath();
 			this.layer.ctx.rect(region.area.x(), region.area.y(), region.area.width(), region.area.height());
 			this.layer.ctx.clip();
-			if (Screen.debug_showRedraws) {
-				this.layer.ctx.fillStyle = Color.getRandomColor();
-				this.layer.ctx.fillRect(region.area.x(), region.area.y(), region.area.width(), region.area.height());
-			}
 			for (var i: number = 0; i < region.elements.length; i++) {
 				region.elements[i].render(this.layer.ctx);
 			}

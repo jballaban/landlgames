@@ -5,30 +5,47 @@ import { Element } from "../Core/Element";
 import { ElementType } from "../Core/ElementType";
 import { Point, MidPoint } from "../Shape/Point";
 import { Rectangle } from "../Shape/Rectangle";
+import { Logger } from "../Util/Logger";
 
 export class BackgroundImage extends Element {
 
 	private image: Sprite;
 	private viewport: Viewport;
+	private resized: boolean = false;
 
 	constructor(image: Sprite, container: ElementContainer, viewport: Viewport) {
-		var topleft = new Point(-512, -512, new MidPoint(viewport.area.topLeft, viewport.area.bottomRight));
-		var bottomright = new Point(1024, 1024, topleft);
-		super(container, ElementType.backgroundImage, new Rectangle(topleft, bottomright), 1, null);
+		super(container, ElementType.backgroundImage, BackgroundImage.getArea(viewport), 1, null);
 		this.image = image;
 		this.viewport = viewport;
+	}
+
+	public update(dt: number): void {
+		if (this.viewport.area.changed() || !this.resized) {
+			this.renderArea = BackgroundImage.getArea(this.viewport);
+			this.resized = this.renderAreaAsRect().width() > 0;
+		}
+	}
+
+	private static getArea(viewport: Viewport): Rectangle {
+		var center = new MidPoint(viewport.area.topLeft, viewport.area.bottomRight);
+		var width = Math.min(viewport.area.width(), 1024);
+		var height = Math.min(viewport.area.height(), 1024);
+		var ratio = Math.min(width / 1024, height / 1024);
+		var topleft = new Point(-ratio * 1024 / 2, -ratio * 1024 / 2, center);
+		var bottomright = new Point(ratio * 1024, ratio * 1024, topleft);
+		return new Rectangle(topleft, bottomright);
 	}
 
 	public ready(): boolean {
 		return super.ready() && this.image.loaded;
 	}
 
-	public areaAsRect(): Rectangle {
-		return this.area as Rectangle;
+	public renderAreaAsRect(): Rectangle {
+		return this.renderArea as Rectangle;
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
-		this.image.render(ctx, this.areaAsRect().topLeft.x(), this.areaAsRect().topLeft.y(), this.areaAsRect().width(), this.areaAsRect().height());
+		this.image.render(ctx, this.renderAreaAsRect().topLeft.x(), this.renderAreaAsRect().topLeft.y(), this.renderAreaAsRect().width(), this.renderAreaAsRect().height());
 	}
 
 }

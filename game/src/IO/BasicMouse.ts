@@ -22,7 +22,7 @@ export class BasicMouse extends Mouse {
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
-		this.area.render(ctx, this.color);
+		this.renderArea.render(ctx, this.color);
 	}
 
 }

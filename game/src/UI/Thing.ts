@@ -35,7 +35,7 @@ export class StaticThing extends Element {
 		if (this.win) {
 			// todo
 		} else {
-			this.area.render(ctx, this.color);
+			this.renderArea.render(ctx, this.color);
 		}
 	}
 }
@@ -61,10 +61,10 @@ export class Thing extends Element {
 		this.speed = Math.max(this.minSpeed, this.speed);
 		var move: Vector = this.direction.clone().multiply(step * this.speed);
 		this.inc(move.x, move.y);
-		if (this.area.origin.x() <= 0 || this.area.origin.x() >= this.container.area.width()) {
+		if (this.renderArea.origin.x() <= 0 || this.renderArea.origin.x() >= this.container.area.width()) {
 			this.direction.x *= -1;
 		}
-		if (this.area.origin.y() <= 0 || this.area.origin.y() >= this.container.area.height()) {
+		if (this.renderArea.origin.y() <= 0 || this.renderArea.origin.y() >= this.container.area.height()) {
 			this.direction.y *= -1;
 		}
 		super.update(step);
@@ -82,14 +82,14 @@ export class Thing extends Element {
 			element.type === ElementType.Mouse
 		)) {
 			this.direction = new Vector(
-				this.area.origin.x() - element.area.origin.x(),
-				this.area.origin.y() - element.area.origin.y()
+				this.renderArea.origin.x() - element.renderArea.origin.x(),
+				this.renderArea.origin.y() - element.renderArea.origin.y()
 			);
 			this.speed = Math.ceil(Math.random() * this.maxSpeed / 2) + this.maxSpeed / 2;
 		}
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
-		this.area.render(ctx, this.color);
+		this.renderArea.render(ctx, this.color);
 	}
 }

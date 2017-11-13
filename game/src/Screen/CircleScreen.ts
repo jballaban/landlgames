@@ -19,7 +19,6 @@ export class CircleScreen extends Screen {
 
 	public constructor() {
 		super(256, new Rectangle(new Point(0, 0), new Point(1024, 768)));
-		this.backgroundColor = "rgb(10,10,10)";
 	}
 
 	public activate(): void {

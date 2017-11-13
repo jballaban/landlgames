@@ -72,7 +72,7 @@ export class ElementContainer {
 	}
 
 	public update(element: Element, position: boolean): void {
-		var currentregions: ElementRegion[] = this.regions.getRegions(element.area);
+		var currentregions: ElementRegion[] = this.regions.getRegions(element.renderArea);
 		if (position) {
 			var oldregions: ElementRegion[] = this.elements.get(element);
 			for (var oldregion of oldregions) {
