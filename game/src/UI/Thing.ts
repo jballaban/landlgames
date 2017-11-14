@@ -14,12 +14,16 @@ import { ElementType } from "../Core/ElementType";
 import { Screen } from "../Core/Screen";
 import { ElementContainer } from "../Core/ElementContainer";
 import { Shadow } from "../Shape/Shadow";
+import { BackgroundImage } from "./BackgroundImage";
+import { Sprite } from "./Sprite";
 
 export class StaticThing extends Element {
 	private win: boolean = false;
+	private winSprite: Sprite;
 
 	constructor(container: ElementContainer, private color: string, area: Circle) {
 		super(container, ElementType.StaticThing, new Shadow(area, 100), area, 4, ElementType.Thing);
+		this.winSprite = new Sprite("win.jpg", 1024, 662);
 	}
 
 	public onCollide(element: Element, on: boolean): void {
@@ -34,7 +38,17 @@ export class StaticThing extends Element {
 
 	public render(ctx: CanvasRenderingContext2D): void {
 		if (this.win) {
-			// todo
+			ctx.save();
+			ctx.beginPath();
+			this.renderArea.render(ctx, this.color);
+			ctx.clip();
+			this.winSprite.render(
+				ctx,
+				this.renderArea.origin.x() - this.winSprite.width / 2,
+				this.renderArea.origin.y() - this.winSprite.height / 2,
+				this.winSprite.width, this.winSprite.height
+			);
+			ctx.restore();
 		} else {
 			this.renderArea.render(ctx, this.color);
 		}
