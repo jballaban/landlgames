@@ -1,8 +1,9 @@
 import { Point } from "./Point";
 
 export enum ShapeType {
-	Circle,
-	Rectangle
+	Circle = 1,
+	Rectangle = 2,
+	Shadow = 4
 }
 
 export interface IShape {

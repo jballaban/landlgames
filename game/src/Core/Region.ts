@@ -1,7 +1,6 @@
 import { Rectangle } from "../Shape/Rectangle";
 import { Point } from "../Shape/Point";
 import { IShape } from "../Shape/IShape";
-import { Recoverable } from "repl";
 
 export abstract class Region {
 	public area: Rectangle;

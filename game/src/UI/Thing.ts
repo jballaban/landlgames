@@ -13,12 +13,13 @@ import { Runtime } from "../Core/Runtime";
 import { ElementType } from "../Core/ElementType";
 import { Screen } from "../Core/Screen";
 import { ElementContainer } from "../Core/ElementContainer";
+import { Shadow } from "../Shape/Shadow";
 
 export class StaticThing extends Element {
 	private win: boolean = false;
 
 	constructor(container: ElementContainer, private color: string, area: Circle) {
-		super(container, ElementType.StaticThing, area, area, 4, ElementType.Thing);
+		super(container, ElementType.StaticThing, new Shadow(area, 100), area, 4, ElementType.Thing);
 	}
 
 	public onCollide(element: Element, on: boolean): void {
@@ -47,9 +48,9 @@ export class Thing extends Element {
 	public minSpeed: number;
 	public maxSpeed: number;
 
-	constructor(container: ElementContainer, private color: string, area: IShape) {
+	constructor(container: ElementContainer, private color: string, renderarea: IShape, collisionarea: IShape) {
 		// tslint:disable-next-line:no-bitwise
-		super(container, ElementType.Thing, area, area, 5, ElementType.StaticThing | ElementType.Mouse);
+		super(container, ElementType.Thing, renderarea, collisionarea, 5, ElementType.StaticThing | ElementType.Mouse);
 		this._color = color;
 		this.direction = new Vector(0, 0);
 		this.speed = 0;
@@ -57,10 +58,10 @@ export class Thing extends Element {
 		this.maxSpeed = 10;
 	}
 
-	public update(step: number): void {
+	public update(dt: number): void {
 		this.speed -= .1;
 		this.speed = Math.max(this.minSpeed, this.speed);
-		var move: Vector = this.direction.clone().multiply(step * this.speed);
+		var move: Vector = this.direction.clone().multiply(dt * this.speed);
 		this.inc(move.x, move.y);
 		if (this.renderArea.origin.x() <= 0 || this.renderArea.origin.x() >= this.container.area.width()) {
 			this.direction.x *= -1;
@@ -68,7 +69,7 @@ export class Thing extends Element {
 		if (this.renderArea.origin.y() <= 0 || this.renderArea.origin.y() >= this.container.area.height()) {
 			this.direction.y *= -1;
 		}
-		super.update(step);
+		super.update(dt);
 	}
 
 	public onCollide(element: Element, on: boolean): void {

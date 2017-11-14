@@ -26,6 +26,14 @@ export class Point {
 		return this.vector.y;
 	}
 
+	public markDirty(): void {
+		if (this.dirty) { return; }
+		this.dirty = true;
+		for (var child of this.children) { // tell children they may need to reposition themselves since we changed something
+			child.markDirty();
+		}
+	}
+
 	public recalculate(): void {
 		if (!this.dirty) { return; }
 		this.dirty = false;
@@ -36,7 +44,7 @@ export class Point {
 		this.vector.y = y;
 		this.changed = true;
 		for (var child of this.children) { // tell children they may need to reposition themselves since we changed something
-			child.dirty = true;
+			child.markDirty();
 		}
 	}
 
@@ -47,13 +55,8 @@ export class Point {
 		if (offsetY != null) {
 			this.offsetY = offsetY;
 		}
-		if (!this.changed) {
-			for (var child of this.children) { // tell children they may need to reposition themselves since we changed something
-				child.dirty = true;
-			}
-			this.changed = true;
-		}
-		this.dirty = true;
+		this.changed = true;
+		this.markDirty();
 	}
 
 	protected calculate(field: string): number {

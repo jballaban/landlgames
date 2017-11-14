@@ -1,3 +1,4 @@
+// tslint:disable:no-bitwise
 import { IShape, ShapeType } from "../Shape/IShape";
 import { Rectangle } from "../Shape/Rectangle";
 import { Circle } from "../Shape/Circle";
@@ -8,24 +9,20 @@ import { Logger } from "./Logger";
 export class Collision {
 
 	public static intersects(shape1: IShape, shape2: IShape): boolean {
-		switch (shape1.type) {
-			case ShapeType.Rectangle:
-				switch (shape2.type) {
-					case ShapeType.Rectangle:
-						return Collision.rectRectIntersect(shape1 as Rectangle, shape2 as Rectangle);
-					case ShapeType.Circle:
-						return Collision.rectCircleIntersect(shape1 as Rectangle, shape2 as Circle);
-				}
-				break;
-			case ShapeType.Circle:
-				switch (shape2.type) {
-					case ShapeType.Rectangle:
-						return Collision.rectCircleIntersect(shape2 as Rectangle, shape1 as Circle);
-					case ShapeType.Circle:
-						return Collision.circleCircleIntersect(shape1 as Circle, shape2 as Circle);
-				}
-				break;
+		if ((shape1.type & ShapeType.Rectangle) !== 0) {
+			if ((shape2.type & ShapeType.Rectangle) !== 0) {
+				return Collision.rectRectIntersect(shape1 as Rectangle, shape2 as Rectangle);
+			} else if ((shape2.type & ShapeType.Circle) !== 0) {
+				return Collision.rectCircleIntersect(shape1 as Rectangle, shape2 as Circle);
+			}
+		} else if ((shape1.type & ShapeType.Circle) !== 0) {
+			if ((shape2.type & ShapeType.Rectangle) !== 0) {
+				return Collision.rectCircleIntersect(shape2 as Rectangle, shape1 as Circle);
+			} else if ((shape2.type & ShapeType.Circle) !== 0) {
+				return Collision.circleCircleIntersect(shape1 as Circle, shape2 as Circle);
+			}
 		}
+		throw "Unknown intersect " + shape1.type + " and " + shape2.type;
 	}
 
 	public static getIntersectionLineAtX(line: Line, x: number): Point {

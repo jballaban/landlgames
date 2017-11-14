@@ -46,12 +46,14 @@ export class LoadingScreen extends Screen {
 		if (this.viewport.area.changed()) {
 			this.container.resize(this.viewport.area);
 		}
-		for (var i = 0; i < this.assets.length; i++) {
+		for (var i: number = 0; i < this.assets.length; i++) {
 			if (this.assets[i].ready()) {
 				this.container.register(this.assets[i]);
 				this.assets.splice(i--, 1);
 				if (this.assets.length === 0) {
-					this.actions.push(new Action(new Duration(0), this.loadScreen.bind(this)))
+					this.actions.push(
+						new Action(new Duration(0), this.loadScreen.bind(this))
+					);
 				}
 			}
 		}

@@ -20,6 +20,10 @@ export class Circle implements IShape {
 		this.origin.changed = false;
 	}
 
+	public toString(): string {
+		return "(" + this.x() + "," + this.y() + "," + this.r;
+	}
+
 	public x(): number {
 		return this.origin.x();
 	}
