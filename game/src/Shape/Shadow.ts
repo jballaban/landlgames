@@ -16,12 +16,12 @@ export class Shadow implements IShape {
 			this.area = new Circle(childArea.origin, (childArea as Circle).r + shadowLen);
 		} else if (childArea.type & ShapeType.Rectangle) {
 			this.area = new Rectangle(
-				new Point(-shadowLen / 2, -shadowLen / 2, (childArea as Rectangle).topLeft),
-				new Point(shadowLen / 2, shadowLen / 2, (childArea as Rectangle).bottomRight)
+				new Point(-shadowLen, -shadowLen, (childArea as Rectangle).topLeft),
+				new Point(shadowLen, shadowLen, (childArea as Rectangle).bottomRight)
 			);
 		}
 		this.type = childArea.type | ShapeType.Shadow;
-		this.origin = this.area.origin;
+		this.origin = childArea.origin;
 	}
 
 	public intersects(shape: IShape): boolean {
@@ -29,7 +29,6 @@ export class Shadow implements IShape {
 	}
 
 	public render(ctx: CanvasRenderingContext2D, color: string): void {
-		Logger.log((this.area as Circle).toString());
 		ctx.save();
 		ctx.shadowBlur = this.shadowLen;
 		ctx.shadowColor = "rgb(0,0,0)";

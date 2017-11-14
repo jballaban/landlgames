@@ -28,8 +28,8 @@ export class CircleScreen extends Screen {
 		for (var i: number = 0; i < 100; i++) {
 			var position: Point = new Point(Math.random() * this.container.area.width(), Math.random() * this.container.area.height());
 			var area: IShape = Math.floor(Math.random() * 2) === 1 ?
-				new Rectangle(position, new Point(Math.floor(Math.random() * 10) + 5, Math.floor(Math.random() * 10) + 5, position))
-				: new Circle(position, Math.floor(Math.random() * 10) + 5);
+				new Rectangle(position, new Point(Math.floor(Math.random() * 10) + 10, Math.floor(Math.random() * 10) + 10, position))
+				: new Circle(position, Math.floor(Math.random() * 10) + 10);
 			var thing: Thing = new Thing(
 				this.container,
 				Color.makeRGBA(Color.getRandomRGB(), 0.8),

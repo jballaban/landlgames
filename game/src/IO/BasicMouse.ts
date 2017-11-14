@@ -11,14 +11,15 @@ import { ElementType } from "../Core/ElementType";
 import { Vector } from "../Core/Vector";
 import { Mouse } from "./Mouse";
 import { ElementContainer } from "../Core/ElementContainer";
+import { Shadow } from "../Shape/Shadow";
 
 export class BasicMouse extends Mouse {
 	private _color: string;
 	private color: string;
 
 	public constructor(container: ElementContainer, x: number, y: number) {
-		var area = new Circle(new Point(x, y), 50);
-		super(container, area, area, 10);
+		var area: Circle = new Circle(new Point(x, y), 50);
+		super(container, new Shadow(area, 20), area, 10);
 		this.color = this._color = "rgba(255,255,255,1)";
 	}
 

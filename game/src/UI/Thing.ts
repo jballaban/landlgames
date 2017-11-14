@@ -50,7 +50,7 @@ export class Thing extends Element {
 
 	constructor(container: ElementContainer, private color: string, renderarea: IShape, collisionarea: IShape) {
 		// tslint:disable-next-line:no-bitwise
-		super(container, ElementType.Thing, renderarea, collisionarea, 5, ElementType.StaticThing | ElementType.Mouse);
+		super(container, ElementType.Thing, new Shadow(renderarea, 10), collisionarea, 5, ElementType.StaticThing | ElementType.Mouse);
 		this._color = color;
 		this.direction = new Vector(0, 0);
 		this.speed = 0;
