@@ -16,16 +16,26 @@ import { BasicMouse } from "../IO/BasicMouse";
 import { Cursor, MouseHandler, CursorState } from "../IO/MouseHandler";
 import { Element } from "../Core/Element";
 import { IShape } from "../Shape/IShape";
+import { BackgroundImage } from "../UI/BackgroundImage";
+import { Sprite } from "../UI/Sprite";
 
 export class CircleScreen extends Screen {
 
+	private background: BackgroundImage;
+
 	public constructor() {
 		super(256, new Rectangle(new Point(0, 0), new Point(1024 * 1.5, 768)));
+		this.container.register(new BackgroundImage(
+			new Sprite("background.jpg", 1920, 1200),
+			this.container,
+			this.viewport,
+			true
+		));
 	}
 
 	public activate(): void {
 		super.activate();
-		for (var i: number = 0; i < 10; i++) {
+		for (var i: number = 0; i < 100; i++) {
 			var position: Point = new Point(Math.random() * this.container.area.width(), Math.random() * this.container.area.height());
 			var area: IShape = Math.floor(Math.random() * 2) === 1 ?
 				new Rectangle(position, new Point(Math.floor(Math.random() * 10) + 10, Math.floor(Math.random() * 10) + 10, position))
@@ -38,7 +48,6 @@ export class CircleScreen extends Screen {
 		}
 		this.container.register(new StaticThing(
 			this.container,
-			"darkblue",
 			new Circle(new MidPoint(
 				this.viewport.area.topLeft,
 				this.viewport.area.bottomRight

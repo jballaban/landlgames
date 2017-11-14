@@ -32,11 +32,13 @@ export class LoadingScreen extends Screen {
 
 	public activate(): void {
 		super.activate();
+		var s: Sprite = new Sprite("maincircle.jpg", 1600, 1064); // todo replace with asset
 		this.assets.push(
 			new BackgroundImage(
 				new Sprite("logo.png", 1024, 1024),
 				this.container,
-				this.viewport
+				this.viewport,
+				false
 			)
 		);
 	}

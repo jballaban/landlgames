@@ -1,3 +1,4 @@
+// tslint:disable:no-bitwise
 import { Mouse } from "../IO/Mouse";
 import { Element } from "../Core/Element";
 import { Camera } from "../Core/Camera";
@@ -20,10 +21,12 @@ import { Sprite } from "./Sprite";
 export class StaticThing extends Element {
 	private win: boolean = false;
 	private winSprite: Sprite;
+	private playSprite: Sprite;
 
-	constructor(container: ElementContainer, private color: string, area: Circle) {
+	constructor(container: ElementContainer, area: Circle) {
 		super(container, ElementType.StaticThing, new Shadow(area, 100), area, 4, ElementType.Thing);
 		this.winSprite = new Sprite("win.jpg", 1024, 662);
+		this.playSprite = new Sprite("maincircle.jpg", 1600, 1064);
 	}
 
 	public onCollide(element: Element, on: boolean): void {
@@ -37,21 +40,26 @@ export class StaticThing extends Element {
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
+		ctx.save();
+		ctx.beginPath();
+		this.renderArea.render(ctx, "rgb(10,10,10)");
+		ctx.clip();
 		if (this.win) {
-			ctx.save();
-			ctx.beginPath();
-			this.renderArea.render(ctx, this.color);
-			ctx.clip();
 			this.winSprite.render(
 				ctx,
 				this.renderArea.origin.x() - this.winSprite.width / 2,
 				this.renderArea.origin.y() - this.winSprite.height / 2,
 				this.winSprite.width, this.winSprite.height
 			);
-			ctx.restore();
 		} else {
-			this.renderArea.render(ctx, this.color);
+			this.playSprite.render(
+				ctx,
+				this.renderArea.origin.x() - this.winSprite.width / 2,
+				this.renderArea.origin.y() - this.winSprite.height / 2,
+				this.winSprite.width, this.winSprite.height
+			);
 		}
+		ctx.restore();
 	}
 }
 
@@ -63,13 +71,19 @@ export class Thing extends Element {
 	public maxSpeed: number;
 
 	constructor(container: ElementContainer, private color: string, renderarea: IShape, collisionarea: IShape) {
-		// tslint:disable-next-line:no-bitwise
-		super(container, ElementType.Thing, new Shadow(renderarea, 10), collisionarea, 5, ElementType.StaticThing | ElementType.Mouse);
+		super(
+			container,
+			ElementType.Thing,
+			new Shadow(renderarea, 10),
+			collisionarea,
+			5,
+			ElementType.StaticThing | ElementType.Mouse | ElementType.Thing
+		);
 		this._color = color;
 		this.direction = new Vector(0, 0);
 		this.speed = 0;
 		this.minSpeed = 0;
-		this.maxSpeed = 10;
+		this.maxSpeed = 20;
 	}
 
 	public update(dt: number): void {
@@ -95,13 +109,22 @@ export class Thing extends Element {
 			this.container.change(this, false);
 		}
 		if (on && (
-			element.type === ElementType.Mouse
+			element.type === ElementType.Mouse || element.type === ElementType.Thing
 		)) {
-			this.direction = new Vector(
-				this.renderArea.origin.x() - element.renderArea.origin.x(),
-				this.renderArea.origin.y() - element.renderArea.origin.y()
-			);
-			this.speed = Math.ceil(Math.random() * this.maxSpeed / 2) + this.maxSpeed / 2;
+			if (element.type === ElementType.Mouse) {
+				this.speed = Math.ceil(Math.random() * this.maxSpeed / 2) + this.maxSpeed / 2;
+				this.direction = new Vector(
+					this.renderArea.origin.x() - element.renderArea.origin.x(),
+					this.renderArea.origin.y() - element.renderArea.origin.y()
+				);
+			} else if (element.type === ElementType.Thing) {
+				(element as Thing).speed = Math.min(this.maxSpeed, (element as Thing).speed + this.speed / 2);
+				this.speed = this.speed * 3 / 4;
+				(element as Thing).direction = new Vector(
+					element.renderArea.origin.x() - this.renderArea.origin.x(),
+					element.renderArea.origin.y() - this.renderArea.origin.y()
+				);
+			}
 		}
 	}
 

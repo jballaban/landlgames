@@ -9,7 +9,7 @@ export class Sprite {
 	}
 
 	public render(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
-		ctx.drawImage(this.image, x, y, width, height);
+		ctx.drawImage(this.image, 0, 0, this.width, this.height, x, y, width, height);
 	}
 
 	private onLoad(): void {
