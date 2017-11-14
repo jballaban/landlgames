@@ -52,12 +52,13 @@ export class Thing extends Element {
 		super(container, ElementType.Thing, area, area, 5, ElementType.StaticThing | ElementType.Mouse);
 		this._color = color;
 		this.direction = new Vector(0, 0);
-		this.minSpeed = this.speed = 0;
-		this.maxSpeed = 20;
+		this.speed = 0;
+		this.minSpeed = 0;
+		this.maxSpeed = 10;
 	}
 
 	public update(step: number): void {
-		this.speed -= .3;
+		this.speed -= .1;
 		this.speed = Math.max(this.minSpeed, this.speed);
 		var move: Vector = this.direction.clone().multiply(step * this.speed);
 		this.inc(move.x, move.y);

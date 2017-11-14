@@ -23,7 +23,7 @@ export class CircleScreen extends Screen {
 
 	public activate(): void {
 		super.activate();
-		for (var i: number = 0; i < 1000; i++) {
+		for (var i: number = 0; i < 100; i++) {
 			var position: Point = new Point(Math.random() * this.container.area.width(), Math.random() * this.container.area.height());
 			var thing: Thing = new Thing(
 				this.container,
@@ -57,7 +57,8 @@ export class CircleScreen extends Screen {
 					if (x !== cursors[i].x || y !== cursors[i].y) {
 						MouseHandler.inc(cursors[i].id, x - cursors[i].x, y - cursors[i].y);
 					}
-					cursors[i].data.move(x, y);
+					cursors[i].data.move("render", x, y);
+					cursors[i].data.move("collision", x, y);
 					break;
 				case CursorState.remove:
 					this.container.deregister(cursors[i].data);

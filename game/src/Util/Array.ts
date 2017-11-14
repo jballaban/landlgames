@@ -20,7 +20,7 @@ export class Array {
 
 	public static indexOfProperty(property: string, index: number, array: any[]): number {
 		for (var i: number = 0; i < array.length; i++) {
-			if (array[i][name] >= index) {
+			if (array[i][property] >= index) {
 				return i;
 			}
 		}

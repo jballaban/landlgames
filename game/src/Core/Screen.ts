@@ -9,7 +9,7 @@ import { Collision } from "../Util/Collision";
 import { ContextLayer } from "../Core/ContextLayer";
 import { Runtime } from "../Core/Runtime";
 import { Color } from "../Util/Color";
-import { ElementContainer, ElementRegion, CollisionRegion } from "../Core/ElementContainer";
+import { ElementContainer, ElementRegion } from "../Core/ElementContainer";
 import { EventHandler } from "../Core/EventHandler";
 import { Viewport } from "../Core/Viewport";
 import { MouseHandler } from "../IO/MouseHandler";
@@ -88,13 +88,12 @@ export abstract class Screen {
 	}
 
 	public checkCollisions(): void {
-		var regions: CollisionRegion[] = this.container.getRegions("collision", this.container.area) as CollisionRegion[];
+		var regions: ElementRegion[] = this.container.getRegions("collision", this.container.area);
 		var checks: Map<Element, Map<Element, boolean>> = new Map<Element, Map<Element, boolean>>();
 		for (var i = 0; i < regions.length; i++) {
 			if (!regions[i].changed) {
 				continue;
 			}
-			//	Logger.log(regions[i].elements.length + " elements");
 			for (var j = 0; j < regions[i].elements.length - 1; j++) {
 				var el = regions[i].elements[j];
 				if (checks.get(el) == null) {
@@ -106,17 +105,15 @@ export abstract class Screen {
 						checks.set(other, new Map<Element, boolean>());
 					}
 					var collides: boolean = checks.get(el).get(other);
-					Logger.log(j + "," + k + " collides");
 					if (collides == null) {
 						if ((el.collisionFilter & other.type) === 0 && (other.collisionFilter & el.type) === 0) {
 							collides = false;
 						}
 					}
 					if (collides == null) {
-						Logger.log("intersects");
 						collides = Collision.intersects(el.collisionArea, other.collisionArea);
-						checks.get(el).set(other, collides);
-						checks.get(other).set(el, collides);
+						checks.get(el).set(other, collides && (el.collisionFilter & other.type) > 0);
+						checks.get(other).set(el, collides && (other.collisionFilter & el.type) > 0);
 					}
 					if (!collides) {
 						if (el.collisions.indexOf(other) > -1) {
@@ -128,19 +125,18 @@ export abstract class Screen {
 							other.onCollide(el, false);
 						}
 					} else {
-						if (el.collisions.indexOf(other) == -1) {
+						if (el.collisions.indexOf(other) == -1 && (el.collisionFilter & other.type) > 0) {
 							el.collisions.push(other);
 							el.onCollide(other, true);
 						}
-						if (other.collisions.indexOf(el) == -1) {
+						if (other.collisions.indexOf(el) == -1 && (other.collisionFilter & el.type) > 0) {
 							other.collisions.push(el);
-							el.onCollide(el, true);
+							other.onCollide(el, true);
 						}
 					}
 				}
 			}
 			regions[i].changed = false;
-			regions[i].updated = [];
 		}
 
 

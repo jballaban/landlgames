@@ -11,10 +11,6 @@ export class ElementRegion extends Region {
 	public elements: Element[] = new Array<Element>();
 }
 
-export class CollisionRegion extends ElementRegion {
-	public updated: Element[] = new Array<Element>();
-}
-
 export class ElementRegionContainer {
 	public renderRegions: ElementRegion[] = new Array<ElementRegion>();
 	public collisionRegions: ElementRegion[] = new Array<ElementRegion>();
@@ -22,13 +18,13 @@ export class ElementRegionContainer {
 
 export class ElementContainer {
 	private renderRegions: RegionContainer<ElementRegion>
-	private collisionRegions: RegionContainer<CollisionRegion>
+	private collisionRegions: RegionContainer<ElementRegion>
 	private elementRegions: Map<Element, ElementRegionContainer> = new Map<Element, ElementRegionContainer>();
 	public elements: Element[] = new Array<Element>();
 
 	public constructor(renderregionsize: number, collisionregionsize: number, public area: Rectangle) {
 		this.renderRegions = new RegionContainer(renderregionsize, area, ElementRegion);
-		this.collisionRegions = new RegionContainer(collisionregionsize, area, CollisionRegion);
+		this.collisionRegions = new RegionContainer(collisionregionsize, area, ElementRegion);
 	}
 
 	public resize(area: Rectangle): void {
@@ -38,7 +34,7 @@ export class ElementContainer {
 			this.deregister(this.elements[i]);
 		}
 		this.renderRegions = new RegionContainer(this.renderRegions.len, area, ElementRegion);
-		this.collisionRegions = new RegionContainer(this.collisionRegions.len, area, CollisionRegion);
+		this.collisionRegions = new RegionContainer(this.collisionRegions.len, area, ElementRegion);
 		for (var i = 0; i < elements.length; i++) {
 			this.register(elements[i]);
 		}
@@ -102,9 +98,6 @@ export class ElementContainer {
 			}
 			for (var i = 0; i < unchanged.length; i++) {
 				unchanged[i].changed = true;
-				if (type === "collision") {
-					(unchanged[i] as CollisionRegion).updated.push(element);
-				}
 			}
 		} else if (type == "render") { // we don't care about collision changes if we are only tweaking an attribute
 			for (var i = 0; i < currentregions.length; i++) {
@@ -135,7 +128,6 @@ export class ElementContainer {
 				break;
 			case "collision":
 				regions = this.elementRegions.get(element).collisionRegions;
-				(region as CollisionRegion).updated.push(element);
 				break;
 		}
 		regions.splice(regions.indexOf(region), 1);
@@ -151,7 +143,7 @@ export class ElementContainer {
 				break;
 			case "collision":
 				this.elementRegions.get(element).collisionRegions.push(region);
-				(region as CollisionRegion).updated.push(element);
+				region.elements.push(element);
 				break;
 		}
 		region.changed = true;

@@ -31,12 +31,27 @@ export abstract class Element {
 	}
 
 	public inc(offsetx: number, offsety: number): void {
-		this.move(this.renderArea.origin.offsetX + offsetx, this.renderArea.origin.offsetY + offsety);
+		this.move("render", this.renderArea.origin.offsetX + offsetx, this.renderArea.origin.offsetY + offsety);
+		this.move("collision", this.collisionArea.origin.offsetX + offsetx, this.collisionArea.origin.offsetY + offsety);
 	}
 
-	public move(offsetX: number, offsetY: number): void {
-		if (offsetX === this.renderArea.origin.offsetX && offsetY === this.renderArea.origin.offsetY) { return; }
-		this.renderArea.origin.move(offsetX, offsetY);
+	public move(type: string, offsetX: number, offsetY: number): void {
+		var area: IShape;
+		switch (type) {
+			case "render":
+				area = this.renderArea;
+				break;
+			case "collision":
+				area = this.collisionArea;
+				break;
+			default:
+				throw "Unknown type " + type;
+		}
+		if (area == null) {
+			return;
+		}
+		if (offsetX === area.origin.offsetX && offsetY === area.origin.offsetY) { return; }
+		area.origin.move(offsetX, offsetY);
 	}
 
 	public update(step: number): void {
