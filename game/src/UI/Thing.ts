@@ -26,12 +26,13 @@ export class StaticThing extends Element {
 
 	constructor(container: ElementContainer, spritepool: SpritePool, area: Circle) {
 		super(container, spritepool, ElementType.StaticThing, new Shadow(area, 100), area, 4, ElementType.Thing);
-		this.winSprite = spritepool.get("Circle:win");
-		this.playSprite = new Sprite("maincircle.jpg", 1600, 1064);
+		this.winSprite = spritepool.get("Circle:StaticThing:win");
+		this.playSprite = spritepool.get("Circle:StaticThing:play");
 	}
 
 	public static preload(spritePool: SpritePool): void {
-		spritePool.register("Circle:win", new Sprite("win.jpg", 1024, 662));
+		spritePool.register("Circle:StaticThing:win", new Sprite("win.jpg", 1024, 662));
+		spritePool.register("Circle:StaticThing:play", new Sprite("maincircle.jpg", 1600, 1064));
 	}
 
 	public onCollide(element: Element, on: boolean): void {

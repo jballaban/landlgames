@@ -24,6 +24,7 @@ import { Duration } from "../Util/Duration";
 
 export class LoadingScreen extends Screen {
 	private selfPreloaded: boolean = false;
+	private screenPreloaded: boolean = false;
 
 	public constructor(private screen: Screen) {
 		super(256, new Rectangle(new Point(0, 0, null), new Point(0, 0, null)));
@@ -52,13 +53,13 @@ export class LoadingScreen extends Screen {
 					)
 				);
 				this.selfPreloaded = true;
-				this.screen.preload();
-			} else if{
-
 			}
 		}
 		if (this.screen.spritePool.ready()) {
-
+			if (!this.screenPreloaded) {
+				this.screenPreloaded = true;
+				this.actions.push(new Action(new Duration(1), this.loadScreen.bind(this)));
+			}
 		}
 	}
 

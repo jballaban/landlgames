@@ -35,7 +35,7 @@ export class CircleScreen extends Screen {
 	public activate(): void {
 		super.activate();
 		this.container.register(new BackgroundImage(
-			"background",
+			"Circle:background",
 			this.container,
 			this.spritePool,
 			this.viewport,
