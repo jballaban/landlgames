@@ -10,7 +10,7 @@ import { Collision } from "../Util/Collision";
 import { ContextLayer } from "../Core/ContextLayer";
 import { Runtime } from "../Core/Runtime";
 import { Color } from "../Util/Color";
-import { ElementContainer, ElementRegion } from "../Core/ElementContainer";
+import { ElementContainer, ElementRegion, CollisionElementRegion } from "../Core/ElementContainer";
 import { EventHandler } from "../Core/EventHandler";
 import { Viewport } from "../Core/Viewport";
 import { MouseHandler } from "../IO/MouseHandler";
@@ -92,55 +92,59 @@ export abstract class Screen {
 		}
 	}
 
+	private collides(cache: Map<Element, Map<Element, boolean>>, el: Element, other: Element): void {
+		if (cache.get(el) == null) {
+			cache.set(el, new Map<Element, boolean>());
+		}
+		if (cache.get(other) == null) {
+			cache.set(other, new Map<Element, boolean>());
+		}
+		var collides: boolean = cache.get(el).get(other);
+		if (collides == null && (el.collisionFilter & other.type) === 0) {
+			collides = false;
+		}
+		if (collides == null) {
+			collides = Collision.intersects(el.collisionArea, other.collisionArea);
+		}
+		cache.get(el).set(other, collides);
+		if (!collides) {
+			var index: number = el.collisions.indexOf(other);
+			if (index > -1) {
+				el.collisions.splice(index, 1);
+				el.onCollide(other, false);
+			}
+		} else {
+			if (el.collisions.indexOf(other) === -1) {
+				el.collisions.push(other);
+				el.onCollide(other, true);
+			}
+		}
+	}
+
 	public checkCollisions(): void {
-		var regions: ElementRegion[] = this.container.getRegions("collision", this.container.area);
+		var regions: CollisionElementRegion[] = this.container.getRegions("collision", this.container.area) as CollisionElementRegion[];
 		var checks: Map<Element, Map<Element, boolean>> = new Map<Element, Map<Element, boolean>>();
 		for (var i: number = 0; i < regions.length; i++) {
 			if (!regions[i].changed) {
 				continue;
 			}
-			for (var j: number = 0; j < regions[i].elements.length - 1; j++) {
-				var el: Element = regions[i].elements[j];
-				if (checks.get(el) == null) {
-					checks.set(el, new Map<Element, boolean>());
-				}
-				for (var k: number = j + 1; k < regions[i].elements.length; k++) {
-					var other: Element = regions[i].elements[k];
-					if (checks.get(other) == null) {
-						checks.set(other, new Map<Element, boolean>());
-					}
-					var collides: boolean = checks.get(el).get(other);
-					if (collides == null) {
-						if ((el.collisionFilter & other.type) === 0 && (other.collisionFilter & el.type) === 0) {
-							collides = false;
-						}
-					}
-					if (collides == null) {
-						collides = Collision.intersects(el.collisionArea, other.collisionArea);
-						checks.get(el).set(other, collides && (el.collisionFilter & other.type) > 0);
-						checks.get(other).set(el, collides && (other.collisionFilter & el.type) > 0);
-					}
-					if (!collides) {
-						if (el.collisions.indexOf(other) > -1) {
-							el.collisions.splice(el.collisions.indexOf(other), 1);
-							el.onCollide(other, false);
-						}
-						if (other.collisions.indexOf(el) > -1) {
-							other.collisions.splice(other.collisions.indexOf(el), 1);
-							other.onCollide(el, false);
-						}
-					} else {
-						if (el.collisions.indexOf(other) === -1 && (el.collisionFilter & other.type) > 0) {
-							el.collisions.push(other);
-							el.onCollide(other, true);
-						}
-						if (other.collisions.indexOf(el) === -1 && (other.collisionFilter & el.type) > 0) {
-							other.collisions.push(el);
-							other.onCollide(el, true);
-						}
-					}
+			for (var k: number = 0; k < regions[i].removed.length; k++) {
+				for (var j: number = 0; j < regions[i].removed[k].collisions.length; j++) {
+					this.collides(checks, regions[i].removed[k], regions[i].removed[k].collisions[j]);
 				}
 			}
+			for (var j: number = 0; j < regions[i].elements.length; j++) {
+				// check if we were colliding with any removed elements
+				for (var k: number = 0; k < regions[i].removed.length; k++) {
+					this.collides(checks, regions[i].elements[j], regions[i].removed[k]);
+				}
+				// now check to any elements still within this boundary
+				for (var k: number = j + 1; k < regions[i].elements.length; k++) {
+					this.collides(checks, regions[i].elements[j], regions[i].elements[k]);
+					this.collides(checks, regions[i].elements[k], regions[i].elements[j]);
+				}
+			}
+			regions[i].removed = new Array<Element>();
 			regions[i].changed = false;
 		}
 	}

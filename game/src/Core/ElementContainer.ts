@@ -11,31 +11,35 @@ export class ElementRegion extends Region {
 	public elements: Element[] = new Array<Element>();
 }
 
+export class CollisionElementRegion extends ElementRegion {
+	public removed: Element[] = new Array<Element>();
+}
+
 export class ElementRegionContainer {
 	public renderRegions: ElementRegion[] = new Array<ElementRegion>();
-	public collisionRegions: ElementRegion[] = new Array<ElementRegion>();
+	public collisionRegions: CollisionElementRegion[] = new Array<CollisionElementRegion>();
 }
 
 export class ElementContainer {
-	private renderRegions: RegionContainer<ElementRegion>
-	private collisionRegions: RegionContainer<ElementRegion>
+	private renderRegions: RegionContainer<ElementRegion>;
+	private collisionRegions: RegionContainer<CollisionElementRegion>;
 	private elementRegions: Map<Element, ElementRegionContainer> = new Map<Element, ElementRegionContainer>();
 	public elements: Element[] = new Array<Element>();
 
 	public constructor(renderregionsize: number, collisionregionsize: number, public area: Rectangle) {
 		this.renderRegions = new RegionContainer(renderregionsize, area, ElementRegion);
-		this.collisionRegions = new RegionContainer(collisionregionsize, area, ElementRegion);
+		this.collisionRegions = new RegionContainer(collisionregionsize, area, CollisionElementRegion);
 	}
 
 	public resize(area: Rectangle): void {
 		var elements: Element[] = new Array<Element>();
-		for (var i = 0; i < this.elements.length; i++) {
+		for (var i: number = 0; i < this.elements.length; i++) {
 			elements.push(this.elements[i]);
 			this.deregister(this.elements[i]);
 		}
 		this.renderRegions = new RegionContainer(this.renderRegions.len, area, ElementRegion);
-		this.collisionRegions = new RegionContainer(this.collisionRegions.len, area, ElementRegion);
-		for (var i = 0; i < elements.length; i++) {
+		this.collisionRegions = new RegionContainer(this.collisionRegions.len, area, CollisionElementRegion);
+		for (var i: number = 0; i < elements.length; i++) {
 			this.register(elements[i]);
 		}
 	}
@@ -47,7 +51,7 @@ export class ElementContainer {
 	}
 
 	public deregister(element: Element): void {
-		var regions = this.elementRegions.get(element).renderRegions;
+		var regions: ElementRegion[] = this.elementRegions.get(element).renderRegions;
 		for (var i: number = 0; i < regions.length; i++) {
 			this.remove("render", element, regions[i--]);
 		}
@@ -67,7 +71,7 @@ export class ElementContainer {
 	}
 
 	private applyChange(type: string, element: Element, position: boolean): void {
-		var currentregions;
+		var currentregions: ElementRegion[];
 		switch (type) {
 			case "render":
 				currentregions = this.elementRegions.get(element).renderRegions;
@@ -80,7 +84,7 @@ export class ElementContainer {
 			var added: ElementRegion[] = new Array<ElementRegion>();
 			var removed: ElementRegion[] = new Array<ElementRegion>();
 			var unchanged: ElementRegion[] = new Array<ElementRegion>();
-			var newregions;
+			var newregions: ElementRegion[];
 			switch (type) {
 				case "render":
 					newregions = this.renderRegions.getRegions(element.renderArea);
@@ -90,17 +94,17 @@ export class ElementContainer {
 					break;
 			}
 			ArrayUtil.diff(currentregions, newregions, added, removed, unchanged);
-			for (var i = 0; i < removed.length; i++) {
+			for (var i: number = 0; i < removed.length; i++) {
 				this.remove(type, element, removed[i]);
 			}
-			for (var i = 0; i < added.length; i++) {
+			for (var i: number = 0; i < added.length; i++) {
 				this.add(type, element, added[i]);
 			}
-			for (var i = 0; i < unchanged.length; i++) {
+			for (var i: number = 0; i < unchanged.length; i++) {
 				unchanged[i].changed = true;
 			}
-		} else if (type == "render") { // we don't care about collision changes if we are only tweaking an attribute
-			for (var i = 0; i < currentregions.length; i++) {
+		} else if (type === "render") { // we don't care about collision changes if we are only tweaking an attribute
+			for (var i: number = 0; i < currentregions.length; i++) {
 				currentregions[i].changed = true;
 			}
 		}
@@ -108,7 +112,7 @@ export class ElementContainer {
 
 	public getRegions(type: string, area: IShape): ElementRegion[] {
 		var result: ElementRegion[] = new Array<ElementRegion>();
-		var prop;
+		var prop: RegionContainer<ElementRegion>;
 		switch (type) {
 			case "render":
 				prop = this.renderRegions;
@@ -128,6 +132,7 @@ export class ElementContainer {
 				break;
 			case "collision":
 				regions = this.elementRegions.get(element).collisionRegions;
+				(region as CollisionElementRegion).removed.push(element);
 				break;
 		}
 		regions.splice(regions.indexOf(region), 1);
@@ -142,126 +147,10 @@ export class ElementContainer {
 				ArrayUtil.insertSorted("zIndex", element, region.elements);
 				break;
 			case "collision":
-				this.elementRegions.get(element).collisionRegions.push(region);
+				this.elementRegions.get(element).collisionRegions.push(region as CollisionElementRegion);
 				region.elements.push(element);
 				break;
 		}
 		region.changed = true;
 	}
 }
-/* 
-export class ElementRegion extends Region {
-	public elements: Element[] = new Array<Element>();
-	public requiresRedraw: boolean = false;
-}
-
-export class ElementContainer {
-
-	private regions: RegionContainer<ElementRegion>;
-	public elements: Map<Element, ElementRegion[]> = new Map<Element, ElementRegion[]>();
-	public regionsCache: ElementRegion[];
-	public areasCache: Rectangle[];
-	public elementsCache: Element[] = new Array<Element>();
-
-	public constructor(regionsize: number, area: Rectangle) {
-		this.regions = new RegionContainer(regionsize, area, ElementRegion);
-		this.regionsCache = Array.from(this.regions.regions.values());
-		this.areasCache = Array.from(this.regions.regions.keys());
-	}
-
-	public resize(area: Rectangle): void {
-		var elements: Element[] = new Array<Element>();
-		for (var i = 0; i < this.elementsCache.length; i++) {
-			elements.push(this.elementsCache[i]);
-			this.deregister(this.elementsCache[i]);
-		}
-		this.regions = new RegionContainer(this.regions.len, area, ElementRegion);
-		this.regionsCache = Array.from(this.regions.regions.values());
-		this.areasCache = Array.from(this.regions.regions.keys());
-		this.elementsCache = new Array<Element>();
-		for (var i = 0; i < elements.length; i++) {
-			this.register(elements[i]);
-		}
-	}
-
-	public get area(): Rectangle {
-		return this.regions.area;
-	}
-
-	public register(element: Element): void {
-		if (this.elementsCache.indexOf(element) > -1) {
-			throw "Dup registration";
-		}
-		this.elements.set(element, new Array<ElementRegion>());
-		this.update(element, true);
-		this.insertSorted(element, this.elementsCache);
-	}
-
-	public deregister(element: Element): void {
-		var regions: ElementRegion[] = this.elements.get(element);
-		for (var i: number = 0; i < regions.length; i++) {
-			this.remove(element, regions[i--]);
-		}
-		this.elementsCache.splice(this.elementsCache.indexOf(element), 1);
-		this.elements.delete(element);
-	}
-
-	public add(element: Element, region: ElementRegion): void {
-		this.insertSorted(element, region.elements);
-		this.elements.get(element).push(region);
-		region.requiresRedraw = true;
-	}
-
-	public remove(element: Element, region: ElementRegion): void {
-		region.elements.splice(region.elements.indexOf(element), 1);
-		this.elements.get(element).splice(this.elements.get(element).indexOf(region), 1);
-		region.requiresRedraw = true;
-	}
-
-	public update(element: Element, position: boolean): void {
-		var currentregions: ElementRegion[] = this.regions.getRegions(element.renderArea);
-		if (position) {
-			var oldregions: ElementRegion[] = this.elements.get(element);
-			for (var oldregion of oldregions) {
-				if (currentregions.indexOf(oldregion) === -1) {
-					this.remove(element, oldregion);
-				}
-			}
-			for (var currentregion of currentregions) {
-				if (oldregions.indexOf(currentregion) === -1) {
-					this.add(element, currentregion);
-				} else {
-					currentregion.requiresRedraw = true;
-				}
-			}
-		} else {
-			for (var i: number = 0; i < currentregions.length; i++) {
-				currentregions[i].requiresRedraw = true;
-			}
-		}
-	}
-
-	public getRegions(area: IShape): ElementRegion[] {
-		var result: ElementRegion[] = new Array<ElementRegion>();
-		for (var i: number = 0; i < this.areasCache.length; i++) {
-			if (area.intersects(this.areasCache[i])) {
-				result.push(this.regions.regions.get(this.areasCache[i]));
-			}
-		}
-		return result;
-	}
-
-	private insertSorted(element: Element, array: Element[]): void {
-		array.splice(this.locationOfIndex(element.zIndex, array), 0, element);
-	}
-
-	private locationOfIndex(index: number, array: Element[]): number {
-		for (var i: number = 0; i < array.length; i++) {
-			if (array[i].zIndex >= index) {
-				return i;
-			}
-		}
-		return array.length;
-	}
-
-} */
