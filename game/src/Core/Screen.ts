@@ -16,6 +16,7 @@ import { Viewport } from "../Core/Viewport";
 import { MouseHandler } from "../IO/MouseHandler";
 import { ElementType } from "./ElementType";
 import { Action } from "../Util/Action";
+import { SpritePool } from "./SpritePool";
 
 export abstract class Screen {
 
@@ -27,6 +28,7 @@ export abstract class Screen {
 	public visibleRegionCache: ElementRegion[];
 	public static debug_showRedraws = false;
 	public backgroundColor: string = "rgb(255,255,255)";
+	public spritePool: SpritePool = new SpritePool();
 
 	constructor(regionsize: number, area: Rectangle) {
 		this.visibleRegionCache = new Array<ElementRegion>();

@@ -24,16 +24,14 @@ import { Duration } from "../Util/Duration";
 
 export class LoadingScreen extends Screen {
 
-	private assets: Element[] = new Array<Element>();
-
 	public constructor(private screen: Screen) {
 		super(256, new Rectangle(new Point(0, 0, null), new Point(0, 0, null)));
 	}
 
 	public activate(): void {
 		super.activate();
-		var s: Sprite = new Sprite("maincircle.jpg", 1600, 1064); // todo replace with asset
-		this.assets.push(
+		this.spritePool.register(1, new Sprite("logo.png", 1024, 1024));
+		this.container.register(
 			new BackgroundImage(
 				new Sprite("logo.png", 1024, 1024),
 				this.container,
@@ -48,7 +46,7 @@ export class LoadingScreen extends Screen {
 		if (this.viewport.area.changed()) {
 			this.container.resize(this.viewport.area);
 		}
-		for (var i: number = 0; i < this.assets.length; i++) {
+		/* for (var i: number = 0; i < this.assets.length; i++) {
 			if (this.assets[i].ready()) {
 				this.container.register(this.assets[i]);
 				this.assets.splice(i--, 1);
@@ -58,7 +56,7 @@ export class LoadingScreen extends Screen {
 					);
 				}
 			}
-		}
+		} */
 	}
 
 	private loadScreen(): void {

@@ -42,8 +42,7 @@ export class CircleScreen extends Screen {
 				: new Circle(position, Math.floor(Math.random() * 10) + 10);
 			var thing: Thing = new Thing(
 				this.container,
-				//Color.makeRGBA(Color.getRandomRGB(), 0.8),
-				"rgba(100,100,100,0.8)",
+				Color.makeRGBA(Color.getRandomRGB(), 0.8),
 				area, area);
 			this.container.register(thing);
 		}
