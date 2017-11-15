@@ -1,23 +1,23 @@
-import { Screen } from "../Core/Screen";
-import { Rectangle } from "../Shape/Rectangle";
-import { Camera } from "../Core/Camera";
+import { Screen } from "../../Core/Screen";
+import { Rectangle } from "../../Shape/Rectangle";
+import { Camera } from "../../Core/Camera";
 import { Runtime } from "Core/Runtime";
 import { Logger } from "Util/Logger";
-import { Position } from "../Shape/Polygon";
-import { Point, MidPoint } from "../Shape/Point";
-import { Thing, StaticThing } from "../UI/Thing";
-import { ContextLayer } from "../Core/ContextLayer";
-import { Mouse } from "../IO/Mouse";
-import { Color } from "../Util/Color";
-import { ElementContainer } from "../Core/ElementContainer";
-import { Vector } from "../Core/Vector";
-import { Circle } from "../Shape/Circle";
-import { BasicMouse } from "../IO/BasicMouse";
-import { Cursor, MouseHandler, CursorState } from "../IO/MouseHandler";
-import { Element } from "../Core/Element";
-import { IShape } from "../Shape/IShape";
-import { BackgroundImage } from "../UI/BackgroundImage";
-import { Sprite } from "../UI/Sprite";
+import { Position } from "../../Shape/Polygon";
+import { Point, MidPoint } from "../../Shape/Point";
+import { Thing, StaticThing } from "../../UI/Thing";
+import { ContextLayer } from "../../Core/ContextLayer";
+import { Mouse } from "../../IO/Mouse";
+import { Color } from "../../Util/Color";
+import { ElementContainer } from "../../Core/ElementContainer";
+import { Vector } from "../../Core/Vector";
+import { Circle } from "../../Shape/Circle";
+import { BasicMouse } from "../../IO/BasicMouse";
+import { Cursor, MouseHandler, CursorState } from "../../IO/MouseHandler";
+import { Element } from "../../Core/Element";
+import { IShape } from "../../Shape/IShape";
+import { BackgroundImage } from "../../UI/BackgroundImage";
+import { Sprite } from "../../UI/Sprite";
 
 export class CircleScreen extends Screen {
 

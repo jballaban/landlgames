@@ -1,7 +1,7 @@
 import { Runtime } from "./Core/Runtime";
 import { Logger, Level } from "./Util/logger";
 import { Screen } from "./Core/Screen";
-import { CircleScreen } from "./Screen/CircleScreen";
+import { CircleScreen } from "./Game/CircleChase/CircleScreen";
 import { LoadingScreen } from "./Screen/LoadingScreen";
 
 export class Game {
@@ -12,8 +12,8 @@ export class Game {
 		Runtime.init();
 		var screen: Screen;
 		switch (game) {
-			case "circle":
-				screen = new CircleScreen();;
+			case "circlechase":
+				screen = new CircleScreen();
 				break;
 			default:
 				throw "Unknown game " + game;

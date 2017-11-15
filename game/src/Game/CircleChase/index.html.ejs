@@ -2,15 +2,15 @@
 <html>
 
 <head>
-	<title></title>
+	<title>Circle Chase</title>
 	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-title" content="Circle" />
+	<meta name="apple-mobile-web-app-title" content="Circle Chase" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	<link rel="apple-touch-icon" sizes="128x128" href="asset/fav.png" />
 	<meta name="viewport" content="user-scalable = no" />
 	<link rel="shortcut icon" href="asset/fav.png">
 	<script src="../require.js"></script>
-	<script src="../game.js"></script>
+	<script src="../game.js?v=<%= pkg.version %>"></script>
 	<script src="../fpsmeter.js"></script>
 	<style>
 		html,
@@ -30,9 +30,9 @@
 	</style>
 	<script>
 		require(["Game"], function (start) {
-			start.Game.init('circle', function () {
+			start.Game.init('circlechase', function () {
 				var diff = new Date() - new Date("<%= grunt.template.today() %>");
-				document.title = "<%= pkg.version %> compiled " + Math.floor(diff / 1000) + " seconds ago";
+				document.title += " <%= pkg.version %> compiled " + Math.floor(diff / 1000) + " seconds ago";
 				return document.title;
 			}());
 		});

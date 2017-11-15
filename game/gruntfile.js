@@ -11,7 +11,7 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		aws: grunt.file.readJSON("aws-credentials.json"),
+		aws: grunt.file.readJSON("../aws-credentials.json"),
 		gitinfo: {
 			options: {
 				cwd: "../"
@@ -38,16 +38,15 @@ module.exports = function (grunt) {
 					process: function (content, srcpath) {
 						return grunt.template.process(content);
 					}
-				}
-				,
+				},
 				files: [
 					{
-						src: './circle/index.html.ejs',
-						dest: './dist/circle/index.html',
+						src: './src/Game/CircleChase/index.html.ejs',
+						dest: './dist/circlechase/index.html',
 					},
 					{
-						cwd: './circle/asset/',
-						dest: './dist/circle/asset',
+						cwd: './src/Game/CircleChase/asset/',
+						dest: './dist/circlechase/asset',
 						src: '**',
 						expand: true
 					},
@@ -71,7 +70,7 @@ module.exports = function (grunt) {
 		},
 		open: {
 			dev: {
-				path: 'http://localhost:8080/index.html'
+				path: 'http://localhost:8080/circlechase/index.html'
 			}
 		},
 		watch: {
