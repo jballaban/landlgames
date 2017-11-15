@@ -23,6 +23,7 @@ import { Action } from "../Util/Action";
 import { Duration } from "../Util/Duration";
 
 export class LoadingScreen extends Screen {
+	private selfPreloaded: boolean = false;
 
 	public constructor(private screen: Screen) {
 		super(256, new Rectangle(new Point(0, 0, null), new Point(0, 0, null)));
@@ -30,15 +31,8 @@ export class LoadingScreen extends Screen {
 
 	public activate(): void {
 		super.activate();
-		this.spritePool.register(1, new Sprite("logo.png", 1024, 1024));
-		this.container.register(
-			new BackgroundImage(
-				new Sprite("logo.png", 1024, 1024),
-				this.container,
-				this.viewport,
-				false
-			)
-		);
+		this.spritePool.register("Loading:Logo", new Sprite("logo.png", 1024, 1024));
+		this.screen.preload();
 	}
 
 	public preUpdate(): void {
@@ -46,17 +40,26 @@ export class LoadingScreen extends Screen {
 		if (this.viewport.area.changed()) {
 			this.container.resize(this.viewport.area);
 		}
-		/* for (var i: number = 0; i < this.assets.length; i++) {
-			if (this.assets[i].ready()) {
-				this.container.register(this.assets[i]);
-				this.assets.splice(i--, 1);
-				if (this.assets.length === 0) {
-					this.actions.push(
-						new Action(new Duration(0), this.loadScreen.bind(this))
-					);
-				}
+		if (this.spritePool.ready()) {
+			if (!this.selfPreloaded) {
+				this.container.register(
+					new BackgroundImage(
+						"Loading:Logo",
+						this.container,
+						this.spritePool,
+						this.viewport,
+						false
+					)
+				);
+				this.selfPreloaded = true;
+				this.screen.preload();
+			} else if{
+
 			}
-		} */
+		}
+		if (this.screen.spritePool.ready()) {
+
+		}
 	}
 
 	private loadScreen(): void {

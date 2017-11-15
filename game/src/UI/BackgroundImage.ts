@@ -6,16 +6,15 @@ import { ElementType } from "../Core/ElementType";
 import { Point, MidPoint } from "../Shape/Point";
 import { Rectangle, PointRectangle } from "../Shape/Rectangle";
 import { Logger } from "../Util/Logger";
+import { SpritePool } from "../Core/SpritePool";
 
 export class BackgroundImage extends Element {
 
-	private image: Sprite;
 	private viewport: Viewport;
 	private resized: boolean = false;
 
-	constructor(image: Sprite, container: ElementContainer, viewport: Viewport, private fill: boolean) {
-		super(container, ElementType.backgroundImage, BackgroundImage.getArea(viewport, fill), null, 1, null);
-		this.image = image;
+	constructor(private sprite: string, container: ElementContainer, spritepool: SpritePool, viewport: Viewport, private fill: boolean) {
+		super(container, spritepool, ElementType.backgroundImage, BackgroundImage.getArea(viewport, fill), null, 1, null);
 		this.viewport = viewport;
 	}
 
@@ -37,16 +36,12 @@ export class BackgroundImage extends Element {
 		return new Rectangle(topleft, bottomright);
 	}
 
-	public ready(): boolean {
-		return super.ready() && this.image.loaded;
-	}
-
 	public renderAreaAsRect(): Rectangle {
 		return this.renderArea as Rectangle;
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
-		this.image.render(
+		this.spritePool.get(this.sprite).render(
 			ctx,
 			this.renderAreaAsRect().topLeft.x(),
 			this.renderAreaAsRect().topLeft.y(),

@@ -17,16 +17,21 @@ import { ElementContainer } from "../Core/ElementContainer";
 import { Shadow } from "../Shape/Shadow";
 import { BackgroundImage } from "./BackgroundImage";
 import { Sprite } from "./Sprite";
+import { SpritePool } from "../Core/SpritePool";
 
 export class StaticThing extends Element {
 	private win: boolean = false;
-	private winSprite: Sprite;
 	private playSprite: Sprite;
+	private winSprite: Sprite;
 
-	constructor(container: ElementContainer, area: Circle) {
-		super(container, ElementType.StaticThing, new Shadow(area, 100), area, 4, ElementType.Thing);
-		this.winSprite = new Sprite("win.jpg", 1024, 662);
+	constructor(container: ElementContainer, spritepool: SpritePool, area: Circle) {
+		super(container, spritepool, ElementType.StaticThing, new Shadow(area, 100), area, 4, ElementType.Thing);
+		this.winSprite = spritepool.get("Circle:win");
 		this.playSprite = new Sprite("maincircle.jpg", 1600, 1064);
+	}
+
+	public static preload(spritePool: SpritePool): void {
+		spritePool.register("Circle:win", new Sprite("win.jpg", 1024, 662));
 	}
 
 	public onCollide(element: Element, on: boolean): void {
@@ -70,9 +75,10 @@ export class Thing extends Element {
 	public minSpeed: number;
 	public maxSpeed: number;
 
-	constructor(container: ElementContainer, private color: string, renderarea: IShape, collisionarea: IShape) {
+	constructor(container: ElementContainer, spritepool: SpritePool, private color: string, renderarea: IShape, collisionarea: IShape) {
 		super(
 			container,
+			spritepool,
 			ElementType.Thing,
 			new Shadow(renderarea, 10),
 			collisionarea,

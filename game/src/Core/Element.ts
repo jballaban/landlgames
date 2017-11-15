@@ -9,22 +9,20 @@ import { ElementContainer } from "./ElementContainer";
 import { ElementType } from "./ElementType";
 import { Screen } from "../Core/Screen";
 import { Circle } from "../Shape/Circle";
+import { SpritePool } from "./SpritePool";
 
 export abstract class Element {
 	public collisions: Element[] = new Array<Element>();
 
 	constructor(
 		protected container: ElementContainer,
+		protected spritePool: SpritePool,
 		public type: ElementType,
 		public renderArea: IShape,
 		public collisionArea: IShape,
 		public zIndex: number,
 		public collisionFilter: ElementType
 	) { }
-
-	public ready(): boolean {
-		return true;
-	}
 
 	public onCollide(element: Element, on: boolean): void {
 		// to implement

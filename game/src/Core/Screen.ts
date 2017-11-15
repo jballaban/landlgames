@@ -17,6 +17,7 @@ import { MouseHandler } from "../IO/MouseHandler";
 import { ElementType } from "./ElementType";
 import { Action } from "../Util/Action";
 import { SpritePool } from "./SpritePool";
+import { Sprite } from "../UI/Sprite";
 
 export abstract class Screen {
 
@@ -36,6 +37,10 @@ export abstract class Screen {
 		this.layer = new ContextLayer(this.viewport, 1);
 		this.camera = new Camera(this.viewport);
 		this.container = new ElementContainer(regionsize, regionsize, area);
+	}
+
+	public preload(): void {
+		// to imple
 	}
 
 	public activate(): void {
