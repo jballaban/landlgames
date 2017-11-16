@@ -27,13 +27,13 @@ export class LoadingScreen extends Screen {
 	private screenPreloaded: boolean = false;
 
 	public constructor(private screen: Screen) {
-		super(256, new Rectangle(new Point(0, 0, null), new Point(0, 0, null)));
+		super(256, new Rectangle(new Point(0, 0), new Point(0, 0)));
 	}
 
 	public activate(): void {
-		super.activate();
 		this.spritePool.register("Loading:Logo", new Sprite("logo.png", 1024, 1024));
 		this.screen.preload();
+		super.activate();
 	}
 
 	public preUpdate(): void {

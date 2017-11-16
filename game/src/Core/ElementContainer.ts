@@ -37,6 +37,7 @@ export class ElementContainer {
 			elements.push(this.elements[i]);
 			this.deregister(this.elements[i]);
 		}
+		this.area = area;
 		this.renderRegions = new RegionContainer(this.renderRegions.len, area, ElementRegion);
 		this.collisionRegions = new RegionContainer(this.collisionRegions.len, area, CollisionElementRegion);
 		for (var i: number = 0; i < elements.length; i++) {

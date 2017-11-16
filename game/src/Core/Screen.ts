@@ -46,6 +46,7 @@ export abstract class Screen {
 	public activate(): void {
 		this.viewport.activate();
 		this.layer.activate();
+		this.preUpdate(); // do a preupdate to set things up before we allow for the rest of activation
 	}
 
 	public deactivate(): void {

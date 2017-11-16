@@ -10,6 +10,7 @@ import { ElementType } from "./ElementType";
 import { Screen } from "../Core/Screen";
 import { Circle } from "../Shape/Circle";
 import { SpritePool } from "./SpritePool";
+import { Logger } from "../Util/Logger";
 
 export abstract class Element {
 	public collisions: Element[] = new Array<Element>();
@@ -34,6 +35,9 @@ export abstract class Element {
 	}
 
 	public move(type: string, offsetX: number, offsetY: number): void {
+		// Logger.log(this.container.area.x() + "," + offsetX);
+		offsetX = Math.min(this.container.area.x2(), Math.max(offsetX, 0));
+		offsetY = Math.min(this.container.area.y2(), Math.max(offsetY, 0));
 		var area: IShape;
 		switch (type) {
 			case "render":

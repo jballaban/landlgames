@@ -24,7 +24,7 @@ export class CircleScreen extends Screen {
 	private background: BackgroundImage;
 
 	public constructor() {
-		super(256, new Rectangle(new Point(0, 0), new Point(1024 * 1.5, 768)));
+		super(256, new Rectangle(new Point(0, 0), new Point(0, 0)));
 	}
 
 	public preload(): void {
@@ -61,6 +61,13 @@ export class CircleScreen extends Screen {
 				this.viewport.area.bottomRight
 			), 300)
 		));
+	}
+
+	public preUpdate(): void {
+		super.preUpdate();
+		if (this.viewport.area.changed()) {
+			this.container.resize(this.viewport.area);
+		}
 	}
 
 	public update(dt: number): void {

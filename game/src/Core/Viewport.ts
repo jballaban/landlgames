@@ -14,12 +14,12 @@ export class Viewport {
 
 	public activate(): void {
 		window.onresize = this.resize.bind(this);
-		this.resize();
+		this.resize(true);
 	}
 
 	public resize(delayed?: boolean): void {
 		if (delayed !== true) { // hack because viewport changes were not accuratly giving us new window sizes
-			window.setTimeout(function () { this.resize(true); }.bind(this), 100);
+			window.setTimeout(function () { this.resize(true); }.bind(this), 500);
 			return;
 		}
 		this.resizeX = window.innerWidth;
