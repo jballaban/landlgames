@@ -17,7 +17,11 @@ export class Viewport {
 		this.resize();
 	}
 
-	public resize(): void {
+	public resize(delayed?: boolean): void {
+		if (delayed !== true) { // hack because viewport changes were not accuratly giving us new window sizes
+			window.setTimeout(function () { this.resize(true); }.bind(this), 100);
+			return;
+		}
 		this.resizeX = window.innerWidth;
 		this.resizeY = window.innerHeight;
 	}
