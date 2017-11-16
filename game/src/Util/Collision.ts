@@ -5,6 +5,7 @@ import { Circle } from "../Shape/Circle";
 import { Point } from "../Shape/Point";
 import { Line } from "../Shape/Line";
 import { Logger } from "./Logger";
+import { Vector } from "../Core/Vector";
 
 export class Collision {
 
@@ -97,6 +98,28 @@ export class Collision {
 					(line1.p1.y() - line1.p2.y()) * (line2.p1.x() - line2.p2.x())
 				)
 			), null); */
+	}
+
+	public static getMass(shape: IShape): number {
+		if ((shape.type & ShapeType.Circle) !== 0) {
+			return Math.PI * Math.pow((shape as Circle).r, 2);
+		} else if ((shape.type & ShapeType.Rectangle) !== 0) {
+			return (shape as Rectangle).width() * (shape as Rectangle).height();
+		}
+		throw "Unknown shape";
+	}
+
+	public static getContactNormal(shape1: IShape, shape2: IShape): Vector {
+		if ((shape1.type & ShapeType.Circle) != 0) {
+			if ((shape2.type & ShapeType.Circle) != 0) {
+				return this.getContactNormalCircleCircle(shape1 as Circle, shape2 as Circle);
+			}
+		}
+		throw "Unhandled shape";
+	}
+
+	public static getContactNormalCircleCircle(circle1: Circle, circle2: Circle): Vector {
+		return circle2.origin.vector.clone().subtract(circle1.origin.vector).normalize();
 	}
 
 	public static getDistance(p1: Point, p2: Point): number {

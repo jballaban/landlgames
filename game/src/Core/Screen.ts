@@ -18,6 +18,7 @@ import { ElementType } from "./ElementType";
 import { Action } from "../Util/Action";
 import { SpritePool } from "./SpritePool";
 import { Sprite } from "../UI/Sprite";
+import { Physics } from "./Physics";
 
 export abstract class Screen {
 
@@ -136,6 +137,7 @@ export abstract class Screen {
 			if (!regions[i].changed) {
 				continue;
 			}
+			// verify any removed elements to see if they are no longer colliding
 			for (var k: number = 0; k < regions[i].removed.length; k++) {
 				for (var j: number = 0; j < regions[i].removed[k].collisions.length; j++) {
 					this.collides(checks, regions[i].removed[k], regions[i].removed[k].collisions[j]);

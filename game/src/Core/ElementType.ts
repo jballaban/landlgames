@@ -1,8 +1,8 @@
 export enum ElementType {
-	Any = 1,
-	None = 2,
-	Thing = 4,
-	StaticThing = 8,
-	Mouse = 16,
-	backgroundImage = 32
-}
+	None = 0,
+	Any = 254,
+	Thing = 2,
+	StaticThing = 4,
+	Mouse = 8,
+	backgroundImage = 16
+}	

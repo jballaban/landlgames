@@ -41,18 +41,38 @@ export class CircleScreen extends Screen {
 			this.viewport,
 			true
 		));
-		for (var i: number = 0; i < 100; i++) {
+		for (var i: number = 0; i < 10; i++) {
 			var position: Point = new Point(Math.random() * this.container.area.width(), Math.random() * this.container.area.height());
-			var area: IShape = Math.floor(Math.random() * 2) === 1 ?
+			var area: IShape = false && Math.floor(Math.random() * 2) === 1 ?
 				new Rectangle(position, new Point(Math.floor(Math.random() * 10) + 10, Math.floor(Math.random() * 10) + 10, position))
-				: new Circle(position, Math.floor(Math.random() * 10) + 10);
+				: new Circle(position, Math.floor(Math.random() * 30) + 10);
 			var thing: Thing = new Thing(
 				this.container,
 				this.spritePool,
 				Color.makeRGBA(Color.getRandomRGB(), 0.8),
 				area, area);
+			thing.vector = new Vector(Math.random() * 80 - 40, Math.random() * 80 - 40);
 			this.container.register(thing);
 		}
+		thing = new Thing(
+			this.container,
+			this.spritePool,
+			Color.makeRGBA(Color.getRandomRGB(), 0.8),
+			new Circle(new Point(200, 200), 20),
+			new Circle(new Point(200, 200), 20)
+		);
+		thing.vector = new Vector(20, 0);
+		this.container.register(thing);
+		thing = new Thing(
+			this.container,
+			this.spritePool,
+			Color.makeRGBA(Color.getRandomRGB(), 0.8),
+			new Circle(new Point(300, 200), 10),
+			new Circle(new Point(300, 200), 10)
+		);
+		thing.vector = new Vector(-80, 0);
+		this.container.register(thing);
+
 		this.container.register(new StaticThing(
 			this.container,
 			this.spritePool,

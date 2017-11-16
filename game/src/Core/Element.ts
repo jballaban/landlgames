@@ -11,9 +11,12 @@ import { Screen } from "../Core/Screen";
 import { Circle } from "../Shape/Circle";
 import { SpritePool } from "./SpritePool";
 import { Logger } from "../Util/Logger";
+import { Vector } from "./Vector";
 
 export abstract class Element {
 	public collisions: Element[] = new Array<Element>();
+	protected processedCollisions: Element[] = new Array<Element>(); // todo change to screen or collision system.  This is per type and not accurate
+	public vector: Vector = new Vector(0, 0);
 
 	constructor(
 		protected container: ElementContainer,
@@ -23,10 +26,12 @@ export abstract class Element {
 		public collisionArea: IShape,
 		public zIndex: number,
 		public collisionFilter: ElementType
-	) { }
+	) {
+	}
 
 	public onCollide(element: Element, on: boolean): void {
-		// to implement
+		this.processedCollisions.push(element);
+		element.processedCollisions.push(this);
 	}
 
 	public inc(offsetx: number, offsety: number): void {
@@ -65,6 +70,7 @@ export abstract class Element {
 		if (this.renderArea.changed()) {
 			this.container.change(this, true);
 		}
+		this.processedCollisions = new Array<Element>();
 	}
 
 	public postRender(): void {

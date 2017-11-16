@@ -8,8 +8,8 @@ import { Cursor } from "./MouseHandler";
 import { SpritePool } from "../Core/SpritePool";
 
 export abstract class Mouse extends Element {
-	constructor(container: ElementContainer, spritePool: SpritePool, renderArea: IShape, collisionArea: IShape, zindex: number) {
-		super(container, spritePool, ElementType.Mouse, renderArea, collisionArea, zindex, null);
+	constructor(container: ElementContainer, spritePool: SpritePool, renderArea: IShape, collisionArea: IShape, zindex: number, collisionfilter: ElementType) {
+		super(container, spritePool, ElementType.Mouse, renderArea, collisionArea, zindex, collisionfilter);
 	}
 
 }

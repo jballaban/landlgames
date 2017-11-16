@@ -1,7 +1,6 @@
 import { Vector } from "../Core/Vector";
 import { Logger } from "../Util/Logger";
 
-// todo: Children shouldn't be registered to party for dirty lookups, chilfren should look up when they want to only
 export class Point {
 	public vector: Vector;
 	public children: Point[] = new Array<Point>();

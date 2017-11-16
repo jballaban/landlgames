@@ -58,7 +58,7 @@ export class LoadingScreen extends Screen {
 		if (this.screen.spritePool.ready()) {
 			if (!this.screenPreloaded) {
 				this.screenPreloaded = true;
-				this.actions.push(new Action(new Duration(1), this.loadScreen.bind(this)));
+				this.actions.push(new Action(new Duration(0), this.loadScreen.bind(this)));
 			}
 		}
 	}

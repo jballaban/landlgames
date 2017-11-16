@@ -18,6 +18,8 @@ import { Shadow } from "../Shape/Shadow";
 import { BackgroundImage } from "./BackgroundImage";
 import { Sprite } from "./Sprite";
 import { SpritePool } from "../Core/SpritePool";
+import { Collision } from "../Util/Collision";
+import { Physics } from "../Core/Physics";
 
 export class StaticThing extends Element {
 	private win: boolean = false;
@@ -71,8 +73,7 @@ export class StaticThing extends Element {
 
 export class Thing extends Element {
 	private _color: string;
-	public direction: Vector;
-	public speed: number;
+	public acceleration: number;
 	public minSpeed: number;
 	public maxSpeed: number;
 
@@ -87,22 +88,21 @@ export class Thing extends Element {
 			ElementType.StaticThing | ElementType.Mouse | ElementType.Thing
 		);
 		this._color = color;
-		this.direction = new Vector(0, 0);
-		this.speed = 0;
-		this.minSpeed = 0;
-		this.maxSpeed = 20;
+		this.acceleration = -1;
 	}
 
 	public update(dt: number): void {
-		this.speed -= .1;
-		this.speed = Math.max(this.minSpeed, this.speed);
-		var move: Vector = this.direction.clone().multiply(dt * this.speed);
+		//this.acceleration -= 1 * dt;
+		this.vector.multiply(1 - (0.5 * dt)); // friction
+		var move: Vector = this.vector.clone().multiply(dt); //addScalar(this.acceleration * dt);
 		this.inc(move.x, move.y);
 		if (this.renderArea.origin.x() <= 0 || this.renderArea.origin.x() >= this.container.area.width()) {
-			this.direction.x *= -1;
+			this.vector.x *= -1;
+			this.inc(move.x, move.y);
 		}
 		if (this.renderArea.origin.y() <= 0 || this.renderArea.origin.y() >= this.container.area.height()) {
-			this.direction.y *= -1;
+			this.vector.y *= -1;
+			this.inc(move.x, move.y);
 		}
 		super.update(dt);
 	}
@@ -115,24 +115,14 @@ export class Thing extends Element {
 			this.color = this._color;
 			this.container.change(this, false);
 		}
-		if (on && (
-			element.type === ElementType.Mouse || element.type === ElementType.Thing
-		)) {
-			if (element.type === ElementType.Mouse) {
-				this.speed = Math.ceil(Math.random() * this.maxSpeed / 2) + this.maxSpeed / 2;
-				this.direction = new Vector(
-					this.renderArea.origin.x() - element.renderArea.origin.x(),
-					this.renderArea.origin.y() - element.renderArea.origin.y()
-				);
-			} else if (element.type === ElementType.Thing) {
-				(element as Thing).speed = Math.min(this.maxSpeed, (element as Thing).speed + this.speed / 2);
-				this.speed = this.speed * 3 / 4;
-				(element as Thing).direction = new Vector(
-					element.renderArea.origin.x() - this.renderArea.origin.x(),
-					element.renderArea.origin.y() - this.renderArea.origin.y()
-				);
-			}
+		if (
+			on
+			&& this.processedCollisions.indexOf(element) === -1
+			&& ((element.type & ElementType.Thing) !== 0)
+		) {
+			Physics.collide(this, element);
 		}
+		super.onCollide(element, on);
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
