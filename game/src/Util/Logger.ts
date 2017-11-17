@@ -33,19 +33,19 @@ export class Logger {
 	private static _messagesSent: number = 0;
 	private static _messagesSkipped: number = 0;
 
-	public static debug(str: string): void {
+	public static debug(str: any): void {
 		this.write(this.output.debug, str, Level.Debug);
 	}
 
-	public static log(str: string): void {
+	public static log(str: any): void {
 		this.write(this.output.log, str, Level.Log);
 	}
 
-	public static error(str: string): void {
+	public static error(str: any): void {
 		this.write(this.output.error, str, Level.Error);
 	}
 
-	private static write(fn: any, str: string, lvl: Level): void {
+	private static write(fn: any, str: any, lvl: Level): void {
 		if (this.shouldWrite(str, lvl)) {
 			if (this.elapsed() >= 1) {
 				if (this._messagesSkipped > 0) {
@@ -57,7 +57,7 @@ export class Logger {
 			} else {
 				this._messagesSent++;
 			}
-			fn(str);
+			fn(str.toString());
 		}
 	}
 

@@ -13,4 +13,5 @@ export interface IShape {
 	changed(): boolean;
 	clearChanged(): void;
 	origin: Point;
+	y2(): number;
 }

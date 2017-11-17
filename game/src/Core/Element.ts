@@ -29,6 +29,10 @@ export abstract class Element {
 	) {
 	}
 
+	public getzIndex(): number {
+		return this.zIndex;
+	}
+
 	public onCollide(element: Element, on: boolean): void {
 		this.processedCollisions.push(element);
 		element.processedCollisions.push(this);
@@ -59,13 +63,15 @@ export abstract class Element {
 		}
 		if (offsetX === area.origin.offsetX && offsetY === area.origin.offsetY) { return; }
 		area.origin.move(offsetX, offsetY);
+		if (type === "render") {
+			this.container.verifyRenderIndex(this);
+		}
 	}
 
 	public update(step: number): void {
 		// to override
 	}
 
-	// todo this feels like the element should call when they change.. that's what we do with colors
 	public postUpdate(): void {
 		if (this.renderArea.changed()) {
 			this.container.change(this, true);

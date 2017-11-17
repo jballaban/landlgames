@@ -11,17 +11,25 @@ export class Shadow implements IShape {
 	public type: ShapeType;
 	public origin: Point;
 
-	constructor(private childArea: IShape, private shadowLen: number) {
-		if (childArea.type & ShapeType.Circle) {
-			this.area = new Circle(childArea.origin, (childArea as Circle).r + shadowLen);
-		} else if (childArea.type & ShapeType.Rectangle) {
-			this.area = new Rectangle(
-				new Point(-shadowLen, -shadowLen, (childArea as Rectangle).topLeft),
-				new Point(shadowLen, shadowLen, (childArea as Rectangle).bottomRight)
-			);
-		}
+	constructor(public childArea: IShape, private shadowLen: number) {
+		this.resize();
 		this.type = childArea.type | ShapeType.Shadow;
 		this.origin = childArea.origin;
+	}
+
+	public resize(): void {
+		if (this.childArea.type & ShapeType.Circle) {
+			this.area = new Circle(this.childArea.origin, (this.childArea as Circle).r + this.shadowLen);
+		} else if (this.childArea.type & ShapeType.Rectangle) {
+			this.area = new Rectangle(
+				new Point(-this.shadowLen, -this.shadowLen, (this.childArea as Rectangle).topLeft),
+				new Point(this.shadowLen, this.shadowLen, (this.childArea as Rectangle).bottomRight)
+			);
+		}
+	}
+
+	public y2(): number {
+		return this.area.y2();
 	}
 
 	public intersects(shape: IShape): boolean {

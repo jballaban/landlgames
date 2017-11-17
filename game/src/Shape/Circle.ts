@@ -32,6 +32,10 @@ export class Circle implements IShape {
 		return this.origin.y();
 	}
 
+	public y2(): number {
+		return this.origin.y() + this.r;
+	}
+
 	public intersects(shape: IShape): boolean {
 		return Collision.intersects(this, shape);
 	}

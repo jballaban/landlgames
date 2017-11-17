@@ -22,7 +22,7 @@ export class BasicMouse extends Mouse {
 	public constructor(container: ElementContainer, spritePool: SpritePool, x: number, y: number) {
 		var renderarea: Circle = new Circle(new Point(x, y), 50);
 		var collisionarea: Circle = new Circle(new Point(x, y), 50);
-		super(container, spritePool, new Shadow(renderarea, 20), collisionarea, 10, ElementType.Thing);
+		super(container, spritePool, new Shadow(renderarea, 20), collisionarea, 100000, ElementType.Thing);
 		this.color = "rgba(255,255,255,0.5)";
 	}
 

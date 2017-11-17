@@ -18,10 +18,12 @@ import { Element } from "../../Core/Element";
 import { IShape } from "../../Shape/IShape";
 import { BackgroundImage } from "../../UI/BackgroundImage";
 import { Sprite } from "../../UI/Sprite";
+import { Collision } from "../../Util/Collision";
 
 export class CircleScreen extends Screen {
 
 	private background: BackgroundImage;
+	private staticThing: StaticThing;
 
 	public constructor() {
 		super(256, new Rectangle(new Point(0, 0), new Point(0, 0)));
@@ -41,7 +43,7 @@ export class CircleScreen extends Screen {
 			this.viewport,
 			true
 		));
-		for (var i: number = 0; i < 10; i++) {
+		for (var i: number = 0; i < Collision.getMass(this.viewport.area) / 5000; i++) {
 			var position: Point = new Point(Math.random() * this.container.area.width(), Math.random() * this.container.area.height());
 			var area: IShape = false && Math.floor(Math.random() * 2) === 1 ?
 				new Rectangle(position, new Point(Math.floor(Math.random() * 10) + 10, Math.floor(Math.random() * 10) + 10, position))
@@ -72,21 +74,25 @@ export class CircleScreen extends Screen {
 		);
 		thing.vector = new Vector(-80, 0);
 		this.container.register(thing);
-
-		this.container.register(new StaticThing(
+		this.staticThing = new StaticThing(
 			this.container,
 			this.spritePool,
 			new Circle(new MidPoint(
 				this.viewport.area.topLeft,
 				this.viewport.area.bottomRight
-			), 300)
-		));
+			), 300));
+		this.container.register(this.staticThing);
 	}
 
 	public preUpdate(): void {
 		super.preUpdate();
 		if (this.viewport.area.changed()) {
 			this.container.resize(this.viewport.area);
+			if (this.staticThing != null) {
+				this.staticThing.updateRadius(
+					Math.floor(Math.min(this.viewport.area.height() / 3, this.viewport.area.width() / 3))
+				);
+			}
 		}
 	}
 

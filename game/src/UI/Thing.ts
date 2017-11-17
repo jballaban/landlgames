@@ -27,7 +27,7 @@ export class StaticThing extends Element {
 	private winSprite: Sprite;
 
 	constructor(container: ElementContainer, spritepool: SpritePool, area: Circle) {
-		super(container, spritepool, ElementType.StaticThing, new Shadow(area, 100), area, 4, ElementType.Thing);
+		super(container, spritepool, ElementType.StaticThing, new Shadow(area, 100), area, 10000, ElementType.Thing);
 		this.winSprite = spritepool.get("Circle:StaticThing:win");
 		this.playSprite = spritepool.get("Circle:StaticThing:play");
 	}
@@ -35,6 +35,14 @@ export class StaticThing extends Element {
 	public static preload(spritePool: SpritePool): void {
 		spritePool.register("Circle:StaticThing:win", new Sprite("win.jpg", 1024, 662));
 		spritePool.register("Circle:StaticThing:play", new Sprite("maincircle.jpg", 1600, 1064));
+	}
+
+
+	public updateRadius(r: number): void {
+		((this.renderArea as Shadow).childArea as Circle).r = r;
+		(this.renderArea as Shadow).resize();
+		(this.collisionArea as Circle).r = r;
+		this.container.change(this, true);
 	}
 
 	public onCollide(element: Element, on: boolean): void {
@@ -76,6 +84,7 @@ export class Thing extends Element {
 	public acceleration: number;
 	public minSpeed: number;
 	public maxSpeed: number;
+	private static _instances: number = 0;
 
 	constructor(container: ElementContainer, spritepool: SpritePool, private color: string, renderarea: IShape, collisionarea: IShape) {
 		super(
@@ -84,7 +93,7 @@ export class Thing extends Element {
 			ElementType.Thing,
 			new Shadow(renderarea, 10),
 			collisionarea,
-			5,
+			20000 + (++Thing._instances),
 			ElementType.StaticThing | ElementType.Mouse | ElementType.Thing
 		);
 		this._color = color;
@@ -95,25 +104,31 @@ export class Thing extends Element {
 		//this.acceleration -= 1 * dt;
 		this.vector.multiply(1 - (0.5 * dt)); // friction
 		var move: Vector = this.vector.clone().multiply(dt); //addScalar(this.acceleration * dt);
-		this.inc(move.x, move.y);
-		if (this.renderArea.origin.x() <= 0 || this.renderArea.origin.x() >= this.container.area.width()) {
-			this.vector.x *= -1;
+		if (move.magnitude() < 1) {
+			this.vector = new Vector(0, 0);
+		} else {
 			this.inc(move.x, move.y);
-		}
-		if (this.renderArea.origin.y() <= 0 || this.renderArea.origin.y() >= this.container.area.height()) {
-			this.vector.y *= -1;
-			this.inc(move.x, move.y);
+			if (this.renderArea.origin.x() <= 0 || this.renderArea.origin.x() >= this.container.area.width()) {
+				this.vector.x *= -1;
+				this.inc(move.x, move.y);
+			}
+			if (this.renderArea.origin.y() <= 0 || this.renderArea.origin.y() >= this.container.area.height()) {
+				this.vector.y *= -1;
+				this.inc(move.x, move.y);
+			}
 		}
 		super.update(dt);
 	}
 
 	public onCollide(element: Element, on: boolean): void {
-		if (this.color === this._color && this.collisions.length > 0) {
-			this.color = "rgba(255,0,0,0.8)";
-			this.container.change(this, false);
-		} else if (this.color !== this._color && this.collisions.length === 0) {
-			this.color = this._color;
-			this.container.change(this, false);
+		if ((element.type & ElementType.StaticThing) !== 0) {
+			if (on) {
+				this.color = "rgba(255,255,255,0.5)";
+				this.container.change(this, false);
+			} else {
+				this.color = this._color;
+				this.container.change(this, false);
+			}
 		}
 		if (
 			on

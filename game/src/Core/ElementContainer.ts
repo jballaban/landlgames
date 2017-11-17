@@ -145,7 +145,7 @@ export class ElementContainer {
 		switch (type) {
 			case "render":
 				this.elementRegions.get(element).renderRegions.push(region);
-				ArrayUtil.insertSorted("zIndex", element, region.elements);
+				ArrayUtil.insertSorted("getzIndex", element, region.elements);
 				break;
 			case "collision":
 				this.elementRegions.get(element).collisionRegions.push(region as CollisionElementRegion);
@@ -153,5 +153,18 @@ export class ElementContainer {
 				break;
 		}
 		region.changed = true;
+	}
+
+	public verifyRenderIndex(element: Element): void {
+		for (var region of this.elementRegions.get(element).renderRegions) {
+			var index: number = region.elements.indexOf(element);
+			if (
+				index < region.elements.length - 1
+				&& region.elements[index + 1].getzIndex() < element.getzIndex()
+			) {
+				region.elements.splice(index, 1);
+				ArrayUtil.insertSorted("getzIndex", element, region.elements);
+			}
+		}
 	}
 }

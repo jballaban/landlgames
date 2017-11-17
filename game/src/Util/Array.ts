@@ -15,12 +15,12 @@ export class Array {
 	}
 
 	public static insertSorted(property: string, obj: any, array: any[]): void {
-		array.splice(Array.indexOfProperty(property, obj[property], array), 0, obj);
+		array.splice(Array.indexOfProperty(property, obj[property](), array), 0, obj);
 	}
 
 	public static indexOfProperty(property: string, index: number, array: any[]): number {
 		for (var i: number = 0; i < array.length; i++) {
-			if (array[i][property] >= index) {
+			if (array[i][property]() >= index) {
 				return i;
 			}
 		}
