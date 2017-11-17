@@ -31,15 +31,8 @@
 		}
 	</style>
 	<script>
-		if (window.navigator.standalone == true) {
-			alert("standalone!");
-		}
 		require(["Game"], function (start) {
-			start.Game.init('circlechase', function () {
-				var diff = new Date() - new Date("<%= grunt.template.today() %>");
-				document.title += " <%= pkg.version %> compiled " + Math.floor(diff / 1000) + " seconds ago";
-				return document.title;
-			}());
+			start.Game.init('circlechase', <%= gameOptions %>);
 		});
 	</script>
 </head>

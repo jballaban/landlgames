@@ -1,3 +1,4 @@
+// tslint:disable:no-bitwise
 import { Thing } from "../UI/Thing";
 import { Element } from "../Core/Element";
 import { Rectangle, PointRectangle } from "../Shape/Rectangle";
@@ -27,8 +28,7 @@ export class BasicMouse extends Mouse {
 
 	public update(dt: number): void {
 		super.update(dt);
-		Logger.log("update");
-		for (var i = 0; i < this.collisions.length; i++) {
+		for (var i: number = 0; i < this.collisions.length; i++) {
 			if ((this.collisions[i].type & ElementType.Thing) !== 0) {
 				this.collisions[i].vector.multiply(1 + (1 * dt));
 			}

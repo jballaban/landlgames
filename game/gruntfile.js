@@ -26,8 +26,8 @@ module.exports = function (grunt) {
 			}
 		},
 		clean: {
-			dev: ['./src/dist', './src/bin'],
-			cleanup: ['./.tscache', './src/bin', './*.tmp.txt']
+			pre: ['./dist'],
+			post: ['./.tscache', './src/bin', './*.tmp.txt']
 		},
 		copy: {
 			options: {
@@ -74,13 +74,9 @@ module.exports = function (grunt) {
 			}
 		},
 		watch: {
-			remote: {
+			scripts: {
 				files: ['./src/**/*.ts', './src/**/*.html.ejs'],
-				tasks: ['readpkg', 'clean:dev', 'ts', 'copy', 'clean:cleanup', 'deploy']
-			},
-			local: {
-				files: ['./src/**/*.ts', './src/**/*.html.ejs'],
-				tasks: ['readpkg', 'clean:dev', 'ts', 'copy', 'clean:cleanup'],
+				tasks: ['build'],
 			}
 		},
 		bump: {
@@ -94,18 +90,31 @@ module.exports = function (grunt) {
 			options: {
 				accessKeyId: "<%= aws.accessKeyId %>",
 				secretAccessKey: "<%= aws.secretAccessKey %>",
-				bucket: "play.landlgames.com"
+				bucket: "play.landlgames.com",
+				access: "public-read",
+				cache: false
 			},
 			build: {
 				cwd: "./dist/",
-				src: "**"
+				src: "**",
+				dest: '<%= grunt.config.get("targetPrefix") %>'
 			}
 		}
 	});
-	grunt.registerTask('readpkg', 'Read in the package.json file', function () {
-		grunt.config.set('pkg', grunt.file.readJSON('./package.json'));
-	});
-	grunt.registerTask('deploy', ['gitinfo', 's3']);
+
+	grunt.config.set('targetPrefix', grunt.option('prod') ? '' : 'dev/');
+	grunt.config.set('environment', grunt.option('prod') ? 'prod' : 'dev');
+	grunt.config.set('gameOptions', JSON.stringify(
+		{
+			version: grunt.config.get('pkg').version,
+			compiled: grunt.template.today(),
+			debug: grunt.config.get('environment') == 'dev'
+		}
+	));
+
+	grunt.registerTask('build', ['ts', 'clean:pre', 'copy', 'clean:post']);
+
+	grunt.registerTask('deploy', ['build', 's3']);
+
 	grunt.registerTask('default', ['connect', 'open', 'watch']);
-	grunt.registerTask('local', ['connect', 'open', 'watch:local']);
 }
