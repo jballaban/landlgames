@@ -4,7 +4,6 @@ import { Logger } from "../Util/Logger";
 
 export class Viewport {
 	public area: Rectangle;
-	private static _current: Viewport;
 	private resizeX: number = null;
 	private resizeY: number = null;
 

@@ -9,9 +9,10 @@ export class Physics {
 		var normal: Vector = Collision.getContactNormal(el1.collisionArea, el2.collisionArea);
 		var relative: Vector = el2.vector.clone().subtract(el1.vector);
 		var contactVelocity: number = relative.dot(normal);
-		if (contactVelocity > 0)
+		if (contactVelocity > 0) {
 			return;
-		var restitution = 0.5;
+		}
+		var restitution: number = 0.5; // should be min of both objects restitution
 		var j: number = -(1 + restitution) * contactVelocity;
 		j /= (1 / Collision.getMass(el1.collisionArea)) + (1 / Collision.getMass(el2.collisionArea));
 		var impulse: Vector = normal.clone().multiply(j);

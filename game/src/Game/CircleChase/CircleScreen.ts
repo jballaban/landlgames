@@ -43,7 +43,7 @@ export class CircleScreen extends Screen {
 			this.viewport,
 			true
 		));
-		for (var i: number = 0; i < Collision.getMass(this.viewport.area) / 5000; i++) {
+		for (var i: number = 0; i < Collision.getMass(this.viewport.area) / 1000; i++) {
 			var position: Point = new Point(Math.random() * this.container.area.width(), Math.random() * this.container.area.height());
 			var area: IShape = false && Math.floor(Math.random() * 2) === 1 ?
 				new Rectangle(position, new Point(Math.floor(Math.random() * 10) + 10, Math.floor(Math.random() * 10) + 10, position))

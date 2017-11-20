@@ -1,3 +1,4 @@
+// tslint:disable:no-bitwise
 import { Point } from "../Shape/Point";
 import { ContextLayer } from "./ContextLayer";
 import { IShape } from "../Shape/IShape";
@@ -13,14 +14,67 @@ import { SpritePool } from "./SpritePool";
 import { Logger } from "../Util/Logger";
 import { Vector } from "./Vector";
 
+
+export enum ElementFlag {
+	None = 0,
+	Renderable = 1
+}
+
+export interface IComponent {
+	name: string;
+	flags: ElementFlag;
+}
+
+export interface IRenderable {
+	area: IShape;
+	render(ctx: CanvasRenderingContext2D): void;
+}
+
+export interface IUpdatable {
+	update(dt: number): void;
+}
+
+export class RenderComponent implements IComponent {
+	public name = "Render";
+	public flags: ElementFlag = ElementFlag.Renderable;
+	constructor(private obj: IRenderable) { }
+	public render(ctx: CanvasRenderingContext2D): void {
+		this.obj.render(ctx);
+	}
+}
+
+export class HoverColorComponent extends RenderComponent implements IUpdatable {
+	private color: string;
+	constructor(obj: IRenderable, private hovercolor: string, private basecolor: string) {
+		super(obj);
+		this.color = basecolor;
+	}
+	public update(dt: number): void {
+		if (dt === 1) {
+			this.color = this.hovercolor;
+		} else {
+			this.color = this.basecolor;
+		}
+	}
+}
+
+export class Element2 {
+	private components: Map<string, IComponent> = new Map<string, IComponent>();
+	public flags: ElementFlag = ElementFlag.None;
+	public add(component: IComponent): void {
+		this.components.set(component.name, component);
+		this.flags = this.flags | component.flags;
+	}
+}
+
 export abstract class Element {
 	public collisions: Element[] = new Array<Element>();
 	protected processedCollisions: Element[] = new Array<Element>(); // todo change to screen or collision system.  This is per type and not accurate
 	public vector: Vector = new Vector(0, 0);
 
 	constructor(
-		protected container: ElementContainer,
-		protected spritePool: SpritePool,
+		public container: ElementContainer,
+		public spritePool: SpritePool,
 		public type: ElementType,
 		public renderArea: IShape,
 		public collisionArea: IShape,
@@ -84,4 +138,5 @@ export abstract class Element {
 	}
 
 	public abstract render(ctx: CanvasRenderingContext2D): void;
+
 }

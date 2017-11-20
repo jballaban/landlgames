@@ -4,5 +4,6 @@ export enum ElementType {
 	Thing = 2,
 	StaticThing = 4,
 	Mouse = 8,
-	backgroundImage = 16
-}	
+	backgroundImage = 16,
+	Renderable = 32
+}
