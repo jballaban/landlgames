@@ -3,22 +3,32 @@ import { Logger } from "../Util/Logger";
 import { Vector2D } from "../Core/Vector";
 
 export class Rectangle implements IShape {
-	public bottom: number;
-	public middle: number;
+	public get bottom(): number {
+		return this.offsetY + this.h;
+	}
+	public get centerX(): number {
+		return this.offsetX + this.w / 2;
+	}
+	public get centerY(): number {
+		return this.offsetY + this.h / 2;
+	}
+	public get top(): number {
+		return this.offsetY;
+	}
+	public get right(): number {
+		return this.offsetX + this.w;
+	}
 
 	constructor(
 		private offsetX: number,
 		private offsetY: number,
 		public w: number,
 		public h: number
-	) {
-		this.bottom = offsetY + h;
-		this.middle = offsetX + w / 2;
-	}
+	) { }
 
-	public draw(ctx: CanvasRenderingContext2D, color: string, x: number, y: number): void {
+	public draw(ctx: CanvasRenderingContext2D, color: string): void {
 		ctx.fillStyle = color;
-		ctx.fillRect(x + this.offsetX, y + this.offsetY, this.w, this.h);
+		ctx.fillRect(this.offsetX, this.offsetY, this.w, this.h);
 	}
 
 }

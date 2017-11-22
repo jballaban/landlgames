@@ -4,7 +4,7 @@ import { World } from "../../v1/Core/World";
 import { PrimitiveModel } from "../../v1/Core/PrimitiveModel";
 import { Circle } from "../../v1/Foundation/Circle";
 import { Color } from "../../v1/Foundation/Color";
-import { Vector, Vector2D } from "../../v1/Core/Vector";
+import { Vector3D, Vector2D } from "../../v1/Core/Vector";
 import { FadeInComponent } from "../../v1/Component/FadeInComponent";
 import { Person } from "./Entity/Person";
 

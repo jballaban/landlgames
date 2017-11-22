@@ -1,5 +1,5 @@
 import { Entity, Composer } from "../../../v1/Core/Entity";
-import { Model, RenderOptions } from "../../../v1/Core/Model";
+import { Model } from "../../../v1/Core/Model";
 import { PrimitiveModel } from "../../../v1/Core/PrimitiveModel";
 import { Circle } from "../../../v1/Foundation/Circle";
 import { Color } from "../../../v1/Foundation/Color";
@@ -108,9 +108,10 @@ export class Arm extends Entity {
 		let arm = new PrimitiveModel(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 200, 255));
 		arm.registerComponent(new WaveComponent(-135, 0, 1));
 		this.registerEntity(arm);
-		let forearm = new PrimitiveModel(new Rectangle(-thickness / 4, length, thickness / 2, length / 2), new Color(255, 255, 255));
-		//	forearm.registerComponent(new WaveComponent(-90, 0, 1));
-		this.registerEntity(forearm);
+		let forearm = new PrimitiveModel(new Rectangle(-thickness / 4, 0, thickness / 2, length / 2), new Color(255, 255, 255));
+		forearm.attributes.set("origin", new Vector2D(0, length));
+		forearm.registerComponent(new WaveComponent(-90, 0, 1));
+		arm.registerEntity(forearm);
 	}
 }
 
@@ -126,8 +127,8 @@ export class Person extends Entity {
 		let arm = new Arm(45, 70, 20);
 		arm.attributes.set("origin", new Vector2D(75 / 2, -180));
 		this.registerEntity(arm);
-		//this.registerComponent(new WalkComponent(viewport));
-		//this.registerComponent(new WaveComponent(-45, 45, 1));
+		this.registerComponent(new WalkComponent(viewport));
+		this.registerComponent(new WaveComponent(-45, 45, 1));
 
 	}
 

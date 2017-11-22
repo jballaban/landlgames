@@ -1,6 +1,7 @@
 import { Component } from "./Component";
 import { ManagedCollection } from "../Foundation/ManagedCollection";
-import { Vector, Vector2D } from "./Vector";
+import { Vector3D, Vector2D } from "./Vector";
+import { Logger } from "../Util/Logger";
 
 export interface IAttributeComposer {
 
@@ -48,7 +49,6 @@ export class Composer {
 	}
 
 }
-
 export class Entity {
 
 	public parent: Entity = null;
@@ -58,8 +58,6 @@ export class Entity {
 
 	constructor() {
 		this.attributes.set("origin", new Vector2D(0, 0));
-		this.attributes.set("scaleX", 1);
-		this.attributes.set("scaleY", 1);
 		this.attributes.set("rotateZ", 0);
 	}
 
@@ -74,9 +72,22 @@ export class Entity {
 
 	public getCalculatedAttribute<T>(name: string, composer: IAttributeComposer): T {
 		if (this.parent == null) {
-			return this.attributes.get(name);
+			return this.getAttribute(name);
 		}
-		return composer(this.parent.getCalculatedAttribute<T>(name, composer), this.attributes.get(name));
+		return composer(this.parent.getCalculatedAttribute<T>(name, composer), this.getAttribute(name));
+	}
+
+	private getAttribute(name: string): any {
+		if (name === "origin") {
+			let origin: Vector2D = this.attributes.get("origin").clone();
+			let rads: number = this.parent == null ? 0 : this.parent.getCalculatedAttribute<number>("rotateZ", Composer.NumberAdd) * Math.PI / 180;
+			let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
+			let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
+			origin.x = x;
+			origin.y = y;
+			return origin;
+		}
+		return this.attributes.get(name);
 	}
 
 	public onAttach(entity: Entity): void {

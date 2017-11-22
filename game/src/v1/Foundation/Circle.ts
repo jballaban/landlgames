@@ -5,10 +5,10 @@ export class Circle implements IShape {
 		public r: number
 	) { }
 
-	public draw(ctx: CanvasRenderingContext2D, color: string, x: number, y: number): void {
+	public draw(ctx: CanvasRenderingContext2D, color: string): void {
 		ctx.fillStyle = color;
 		ctx.beginPath();
-		ctx.arc(x, y, this.r, 0, 2 * Math.PI);
+		ctx.arc(0, 0, this.r, 0, 2 * Math.PI);
 		ctx.fill();
 	}
 
