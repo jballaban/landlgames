@@ -14,8 +14,13 @@ export class PrimitiveModel extends Model {
 	}
 
 	public render(ctx: CanvasRenderingContext2D, options: RenderOptions): void {
+		ctx.save();
 		ctx.globalAlpha = options.alpha;
-		this.shape.draw(ctx, this.color.toString(), options.position.x, options.position.y);
+		ctx.translate(options.rotationX, options.rotationY);
+		ctx.rotate(options.rotateZ);
+		ctx.translate(-options.rotationX, -options.rotationY);
+		this.shape.draw(ctx, this.color.toString(), options.x, options.y);
+		ctx.restore();
 	}
 
 }

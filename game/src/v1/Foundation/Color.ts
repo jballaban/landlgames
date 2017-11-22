@@ -1,9 +1,12 @@
 export class Color {
+
 	constructor(
-		private rgb: string
+		public red: number,
+		public green: number,
+		public blue: number
 	) { }
 
 	public toString() {
-		return this.rgb;
+		return "rgb(" + this.red + "," + this.green + "," + this.blue + ")";
 	}
 }

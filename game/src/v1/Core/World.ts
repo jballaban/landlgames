@@ -14,8 +14,15 @@ export class World extends Entity {
 
 	public registerEntity(entity: Entity) {
 		super.registerEntity(entity);
+		this.registerModels(entity);
+	}
+
+	private registerModels(entity: Entity) {
 		if (entity instanceof Model) {
 			this.models.push(entity);
+		}
+		for (let i = 0; i < entity.entities.length; i++) {
+			this.registerModels(entity.entities[i]);
 		}
 	}
 

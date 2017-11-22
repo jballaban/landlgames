@@ -40,20 +40,27 @@ export class Composer {
 		return obj1 + obj2;
 	}
 
+	public static Latest(obj1: any, obj2: any): any {
+		if (obj2 == null) {
+			return obj1;
+		}
+		return obj2;
+	}
+
 }
 
 export class Entity {
 
 	public parent: Entity = null;
 	private components: Component[] = new Array<Component>();
-	private entities: Entity[] = new Array<Entity>();
+	public entities: Entity[] = new Array<Entity>();
 	public attributes: Map<string, any> = new Map<string, any>();
 
 	constructor() {
 		this.attributes.set("origin", new Vector2D(0, 0));
 		this.attributes.set("scaleX", 1);
 		this.attributes.set("scaleY", 1);
-		this.attributes.set("rotate", 0);
+		this.attributes.set("rotateZ", 0);
 	}
 
 	public update(seconds: number): void {
@@ -69,7 +76,7 @@ export class Entity {
 		if (this.parent == null) {
 			return this.attributes.get(name);
 		}
-		return composer(this.parent.getCalculatedAttribute(name, composer), this.attributes.get(name));
+		return composer(this.parent.getCalculatedAttribute<T>(name, composer), this.attributes.get(name));
 	}
 
 	public onAttach(entity: Entity): void {
