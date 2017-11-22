@@ -4,7 +4,8 @@ import { World } from "../../v1/Core/World";
 import { PrimitiveModel } from "../../v1/Core/PrimitiveModel";
 import { Circle } from "../../v1/Foundation/Circle";
 import { Color } from "../../v1/Foundation/Color";
-import { Vector } from "../../v1/Core/Vector";
+import { Vector, Vector2D } from "../../v1/Core/Vector";
+import { FadeInComponent } from "../../v1/Component/FadeInComponent";
 
 export class PlayLevel extends Level {
 
@@ -14,19 +15,15 @@ export class PlayLevel extends Level {
 		let viewport = new FullscreenViewport();
 		super([viewport], new World(viewport.width, viewport.height));
 		let thing = new PrimitiveModel(new Circle(10), new Color("rgb(255,255,255)"));
-		thing.origin = new Vector(100, 100, 0);
+		thing.attributes.set("origin", new Vector2D(100, 100));
+		thing.registerComponent(new FadeInComponent());
 		this.world.registerEntity(thing);
-		this.world.alpha = 0;
 		this.fullscreen = viewport;
 	}
 
 	public update(seconds: number): void {
 		this.fullscreen.update(seconds);
 		super.update(seconds);
-		this.world.alpha += 0.01;
-		if (this.world.alpha >= 1) {
-			this.world.alpha = 0;
-		}
 	}
 
 }

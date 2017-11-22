@@ -19,8 +19,4 @@ export class World extends Entity {
 		}
 	}
 
-	public update(seconds: number): void {
-
-	}
-
 }

@@ -1,35 +1,89 @@
 import { Component } from "./Component";
 import { ManagedCollection } from "../Foundation/ManagedCollection";
-import { Vector } from "./Vector";
+import { Vector, Vector2D } from "./Vector";
+
+export interface IAttributeComposer {
+
+	(obj1: any, obj2: any): any;
+
+}
+
+export class Composer {
+
+	public static Vector2DAdd(obj1: Vector2D, obj2: Vector2D): Vector2D {
+		if (obj2 == null) {
+			return obj1;
+		}
+		if (obj1 == null) {
+			return obj2;
+		}
+		return obj1.clone().add(obj2);
+	}
+
+	public static NumberMultiply(obj1: number, obj2: number): number {
+		if (obj2 == null) {
+			return obj1;
+		}
+		if (obj1 == null) {
+			return obj2;
+		}
+		return obj1 * obj2;
+	}
+
+	public static NumberAdd(obj1: number, obj2: number): number {
+		if (obj2 == null) {
+			return obj1;
+		}
+		if (obj1 == null) {
+			return obj2;
+		}
+		return obj1 + obj2;
+	}
+
+}
 
 export class Entity {
 
 	public parent: Entity = null;
-	public components: Component[] = new Array<Component>();
-	public entities: ManagedCollection<Entity> = new ManagedCollection<Entity>();
-	public origin: Vector = new Vector(0, 0, 0);
-	public scaleX: number = 1;
-	public scaleY: number = 1;
-	public rotateZ: number = 0;
-	public alpha: number = 1;
+	private components: Component[] = new Array<Component>();
+	private entities: Entity[] = new Array<Entity>();
+	public attributes: Map<string, any> = new Map<string, any>();
 
-	public update(seconds: number): void { }
-
-	public registerEntity(entity: Entity): void {
-		this.entities.add(entity);
-		entity.parent = this;
+	constructor() {
+		this.attributes.set("origin", new Vector2D(0, 0));
+		this.attributes.set("scaleX", 1);
+		this.attributes.set("scaleY", 1);
+		this.attributes.set("rotate", 0);
 	}
 
-	public calc(name: string): any {
+	public update(seconds: number): void {
+		for (let i = 0; i < this.components.length; i++) {
+			this.components[i].update(seconds);
+		}
+		for (let i = 0; i < this.entities.length; i++) {
+			this.entities[i].update(seconds);
+		}
+	}
+
+	public getCalculatedAttribute<T>(name: string, composer: IAttributeComposer): T {
 		if (this.parent == null) {
-			return this[name];
+			return this.attributes.get(name);
 		}
-		switch (name) {
-			case "origin":
-				return this.origin.clone().add(this.parent.calc("origin"));
-			case "alpha":
-				return this.alpha * this.parent.calc("alpha");
-		}
+		return composer(this.parent.getCalculatedAttribute(name, composer), this.attributes.get(name));
+	}
+
+	public onAttach(entity: Entity): void {
+		this.parent = entity;
+	}
+
+	public registerComponent(component: Component): void {
+		this.components.push(component);
+		component.onAttach(this);
+	}
+
+	public registerEntity(entity: Entity): void {
+		this.entities.push(entity);
+		entity.onAttach(this);
 	}
 
 }

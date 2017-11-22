@@ -1,7 +1,9 @@
 import { IShape } from "../Foundation/IShape";
 import { Color } from "../Foundation/Color";
-import { Model } from "./Model";
+import { Model, RenderOptions } from "./Model";
 import { Logger } from "../Util/Logger";
+import { Composer } from "./Entity";
+import { Vector2D } from "./Vector";
 
 export class PrimitiveModel extends Model {
 	constructor(
@@ -11,11 +13,9 @@ export class PrimitiveModel extends Model {
 		super();
 	}
 
-	public draw(ctx: CanvasRenderingContext2D): void {
-		ctx.save();
-		ctx.globalAlpha = this.calc("alpha");
-		this.shape.draw(ctx, this.color.toString(), this.calc("origin").x, this.calc("origin").y);
-		ctx.restore();
+	public render(ctx: CanvasRenderingContext2D, options: RenderOptions): void {
+		ctx.globalAlpha = options.alpha;
+		this.shape.draw(ctx, this.color.toString(), options.position.x, options.position.y);
 	}
 
 }

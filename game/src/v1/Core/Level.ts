@@ -14,7 +14,7 @@ export class Level {
 
 	public draw(): void {
 		for (let i = 0; i < this.viewports.length; i++) {
-			this.viewports[i].camera.draw(this.viewports[i].canvas.ctx, this.world.models);
+			this.viewports[i].draw(this.world.models);
 		}
 	}
 

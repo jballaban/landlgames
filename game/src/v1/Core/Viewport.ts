@@ -1,5 +1,7 @@
 import { Canvas } from "./Canvas";
 import { Camera } from "./Camera";
+import { Model } from "./Model";
+import { Logger } from "../Util/Logger";
 
 export class Viewport {
 
@@ -24,6 +26,11 @@ export class Viewport {
 		this.width = width;
 		this.height = height;
 		this.canvas.resize(width, height);
+	}
+
+	public draw(models: Model[]): void {
+		this.canvas.ctx.clearRect(this.x, this.y, this.width, this.height);
+		this.camera.draw(this.canvas.ctx, models);
 	}
 
 }
