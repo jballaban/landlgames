@@ -10,6 +10,9 @@ export class Level {
 
 	public update(seconds: number): void {
 		this.world.update(seconds);
+		for (var i = 0; i < this.viewports.length; i++) {
+			this.viewports[i].update(seconds);
+		}
 	}
 
 	public draw(): void {

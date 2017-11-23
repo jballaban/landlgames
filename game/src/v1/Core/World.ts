@@ -17,6 +17,10 @@ export class World extends Entity {
 		this.registerModels(entity);
 	}
 
+	public unregisterEntity(entity: Entity) {
+		this.unregisterModels(entity);
+	}
+
 	private registerModels(entity: Entity) {
 		if (entity instanceof Model) {
 			this.models.push(entity);
@@ -26,4 +30,12 @@ export class World extends Entity {
 		}
 	}
 
+	private unregisterModels(entity: Entity) {
+		if (entity instanceof Model) {
+			this.models.splice(this.models.indexOf(entity), 1);
+		}
+		for (let i = 0; i < entity.entities.length; i++) {
+			this.unregisterModels(entity.entities[i]);
+		}
+	}
 }

@@ -82,12 +82,15 @@ export class Head extends Entity {
 		let lefteye = new PrimitiveModel(new Circle(size / 10), new Color(255, 0, 0));
 		lefteye.attributes.set("origin", new Vector2D(-size * 1 / 4, -size / 4));
 		lefteye.registerComponent(new BlinkComponent(new Color(0, 0, 255)));
+		lefteye.attributes.set("zIndex", 0.1);
 		face.registerEntity(lefteye);
 		let righteye = new PrimitiveModel(new Circle(size / 10), new Color(255, 0, 0));
 		righteye.attributes.set("origin", new Vector2D(size * 1 / 4, -size / 4));
+		righteye.attributes.set("zIndex", 0.1);
 		face.registerEntity(righteye);
 		this.registerEntity(face);
 		let mouth = new PrimitiveModel(new Rectangle(-size / 4, size / 4, size / 2, size / 8), new Color(255, 255, 0));
+		mouth.attributes.set("zIndex", 0.1);
 		face.registerEntity(mouth);
 		this.registerEntity(new Joint(5));
 		this.registerComponent(new WaveComponent(-15, 15, 1));
@@ -108,6 +111,7 @@ export class Body extends Entity {
 export class Joint extends PrimitiveModel {
 	constructor(size: number) {
 		super(new Circle(size), new Color(150, 150, 255));
+		this.attributes.set("zIndex", 0.1);
 	}
 }
 
@@ -205,9 +209,20 @@ export class Person extends Entity {
 		this.registerEntity(new Leg(new Vector2D(-width / 2, 0), width / 2, height / 2, true));
 		this.registerEntity(new Leg(new Vector2D(width / 2, 0), width / 2, height / 2, false));
 		this.registerComponent(new WalkComponent(viewport));
-		this.registerComponent(new WaveComponent(-45, 45, velocity));
+		this.registerComponent(new WaveComponent(0, 360, velocity));
 		this.attributes.set("origin", origin);
+		this.attributes.set("rotateZ", Math.floor(Math.random() * 360));
+	}
 
+	public update(seconds: number): void {
+		super.update(seconds);
+		let scale = this.attributes.get("scale");
+		scale -= .001 + (scale / 4) / 10;
+		if (scale <= 0) {
+			scale = 4;
+		}
+		this.attributes.set("scale", scale);
+		this.attributes.set("zIndex", scale);
 	}
 
 }

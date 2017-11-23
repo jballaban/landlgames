@@ -49,6 +49,8 @@ export class Composer {
 	}
 
 }
+
+
 export class Entity {
 
 	public parent: Entity = null;
@@ -59,6 +61,7 @@ export class Entity {
 	constructor() {
 		this.attributes.set("origin", new Vector2D(0, 0));
 		this.attributes.set("rotateZ", 0);
+		this.attributes.set("scale", 1);
 	}
 
 	public update(seconds: number): void {
@@ -80,6 +83,7 @@ export class Entity {
 	private getAttribute(name: string): any {
 		if (name === "origin") {
 			let origin: Vector2D = this.attributes.get("origin").clone();
+			origin.multiply(this.parent == null ? 1 : this.parent.getCalculatedAttribute<number>("scale", Composer.NumberMultiply));
 			let rads: number = this.parent == null ? 0 : this.parent.getCalculatedAttribute<number>("rotateZ", Composer.NumberAdd) * Math.PI / 180;
 			let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
 			let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
@@ -102,6 +106,10 @@ export class Entity {
 	public registerEntity(entity: Entity): void {
 		this.entities.push(entity);
 		entity.onAttach(this);
+	}
+
+	public unregisterEntity(entity: Entity): void {
+		this.entities.splice(this.entities.indexOf(entity), 1);
 	}
 
 }

@@ -22,6 +22,10 @@ export class Viewport {
 		this.canvas.destroy();
 	}
 
+	public update(seconds): void {
+		this.camera.update(seconds);
+	}
+
 	public resize(width: number, height: number): void {
 		this.width = width;
 		this.height = height;
@@ -30,7 +34,7 @@ export class Viewport {
 
 	public draw(models: Model[]): void {
 		this.canvas.ctx.clearRect(this.x, this.y, this.width, this.height);
-		this.camera.draw(this.canvas.ctx, models);
+		this.camera.draw(this, this.canvas.ctx, models);
 	}
 
 }
@@ -53,6 +57,7 @@ export class FullscreenViewport extends Viewport {
 	}
 
 	public update(seconds: number): void {
+		super.update(seconds);
 		if (this.width !== this._width || this.height !== this._height) {
 			this.resize(this._width, this._height);
 			this._width = this.width;
