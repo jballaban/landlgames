@@ -18,9 +18,12 @@ export class PlayLevel extends Level {
 		let thing = new PrimitiveModel(new Circle(10), new Color(255, 255, 255));
 		thing.attributes.set("origin", new Vector2D(100, 100));
 		thing.registerComponent(new FadeInComponent());
-		let person = new Person(viewport);
-		person.attributes.set("origin", new Vector2D(500, 500));
-		this.world.registerEntity(person);
+		for (let i = 0; i < 20; i++) {
+			let scale = Math.random();
+			let person = new Person(25 * scale, 150 * scale, Math.random(), new Vector2D(Math.random() * viewport.height, Math.random() * viewport.width), viewport);
+			this.world.registerEntity(person);
+		}
+
 		this.world.registerEntity(thing);
 		this.fullscreen = viewport;
 	}

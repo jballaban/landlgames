@@ -78,57 +78,135 @@ export class Head extends Entity {
 	constructor(size: number) {
 		super();
 		let face = new PrimitiveModel(new Circle(size / 2), new Color(255, 255, 255));
-		let lefteye = new PrimitiveModel(new Circle(5), new Color(255, 0, 0));
-		lefteye.attributes.set("origin", new Vector2D(-15, -size / 4));
+		face.attributes.set("origin", new Vector2D(0, -size / 2));
+		let lefteye = new PrimitiveModel(new Circle(size / 10), new Color(255, 0, 0));
+		lefteye.attributes.set("origin", new Vector2D(-size * 1 / 4, -size / 4));
 		lefteye.registerComponent(new BlinkComponent(new Color(0, 0, 255)));
 		face.registerEntity(lefteye);
-		let righteye = new PrimitiveModel(new Circle(5), new Color(255, 0, 0));
-		righteye.attributes.set("origin", new Vector2D(15, -size / 4));
+		let righteye = new PrimitiveModel(new Circle(size / 10), new Color(255, 0, 0));
+		righteye.attributes.set("origin", new Vector2D(size * 1 / 4, -size / 4));
 		face.registerEntity(righteye);
 		this.registerEntity(face);
 		let mouth = new PrimitiveModel(new Rectangle(-size / 4, size / 4, size / 2, size / 8), new Color(255, 255, 0));
 		face.registerEntity(mouth);
+		this.registerEntity(new Joint(5));
+		this.registerComponent(new WaveComponent(-15, 15, 1));
 	}
 
 }
 
 export class Body extends Entity {
-
 	constructor(width: number, height: number) {
 		super();
 		let body = new PrimitiveModel(new Rectangle(-width / 2, -height, width, height), new Color(200, 255, 255));
 		this.registerEntity(body);
+		this.registerEntity(new Arm(new Vector2D(-width / 2, -height * 3 / 4), width / 3, height / 3, true));
+		this.registerEntity(new Arm(new Vector2D(width / 2, -height * 3 / 4), width / 3, height / 3, false));
 	}
-
 }
 
-export class Arm extends Entity {
+export class Joint extends PrimitiveModel {
+	constructor(size: number) {
+		super(new Circle(size), new Color(150, 150, 255));
+	}
+}
+
+export class Leg extends PrimitiveModel {
+	constructor(origin: Vector2D, thickness: number, length: number, left: boolean) {
+		super(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 200, 255));
+		this.registerComponent(new WaveComponent(left ? 0 : -90, left ? 90 : 0, 1));
+		this.registerEntity(new Calf(new Vector2D(0, length), thickness / 2, length * 2 / 3, left));
+		this.attributes.set("origin", origin);
+		this.registerEntity(new Joint(5));
+	}
+}
+
+export class Calf extends PrimitiveModel {
+	constructor(origin: Vector2D, thickness, length: number, left: boolean) {
+		super(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 255, 255));
+		this.attributes.set("origin", origin);
+		this.registerEntity(new Foot(new Vector2D(0, length), length / 2, left));
+		this.registerComponent(new WaveComponent(left ? -90 : 0, left ? 0 : 90, Math.random()));
+		this.registerEntity(new Joint(5));
+	}
+}
+
+export class Foot extends PrimitiveModel {
+	constructor(origin: Vector2D, length: number, left: boolean) {
+		super(new Rectangle(left ? -length * 3 / 4 : -length / 4, 0, length, length / 2), new Color(200, 200, 200));
+		this.attributes.set("origin", origin);
+		this.registerEntity(new Joint(5));
+	}
+}
+
+export class Arm extends PrimitiveModel {
+	constructor(origin: Vector2D, thickness: number, length: number, left: boolean) {
+		super(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 200, 255));
+		this.registerComponent(new WaveComponent(left ? 0 : -135, left ? 135 : 0, 1));
+		this.registerEntity(new Forearm(new Vector2D(0, length), thickness / 2, length * 2 / 3, left));
+		this.attributes.set("origin", origin);
+		this.registerEntity(new Joint(5));
+	}
+}
+
+export class Forearm extends PrimitiveModel {
+	constructor(origin: Vector2D, thickness, length: number, left: boolean) {
+		super(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 255, 255));
+		this.attributes.set("origin", origin);
+		this.registerEntity(new Hand(new Vector2D(0, length), length / 2));
+		this.registerComponent(new WaveComponent(left ? 0 : -90, left ? 90 : 0, Math.random()));
+		this.registerEntity(new Joint(5));
+	}
+}
+
+export class Hand extends PrimitiveModel {
+	constructor(origin: Vector2D, size: number) {
+		super(new Rectangle(-size / 2, 0, size, size), new Color(200, 200, 200));
+		this.attributes.set("origin", origin);
+		this.registerEntity(new Joint(5));
+	}
+}
+
+export class RightArm extends Entity {
 	constructor(degrees: number, length: number, thickness: number) {
 		super();
 		let arm = new PrimitiveModel(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 200, 255));
 		arm.registerComponent(new WaveComponent(-135, 0, 1));
 		this.registerEntity(arm);
-		let forearm = new PrimitiveModel(new Rectangle(-thickness / 4, 0, thickness / 2, length / 2), new Color(255, 255, 255));
+		arm.registerEntity(new Forearm(new Vector2D(0, length), thickness / 2, length * 2 / 3, false));
+	}
+}
+
+export class LeftArm extends Entity {
+	constructor(degrees: number, length: number, thickness: number) {
+		super();
+		let arm = new PrimitiveModel(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 200, 255));
+		arm.registerComponent(new WaveComponent(0, 135, 1.1));
+		this.registerEntity(arm);
+		let forearm = new PrimitiveModel(new Rectangle(-thickness / 4, 0, thickness / 2, length * 2 / 3), new Color(255, 255, 255));
 		forearm.attributes.set("origin", new Vector2D(0, length));
-		forearm.registerComponent(new WaveComponent(-90, 0, 1));
+		forearm.registerComponent(new WaveComponent(0, 90, 0.4));
+		let hand = new PrimitiveModel(new Rectangle(-10, 0, 20, 20), new Color(200, 200, 200));
+		hand.attributes.set("origin", new Vector2D(0, length * 2 / 3));
+		forearm.registerEntity(hand);
 		arm.registerEntity(forearm);
 	}
 }
 
 export class Person extends Entity {
 
-	constructor(viewport: Viewport) {
+	constructor(width: number, height: number, velocity: number, origin: Vector2D, viewport: Viewport) {
 		super();
-		let body = new Body(75, 200);
+		let body = new Body(width, height);
 		this.registerEntity(body);
-		let head = new Head(50);
-		head.attributes.set("origin", new Vector2D(0, -225));
+		let head = new Head(height / 3);
+		head.attributes.set("origin", new Vector2D(0, -height));
 		this.registerEntity(head);
-		let arm = new Arm(45, 70, 20);
-		arm.attributes.set("origin", new Vector2D(75 / 2, -180));
-		this.registerEntity(arm);
+		this.registerEntity(new Leg(new Vector2D(-width / 2, 0), width / 2, height / 2, true));
+		this.registerEntity(new Leg(new Vector2D(width / 2, 0), width / 2, height / 2, false));
 		this.registerComponent(new WalkComponent(viewport));
-		this.registerComponent(new WaveComponent(-45, 45, 1));
+		this.registerComponent(new WaveComponent(-45, 45, velocity));
+		this.attributes.set("origin", origin);
 
 	}
 
