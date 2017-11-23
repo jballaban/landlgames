@@ -1,5 +1,5 @@
 import { Entity, Composer } from "./Entity";
-import { Vector2D } from "./Vector";
+import { Vector3D } from "./Vector";
 import { Logger } from "../Util/Logger";
 import { Component } from "./Component";
 
@@ -7,14 +7,21 @@ export abstract class Model extends Entity {
 
 	constructor() {
 		super();
-		this.attributes.set("alpha", 1);
-		this.attributes.set("zIndex", 0);
+		this.alpha = 1;
+	}
+
+	public get alpha(): number {
+		return this.getAttribute<number>("alpha");
+	}
+
+	public set alpha(value: number) {
+		this.setAttribute("alpha", Math.min(1, value));
 	}
 
 	public abstract render(ctx: CanvasRenderingContext2D): void;
 
 	public draw(ctx: CanvasRenderingContext2D): void {
-		let position: Vector2D = this.getCalculatedAttribute("origin", Composer.Vector2DAdd);
+		let position: Vector3D = this.effectiveOrigin;
 		let angle: number = this.getCalculatedAttribute("rotateZ", Composer.NumberAdd);
 		ctx.save();
 		ctx.globalAlpha = this.getCalculatedAttribute("alpha", Composer.NumberMultiply);

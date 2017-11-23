@@ -15,7 +15,7 @@ export class Viewport {
 		public height: number
 	) {
 		this.canvas = new Canvas(x, y, this.width, this.height);
-		this.camera = new Camera();
+		this.camera = new Camera(10);
 	}
 
 	public destroy() {

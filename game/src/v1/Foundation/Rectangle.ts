@@ -1,6 +1,5 @@
 import { IShape } from "./IShape";
 import { Logger } from "../Util/Logger";
-import { Vector2D } from "../Core/Vector";
 
 export class Rectangle implements IShape {
 	public get bottom(): number {

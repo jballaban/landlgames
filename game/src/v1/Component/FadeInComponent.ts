@@ -1,19 +1,17 @@
 import { Component } from "../Core/Component";
 import { Entity, Composer } from "../Core/Entity";
 import { Logger } from "../Util/Logger";
+import { Model } from "../Core/Model";
 
 export class FadeInComponent extends Component {
 
-	public onAttach(entity: Entity): void {
+	public onAttach(entity: Model): void {
 		super.onAttach(entity);
-		entity.attributes.set("alpha", 0);
+		entity.alpha = 0;
 	}
 
 	public update(seconds: number): void {
-		let alpha: number = this.entity.attributes.get("alpha");
-		if (alpha < 1) {
-			this.entity.attributes.set("alpha", Math.min(1, alpha + 0.01));
-		}
+		(this.entity as Model).alpha += .01;
 	}
 
 }
