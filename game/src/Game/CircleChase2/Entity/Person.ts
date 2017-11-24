@@ -32,6 +32,7 @@ export class WaveComponent extends Component {
 		super();
 		this.velocity *= 60 * Time.delta;
 	}
+
 	public update(): void {
 		this.entity.rotateZ += this.velocity;
 		if (this.entity.rotateZ < this.minAngle) {
@@ -60,7 +61,7 @@ export class BlinkComponent extends Component {
 	}
 
 	public update(): void {
-		let rnd = this.blinking ? 20 : 400;
+		let rnd: number = this.blinking ? 20 : 400;
 		if (Math.floor(Math.random() * rnd) === 1) {
 			(this.entity as PrimitiveModel).color = this.blinking ? this.originalColor : this.blinkColor;
 			this.blinking = !this.blinking;
@@ -144,7 +145,7 @@ export class Arm extends PrimitiveModel {
 }
 
 export class Forearm extends PrimitiveModel {
-	constructor(origin: Vector3D, thickness, length: number, left: boolean) {
+	constructor(origin: Vector3D, thickness: number, length: number, left: boolean) {
 		super(new Rectangle(-thickness / 2, 0, thickness, length), new Color(255, 255, 255));
 		this.origin = origin;
 		this.registerEntity(new Hand(new Vector3D(0, length, 0.1), length / 2));

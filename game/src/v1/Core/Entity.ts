@@ -4,13 +4,10 @@ import { Vector3D } from "./Vector";
 import { Logger } from "../Util/Logger";
 
 export interface IAttributeComposer {
-
 	(obj1: any, obj2: any): any;
-
 }
 
 export class Composer {
-
 	public static Vector3DAdd(obj1: Vector3D, obj2: Vector3D): Vector3D {
 		if (obj2 == null) {
 			return obj1;
@@ -19,6 +16,16 @@ export class Composer {
 			return obj2;
 		}
 		return obj1.clone().add(obj2);
+	}
+
+	public static BooleanOr(obj1: boolean, obj2: boolean): boolean {
+		if (obj2 == null) {
+			return obj1;
+		}
+		if (obj1 == null) {
+			return obj2;
+		}
+		return obj1 || obj2;
 	}
 
 	public static NumberMultiply(obj1: number, obj2: number): number {
@@ -47,64 +54,68 @@ export class Composer {
 		}
 		return obj2;
 	}
+}
 
+export interface IUpdate {
+	update(): void;
+}
+
+export interface IPostUpdate {
+	postUpdate(): void;
 }
 
 export class Entity {
-
 	public parent: Entity = null;
-	private components: Component[] = new Array<Component>();
+	public components: Component[] = new Array<Component>();
 	public entities: Entity[] = new Array<Entity>();
 	private attributes: Map<string, any> = new Map<string, any>();
 
 	constructor() {
-		this.attributes.set("origin", new Vector3D(0, 0, 0));
-		this.attributes.set("rotateZ", 0);
-		this.attributes.set("scale", 1);
+		this.setAttribute("origin", new Vector3D(0, 0, 0));
+		this.setAttribute("rotateZ", 0);
+		this.setAttribute("scale", 1);
+		this.setAttribute("positionChanged", true);
+	}
+
+	public get positionChanged(): boolean { return this.getCalculatedAttribute<boolean>("positionChanged", Composer.BooleanOr); }
+
+	public set positionChanged(value: boolean) {
+		this.setAttribute("positionChanged", value);
 	}
 
 	public get effectiveOrigin(): Vector3D {
-		return this.getCalculatedAttribute<Vector3D>("effectiveOrigin", Composer.Vector3DAdd);
+		if (this.positionChanged) {
+			this.setAttribute("effectiveOrigin", this.getCalculatedAttribute<Vector3D>("origin", Composer.Vector3DAdd));
+		}
+		return this.getAttribute<Vector3D>("effectiveOrigin");
 	}
 
-	public get rotateZ(): number {
-		return this.getAttribute<number>("rotateZ");
-	}
+	public get rotateZ(): number { return this.getAttribute<number>("rotateZ"); }
 
 	public set rotateZ(value: number) {
-		this.attributes.set("rotateZ", value);
+		this.setAttribute("rotateZ", value);
+		this.positionChanged = true;
 	}
 
-	public get scale(): number {
-		return this.getAttribute<number>("scale");
-	}
+	public get scale(): number { return this.getAttribute<number>("scale"); }
 
 	public set scale(value: number) {
-		this.attributes.set("scale", value);
+		this.setAttribute("scale", value);
+		this.positionChanged = true;
 	}
 
-	public get origin(): Vector3D {
-		return this.getAttribute<Vector3D>("origin");
-	}
+	public get origin(): Vector3D { return this.getAttribute<Vector3D>("origin"); }
 
 	public set origin(value: Vector3D) {
-		this.attributes.set("origin", value);
-	}
-
-	public update(): void {
-		for (let i = 0; i < this.components.length; i++) {
-			this.components[i].update();
-		}
-		for (let i = 0; i < this.entities.length; i++) {
-			this.entities[i].update();
-		}
+		this.setAttribute("origin", value);
+		this.positionChanged = true;
 	}
 
 	protected getCalculatedAttribute<T>(name: string, composer: IAttributeComposer): T {
 		if (this.parent == null) {
-			return this.getAttribute<T>(name);
+			return this.calcAttribute<T>(name);
 		}
-		return composer(this.parent.getCalculatedAttribute<T>(name, composer), this.getAttribute<T>(name));
+		return composer(this.parent.getCalculatedAttribute<T>(name, composer), this.calcAttribute<T>(name));
 	}
 
 	protected setAttribute(name: string, value: any): void {
@@ -112,7 +123,11 @@ export class Entity {
 	}
 
 	protected getAttribute<T>(name: string): T {
-		if (name === "effectiveOrigin") {
+		return this.attributes.get(name);
+	}
+
+	private calcAttribute<T>(name: string): T {
+		if (name === "origin") {
 			let origin: Vector3D = this.attributes.get("origin").clone();
 			origin.multiply(this.parent == null ? 1 : this.parent.getCalculatedAttribute<number>("scale", Composer.NumberMultiply));
 			let rads: number = this.parent == null ? 0 : this.parent.getCalculatedAttribute<number>("rotateZ", Composer.NumberAdd) * Math.PI / 180;

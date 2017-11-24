@@ -40,7 +40,6 @@ export class Runtime {
 				smoothing: 0.8
 			});
 		}
-		Time.scale = 1;
 		requestAnimationFrame(Runtime.frame);
 	}
 

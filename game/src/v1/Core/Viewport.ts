@@ -15,7 +15,6 @@ export class Viewport {
 		public height: number
 	) {
 		this.canvas = new Canvas(x, y, this.width, this.height);
-		this.camera = new Camera(10);
 	}
 
 	public destroy(): void {
@@ -23,7 +22,7 @@ export class Viewport {
 	}
 
 	public update(): void {
-		this.camera.update();
+		// todo
 	}
 
 	public resize(width: number, height: number): void {
