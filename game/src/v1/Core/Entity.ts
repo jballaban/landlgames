@@ -91,12 +91,12 @@ export class Entity {
 		this.attributes.set("origin", value);
 	}
 
-	public update(seconds: number): void {
+	public update(): void {
 		for (let i = 0; i < this.components.length; i++) {
-			this.components[i].update(seconds);
+			this.components[i].update();
 		}
 		for (let i = 0; i < this.entities.length; i++) {
-			this.entities[i].update(seconds);
+			this.entities[i].update();
 		}
 	}
 
@@ -107,7 +107,7 @@ export class Entity {
 		return composer(this.parent.getCalculatedAttribute<T>(name, composer), this.getAttribute<T>(name));
 	}
 
-	protected setAttribute(name: string, value: any) {
+	protected setAttribute(name: string, value: any): void {
 		this.attributes.set(name, value);
 	}
 

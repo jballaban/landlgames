@@ -10,7 +10,7 @@ export class FadeInComponent extends Component {
 		entity.alpha = 0;
 	}
 
-	public update(seconds: number): void {
+	public update(): void {
 		(this.entity as Model).alpha += .01;
 	}
 

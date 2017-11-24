@@ -18,12 +18,12 @@ export class Viewport {
 		this.camera = new Camera(10);
 	}
 
-	public destroy() {
+	public destroy(): void {
 		this.canvas.destroy();
 	}
 
-	public update(seconds): void {
-		this.camera.update(seconds);
+	public update(): void {
+		this.camera.update();
 	}
 
 	public resize(width: number, height: number): void {
@@ -51,13 +51,13 @@ export class FullscreenViewport extends Viewport {
 		window.onresize = this.resizeWindow.bind(this);
 	}
 
-	public destroy() {
+	public destroy(): void {
 		window.onresize = null;
 		super.destroy();
 	}
 
-	public update(seconds: number): void {
-		super.update(seconds);
+	public update(): void {
+		super.update();
 		if (this.width !== this._width || this.height !== this._height) {
 			this.resize(this._width, this._height);
 			this._width = this.width;

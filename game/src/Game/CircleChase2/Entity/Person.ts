@@ -8,14 +8,15 @@ import { Rectangle } from "../../../v1/Foundation/Rectangle";
 import { Component } from "../../../v1/Core/Component";
 import { Logger } from "../../../v1/Util/Logger";
 import { Viewport } from "../../../v1/Core/Viewport";
+import { Time } from "../../../v1/Core/Time";
 
 export class WalkComponent extends Component {
 	constructor(private viewport: Viewport) {
 		super();
 	}
 
-	public update(seconds: number): void {
-		this.entity.origin.x += 1;
+	public update(): void {
+		this.entity.origin.x += 60 * Time.delta;
 		if (this.entity.origin.x > this.viewport.width) {
 			this.entity.origin.x = 0;
 		}
@@ -29,8 +30,9 @@ export class WaveComponent extends Component {
 		private velocity: number
 	) {
 		super();
+		this.velocity *= 60 * Time.delta;
 	}
-	public update(seconds: number): void {
+	public update(): void {
 		this.entity.rotateZ += this.velocity;
 		if (this.entity.rotateZ < this.minAngle) {
 			this.entity.rotateZ = this.minAngle;
@@ -57,7 +59,7 @@ export class BlinkComponent extends Component {
 		this.blinking = false;
 	}
 
-	public update(seconds: number): void {
+	public update(): void {
 		let rnd = this.blinking ? 20 : 400;
 		if (Math.floor(Math.random() * rnd) === 1) {
 			(this.entity as PrimitiveModel).color = this.blinking ? this.originalColor : this.blinkColor;

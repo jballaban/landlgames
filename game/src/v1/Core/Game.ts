@@ -4,7 +4,7 @@ export class Game {
 	public level: Level;
 	public nextLevel: Level;
 
-	public update(seconds: number): void {
+	public update(): void {
 		if (this.nextLevel != null) {
 			if (this.level != null) {
 				this.level.destroy();
@@ -13,7 +13,7 @@ export class Game {
 			this.nextLevel = null;
 		}
 		if (this.level != null) {
-			this.level.update(seconds);
+			this.level.update();
 		}
 	}
 

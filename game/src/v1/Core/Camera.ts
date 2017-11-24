@@ -10,7 +10,7 @@ export class Camera extends Entity {
 		this.origin.z = z;
 	}
 
-	public draw(viewport: Viewport, ctx: CanvasRenderingContext2D, models: Model[]) {
+	public draw(viewport: Viewport, ctx: CanvasRenderingContext2D, models: Model[]): void {
 		models.sort(function (a: Model, b: Model): number {
 			let aindex = a.effectiveOrigin.z;
 			let bindex = b.effectiveOrigin.z;
@@ -30,8 +30,4 @@ export class Camera extends Entity {
 		ctx.restore();
 	}
 
-	public update(seconds: number): void {
-		//this.origin.z += .1;
-		//this.scale = 1 / this.origin.z;
-	}
 }

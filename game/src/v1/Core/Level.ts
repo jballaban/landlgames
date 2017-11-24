@@ -8,10 +8,10 @@ export class Level {
 		public world: World
 	) { }
 
-	public update(seconds: number): void {
-		this.world.update(seconds);
+	public update(): void {
+		this.world.update();
 		for (var i = 0; i < this.viewports.length; i++) {
-			this.viewports[i].update(seconds);
+			this.viewports[i].update();
 		}
 	}
 

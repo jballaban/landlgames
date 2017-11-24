@@ -5,5 +5,5 @@ export abstract class Component {
 	public onAttach(entity: Entity): void {
 		this.entity = entity;
 	}
-	public abstract update(seconds: number): void;
+	public abstract update(): void;
 }
