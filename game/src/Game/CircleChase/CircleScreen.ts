@@ -1,24 +1,24 @@
-import { Screen } from "../../Core/Screen";
-import { Rectangle } from "../../Shape/Rectangle";
-import { Camera } from "../../Core/Camera";
-import { Runtime } from "Core/Runtime";
-import { Logger } from "Util/Logger";
-import { Position } from "../../Shape/Polygon";
-import { Point, MidPoint } from "../../Shape/Point";
-import { Thing, StaticThing } from "../../UI/Thing";
-import { ContextLayer } from "../../Core/ContextLayer";
-import { Mouse } from "../../IO/Mouse";
-import { Color } from "../../Util/Color";
-import { ElementContainer } from "../../Core/ElementContainer";
-import { Vector } from "../../Core/Vector";
-import { Circle } from "../../Shape/Circle";
-import { BasicMouse } from "../../IO/BasicMouse";
-import { Cursor, MouseHandler, CursorState } from "../../IO/MouseHandler";
-import { Element } from "../../Core/Element";
-import { IShape } from "../../Shape/IShape";
-import { BackgroundImage } from "../../UI/BackgroundImage";
-import { Sprite } from "../../UI/Sprite";
-import { Collision } from "../../Util/Collision";
+import { Screen } from "../../v0/Core/Screen";
+import { Rectangle } from "../../v0/Shape/Rectangle";
+import { Camera } from "../../v0/Core/Camera";
+import { Runtime } from "v0/Core/Runtime";
+import { Logger } from "v0/Util/Logger";
+import { Position } from "../../v0/Shape/Polygon";
+import { Point, MidPoint } from "../../v0/Shape/Point";
+import { Thing, StaticThing } from "../../v0/UI/Thing";
+import { ContextLayer } from "../../v0/Core/ContextLayer";
+import { Mouse } from "../../v0/IO/Mouse";
+import { Color } from "../../v0/Util/Color";
+import { ElementContainer } from "../../v0/Core/ElementContainer";
+import { Vector } from "../../v0/Core/Vector";
+import { Circle } from "../../v0/Shape/Circle";
+import { BasicMouse } from "../../v0/IO/BasicMouse";
+import { Cursor, MouseHandler, CursorState } from "../../v0/IO/MouseHandler";
+import { Element } from "../../v0/Core/Element";
+import { IShape } from "../../v0/Shape/IShape";
+import { BackgroundImage } from "../../v0/UI/BackgroundImage";
+import { Sprite } from "../../v0/UI/Sprite";
+import { Collision } from "../../v0/Util/Collision";
 
 export class CircleScreen extends Screen {
 

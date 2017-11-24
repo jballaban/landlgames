@@ -1,7 +1,7 @@
 import { Runtime } from "./Core/Runtime";
 import { Logger, Level } from "./Util/logger";
 import { Screen } from "./Core/Screen";
-import { CircleScreen } from "./Game/CircleChase/CircleScreen";
+import { CircleScreen } from "../Game/CircleChase/CircleScreen";
 import { LoadingScreen } from "./Screen/LoadingScreen";
 
 export interface IGameOptions {
