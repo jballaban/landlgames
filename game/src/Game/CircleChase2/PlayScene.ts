@@ -19,13 +19,14 @@ export class PlayScene extends Scene {
 	constructor() {
 		let viewport: Viewport = new FullscreenViewport();
 		super([viewport]);
-		this.world = new World(viewport.width, viewport.height, this);
+		this.world = new World(1024 * 10, 768 * 10, this);
 		let camera: Camera = new Camera();
-		let topmask: PrimitiveModel = new PrimitiveModel(new Rectangle(0, 0, viewport.width, 10), new Color(255, 55, 55));
-		topmask.origin = new Vector3D(0, 0, 1000);
-		camera.registerEntity(topmask);
-		camera.origin = new Vector3D(viewport.width / 2, viewport.height / 2, 0);
-		this.world.registerEntity(camera);
+		let dot: PrimitiveModel = new PrimitiveModel(new Circle(10), new Color(255, 55, 55));
+		camera.registerEntity(dot);
+		let mask: PrimitiveModel = new PrimitiveModel(new Rectangle(-viewport.width / 2, -viewport.height / 2, viewport.width, 10), new Color(20, 199, 0));
+		camera.registerEntity(mask);
+		camera.origin = new Vector3D(this.world.width / 2, this.world.height / 2, 0);
+		camera.cameraScale = .1;//viewport.height / this.world.height;
 		viewport.camera = camera;
 		let background: ImageModel = new ImageModel("blackhole.png", 1024, 768);
 		let scale: number = 2;
@@ -37,22 +38,22 @@ export class PlayScene extends Scene {
 			);
 		background.scale = scale;
 		//this.world.registerEntity(background);
-		let thing: PrimitiveModel = new PrimitiveModel(new Circle(10), new Color(255, 255, 255));
-		thing.origin = new Vector3D(100, 100, 100);
+		let thing: PrimitiveModel = new PrimitiveModel(new Rectangle(0, 0, this.world.width, this.world.height), new Color(10, 23, 2));
 		thing.registerComponent(new FadeInComponent());
+		this.world.registerEntity(thing);
 		for (let i: number = 0; i < 10; i++) {
 			let scale: number = 1;
 			let person: Person = new Person(
 				25,
 				150,
 				Math.random(),
-				new Vector3D(Math.random() * viewport.width, Math.random() * viewport.height + 150, 1 + i),
-				viewport
+				new Vector3D(Math.random() * this.world.width, Math.random() * this.world.height + 150, 1 + i),
+				this.world
 			);
 			person.scale = scale;
 			this.world.registerEntity(person);
 		}
-		this.world.registerEntity(thing);
+		this.world.registerEntity(camera);
 	}
 
 }

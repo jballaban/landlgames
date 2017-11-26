@@ -25,7 +25,7 @@ export abstract class Model extends Entity {
 	public abstract render(ctx: CanvasRenderingContext2D): void;
 
 	public draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
-		let position: Vector3D = this.getEffectiveOrigin(camera.cameraScale, camera.rotateZ);
+		let position: Vector3D = this.getEffectiveOrigin(camera.origin, camera.cameraScale, camera.cameraRotateZ);
 		let angle: number = this.getEffectiveRotateZ(camera.cameraRotateZ);
 		ctx.save();
 		if (this.getEffectiveAlpha() !== 1) {

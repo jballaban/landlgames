@@ -9,15 +9,16 @@ import { Component } from "../../../v1/Core/Component";
 import { Logger } from "../../../v1/Util/Logger";
 import { Viewport } from "../../../v1/Core/Viewport";
 import { Time } from "../../../v1/Core/Time";
+import { World } from "../../../v1/Core/World";
 
 export class WalkComponent extends Component {
-	constructor(private viewport: Viewport) {
+	constructor(private world: World) {
 		super();
 	}
 
 	public update(): void {
 		this.entity.origin.x += 60 * Time.delta;
-		if (this.entity.origin.x > this.viewport.width) {
+		if (this.entity.origin.x > this.world.width) {
 			this.entity.origin.x = 0;
 		}
 	}
@@ -163,7 +164,7 @@ export class Hand extends PrimitiveModel {
 }
 
 export class Person extends Entity {
-	constructor(width: number, height: number, velocity: number, origin: Vector3D, viewport: Viewport) {
+	constructor(width: number, height: number, velocity: number, origin: Vector3D, world: World) {
 		super();
 		let body = new Body(width, height);
 		this.registerEntity(body);
@@ -172,7 +173,7 @@ export class Person extends Entity {
 		this.registerEntity(head);
 		this.registerEntity(new Leg(new Vector3D(-width / 2, 0, 0.1), width / 2, height / 2, true));
 		this.registerEntity(new Leg(new Vector3D(width / 2, 0, 0.1), width / 2, height / 2, false));
-		this.registerComponent(new WalkComponent(viewport));
+		this.registerComponent(new WalkComponent(world));
 		//	this.registerComponent(new WaveComponent(0, 360, velocity));
 		this.origin = origin;
 		this.rotateZ = Math.floor(Math.random() * 360);

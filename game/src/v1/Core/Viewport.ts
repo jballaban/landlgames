@@ -2,6 +2,7 @@ import { Canvas } from "./Canvas";
 import { Camera } from "./Camera";
 import { Model } from "./Model";
 import { Logger } from "../Util/Logger";
+import { Entity } from "./Entity";
 
 export class Viewport {
 

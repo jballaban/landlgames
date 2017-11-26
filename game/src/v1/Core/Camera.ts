@@ -3,8 +3,10 @@ import { Model } from "./Model";
 import { Viewport } from "./Viewport";
 import { Logger } from "../Util/Logger";
 import { Vector3D } from "./Vector";
+import { Component } from "./Component";
+import { Time } from "./Time";
 
-export class Camera extends Entity implements IUpdate {
+export class Camera extends Entity {
 	constructor() {
 		super();
 		this.cameraScale = 1;
@@ -30,23 +32,13 @@ export class Camera extends Entity implements IUpdate {
 	}
 
 	public draw(viewport: Viewport, ctx: CanvasRenderingContext2D, models: Model[]): void {
-		//ctx.save();
-		//ctx.translate(this.origin.x, this.origin.y);
-		if (this.rotateZ !== 0) {
-			//	ctx.rotate(this.rotateZ * Math.PI / 180);
-		}
-		if (this.scale !== 1) {
-			//		ctx.scale(this.scale, this.scale);
-		}
 		for (let i: number = 0; i < models.length; i++) {
 			models[i].draw(ctx, this);
 		}
-		//	ctx.translate(-this.origin.x, -this.origin.y);
-		//	ctx.restore();
 	}
 
-	public update(): void {
-		//this.cameraRotateZ += 1;
+	public update() {
+		//	this.cameraRotateZ += 10 * Time.delta;
+		//	Logger.log(this.cameraScale);
 	}
-
 }
