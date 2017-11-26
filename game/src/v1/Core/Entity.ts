@@ -56,6 +56,14 @@ export class Composer {
 	}
 }
 
+export interface IFrameStart {
+	frameStart(): void;
+}
+
+export interface IPreUpdate {
+	preUpdate(): void;
+}
+
 export interface IUpdate {
 	update(): void;
 }
@@ -84,10 +92,7 @@ export class Entity {
 	}
 
 	public get effectiveOrigin(): Vector3D {
-		if (this.positionChanged) {
-			this.setAttribute("effectiveOrigin", this.getCalculatedAttribute<Vector3D>("origin", Composer.Vector3DAdd));
-		}
-		return this.getAttribute<Vector3D>("effectiveOrigin");
+		return this.getEffectiveAttribute("origin", Composer.Vector3DAdd, null);
 	}
 
 	public get rotateZ(): number { return this.getAttribute<number>("rotateZ"); }
@@ -110,6 +115,32 @@ export class Entity {
 		this.setAttribute("origin", value);
 		this.positionChanged = true;
 	}
+
+	public preUpdate(): void {
+		this.attributes.set("updateCache", new Map<string, any>()); // clear cache that is update specific
+	}
+
+	protected getEffectiveAttribute<T>(name: string, composer: IAttributeComposer, base?: T): T {
+		if (this.parent == null) {
+			return this.calcEffectiveAttribute<T>(name, composer, base);
+		}
+		return composer(this.parent.getCalculatedAttribute<T>(name, composer), this.calcEffectiveAttribute<T>(name, composer, base));
+	}
+
+	private calcEffectiveAttribute<T>(name: string, composer: IAttributeComposer, base?: T): T {
+		if (name === "origin") {
+			let origin: Vector3D = this.attributes.get("origin").clone();
+			origin.multiply(this.parent == null ? 1 : this.parent.getCalculatedAttribute<number>("scale", Composer.NumberMultiply));
+			let rads: number = this.parent == null ? 0 : this.parent.getCalculatedAttribute<number>("rotateZ", Composer.NumberAdd) * Math.PI / 180;
+			let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
+			let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
+			origin.x = x;
+			origin.y = y;
+			return base == null ? origin : composer(base, origin);
+		}
+		return base == null ? this.attributes.get(name) : composer(base, this.attributes.get(name));
+	}
+
 
 	protected getCalculatedAttribute<T>(name: string, composer: IAttributeComposer): T {
 		if (this.parent == null) {

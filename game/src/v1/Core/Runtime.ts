@@ -1,5 +1,4 @@
 import { Game } from "./Game";
-import { Level } from "./Level";
 import { Time } from "./Time";
 import { Logger } from "../Util/Logger";
 
@@ -51,9 +50,10 @@ export class Runtime {
 			let elapsed: number = (now - Runtime.last) / 1000;
 			Time.realTime += elapsed;
 			Runtime.lag += elapsed;
+			Time.frameCount++;
+			Runtime.game.frame();
 			// proceesInput
 			while (Time.delta > 0 && Runtime.lag >= Time.step) {
-				Time.frameCount++;
 				Time.gameTime += Time.delta;
 				if (Runtime.updateTime != null) { Runtime.updateTime.tickStart(); }
 				Runtime.game.update();

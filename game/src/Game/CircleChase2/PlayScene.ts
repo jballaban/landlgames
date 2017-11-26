@@ -1,4 +1,3 @@
-import { Level } from "../../v1/Core/Level";
 import { Viewport, FullscreenViewport } from "../../v1/Core/Viewport";
 import { World } from "../../v1/Core/World";
 import { PrimitiveModel } from "../../v1/Core/PrimitiveModel";
@@ -9,16 +8,20 @@ import { FadeInComponent } from "../../v1/Component/FadeInComponent";
 import { Person } from "./Entity/Person";
 import { ImageModel } from "../../v1/Core/ImageModel";
 import { Camera } from "../../v1/Core/Camera";
+import { Game } from "./Game";
+import { Scene } from "../../v1/Core/Scene";
 
-export class PlayLevel extends Level {
+export class PlayScene extends Scene {
+
+	private world: World;
 
 	constructor() {
 		let viewport: Viewport = new FullscreenViewport();
-		let world: World = new World(viewport.width, viewport.height);
+		super([viewport]);
+		this.world = new World(viewport.width, viewport.height, this);
 		let camera: Camera = new Camera(10);
-		world.registerEntity(camera);
+		this.world.registerEntity(camera);
 		viewport.camera = camera;
-		super([viewport], world);
 		let background: ImageModel = new ImageModel("blackhole.png", 1024, 768);
 		let scale: number = 2;
 		background.origin =

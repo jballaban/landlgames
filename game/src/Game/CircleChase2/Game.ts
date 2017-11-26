@@ -1,11 +1,11 @@
 import { Game as BaseGame } from "../../v1/Core/Game";
-import { PlayLevel } from "./PlayLevel";
+import { PlayScene } from "./PlayScene";
 
 export class Game extends BaseGame {
 
 	constructor() {
 		super();
-		this.nextLevel = new PlayLevel();
+		this.nextScene = new PlayScene();
 	}
 
 }
