@@ -10,6 +10,7 @@ import { ImageModel } from "../../v1/Core/ImageModel";
 import { Camera } from "../../v1/Core/Camera";
 import { Game } from "./Game";
 import { Scene } from "../../v1/Core/Scene";
+import { Rectangle } from "../../v1/Foundation/Rectangle";
 
 export class PlayScene extends Scene {
 
@@ -19,7 +20,11 @@ export class PlayScene extends Scene {
 		let viewport: Viewport = new FullscreenViewport();
 		super([viewport]);
 		this.world = new World(viewport.width, viewport.height, this);
-		let camera: Camera = new Camera(10);
+		let camera: Camera = new Camera();
+		let topmask: PrimitiveModel = new PrimitiveModel(new Rectangle(0, 0, viewport.width, 10), new Color(255, 55, 55));
+		topmask.origin = new Vector3D(0, 0, 1000);
+		camera.registerEntity(topmask);
+		camera.origin = new Vector3D(viewport.width / 2, viewport.height / 2, 0);
 		this.world.registerEntity(camera);
 		viewport.camera = camera;
 		let background: ImageModel = new ImageModel("blackhole.png", 1024, 768);

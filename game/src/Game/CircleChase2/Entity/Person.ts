@@ -1,4 +1,4 @@
-import { Entity, Composer } from "../../../v1/Core/Entity";
+import { Entity } from "../../../v1/Core/Entity";
 import { Model } from "../../../v1/Core/Model";
 import { PrimitiveModel } from "../../../v1/Core/PrimitiveModel";
 import { Circle } from "../../../v1/Foundation/Circle";
@@ -173,7 +173,7 @@ export class Person extends Entity {
 		this.registerEntity(new Leg(new Vector3D(-width / 2, 0, 0.1), width / 2, height / 2, true));
 		this.registerEntity(new Leg(new Vector3D(width / 2, 0, 0.1), width / 2, height / 2, false));
 		this.registerComponent(new WalkComponent(viewport));
-		this.registerComponent(new WaveComponent(0, 360, velocity));
+		//	this.registerComponent(new WaveComponent(0, 360, velocity));
 		this.origin = origin;
 		this.rotateZ = Math.floor(Math.random() * 360);
 	}

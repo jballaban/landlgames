@@ -1,5 +1,5 @@
 import { Component } from "../Core/Component";
-import { Entity, Composer } from "../Core/Entity";
+import { Entity } from "../Core/Entity";
 import { Logger } from "../Util/Logger";
 import { Model } from "../Core/Model";
 

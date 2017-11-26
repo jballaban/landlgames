@@ -21,10 +21,6 @@ export class Viewport {
 		this.canvas.destroy();
 	}
 
-	public update(): void {
-		// todo
-	}
-
 	public resize(width: number, height: number): void {
 		this.width = width;
 		this.height = height;
@@ -56,7 +52,6 @@ export class FullscreenViewport extends Viewport {
 	}
 
 	public update(): void {
-		super.update();
 		if (this.width !== this._width || this.height !== this._height) {
 			this.resize(this._width, this._height);
 			this._width = this.width;

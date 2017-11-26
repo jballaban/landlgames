@@ -1,52 +1,41 @@
-import { Entity, Composer } from "./Entity";
+import { Entity } from "./Entity";
 import { Vector3D } from "./Vector";
 import { Logger } from "../Util/Logger";
 import { Component } from "./Component";
+import { Composer } from "../Foundation/Composer";
+import { Camera } from "./Camera";
 
 export abstract class Model extends Entity {
 
 	constructor() {
 		super();
 		this.alpha = 1;
-		this.setAttribute("drawChanged", true);
-	}
-
-	public get drawChanged(): boolean {
-		return this.positionChanged || this.getCalculatedAttribute<boolean>("drawChanged", Composer.BooleanOr);
-	}
-
-	public set drawChanged(value: boolean) {
-		this.setAttribute("drawChanged", true);
 	}
 
 	public get alpha(): number { return this.getAttribute<number>("alpha"); }
 
 	public set alpha(value: number) {
-		this.drawChanged = true;
 		this.setAttribute("alpha", Math.min(1, value));
 	}
 
-	public get effectiveAlpha(): number {
-		if (this.drawChanged) {
-			this.setAttribute("effectiveAlpha", this.getCalculatedAttribute<number>("alpha", Composer.NumberMultiply));
-		}
-		return this.getAttribute<number>("effectiveAlpha");
+	public getEffectiveAlpha(): number {
+		return this.getEffectiveAttribute("alpha", Composer.NumberMultiply);
 	}
 
 	public abstract render(ctx: CanvasRenderingContext2D): void;
 
-	public draw(ctx: CanvasRenderingContext2D): void {
-		let position: Vector3D = this.effectiveOrigin;
-		let angle: number = this.getCalculatedAttribute("rotateZ", Composer.NumberAdd);
+	public draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
+		let position: Vector3D = this.getEffectiveOrigin(camera.cameraScale, camera.rotateZ);
+		let angle: number = this.getEffectiveRotateZ(camera.cameraRotateZ);
 		ctx.save();
-		if (this.effectiveAlpha !== 1) {
-			ctx.globalAlpha = this.effectiveAlpha;
+		if (this.getEffectiveAlpha() !== 1) {
+			ctx.globalAlpha = this.getEffectiveAlpha();
 		}
 		ctx.translate(position.x, position.y);
 		if (angle !== 0) {
 			ctx.rotate(angle * Math.PI / 180);
 		}
-		let scale: number = this.getCalculatedAttribute<number>("scale", Composer.NumberMultiply);
+		let scale: number = this.getEffectiveScale(camera.cameraScale);
 		if (scale !== 1) {
 			ctx.scale(scale, scale);
 		}

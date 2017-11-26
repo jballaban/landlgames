@@ -19,14 +19,11 @@ export class World extends Entity {
 	public registerEntity(entity: Entity): void {
 		super.registerEntity(entity as Entity);
 		this.scene.registerEvents(entity);
-
 	}
 
 	public registerComponent(component: Component): void {
 		super.registerComponent(component);
 		this.scene.registerEvents(component);
 	}
-
-
 
 }
