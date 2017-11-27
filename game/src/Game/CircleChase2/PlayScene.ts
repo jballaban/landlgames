@@ -22,11 +22,13 @@ export class PlayScene extends Scene {
 		this.world = new World(1024 * 10, 768 * 10, this);
 		let camera: Camera = new Camera();
 		let dot: PrimitiveModel = new PrimitiveModel(new Circle(10), new Color(255, 55, 55));
+		dot.layerIndex = this.hudLayerIndex;
 		camera.registerEntity(dot);
-		let mask: PrimitiveModel = new PrimitiveModel(new Rectangle(-viewport.width / 2, -viewport.height / 2, viewport.width, 10), new Color(20, 199, 0));
+		let mask: PrimitiveModel = new PrimitiveModel(new Rectangle(-viewport.width / 2, -viewport.height / 2, viewport.width, 100), new Color(20, 199, 0));
+		mask.layerIndex = this.hudLayerIndex;
 		camera.registerEntity(mask);
-		camera.origin = new Vector3D(this.world.width / 2, this.world.height / 2, 0);
-		camera.cameraScale = .1;//viewport.height / this.world.height;
+		camera.origin = new Vector3D(viewport.width / 2, viewport.height / 2, 0);
+		camera.cameraScale = 0.1;
 		viewport.camera = camera;
 		let background: ImageModel = new ImageModel("blackhole.png", 1024, 768);
 		let scale: number = 2;
@@ -40,7 +42,7 @@ export class PlayScene extends Scene {
 		//this.world.registerEntity(background);
 		let thing: PrimitiveModel = new PrimitiveModel(new Rectangle(0, 0, this.world.width, this.world.height), new Color(10, 23, 2));
 		thing.registerComponent(new FadeInComponent());
-		this.world.registerEntity(thing);
+		//	this.world.registerEntity(thing);
 		for (let i: number = 0; i < 10; i++) {
 			let scale: number = 1;
 			let person: Person = new Person(
@@ -53,7 +55,7 @@ export class PlayScene extends Scene {
 			person.scale = scale;
 			this.world.registerEntity(person);
 		}
-		this.world.registerEntity(camera);
+		//this.world.registerEntity(camera);
 	}
 
 }

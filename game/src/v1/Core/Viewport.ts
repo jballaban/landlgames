@@ -4,7 +4,7 @@ import { Model } from "./Model";
 import { Logger } from "../Util/Logger";
 import { Entity } from "./Entity";
 
-export class Viewport {
+export class Viewport extends Entity {
 
 	public canvas: Canvas;
 	public camera: Camera;
@@ -15,6 +15,7 @@ export class Viewport {
 		public width: number,
 		public height: number
 	) {
+		super();
 		this.canvas = new Canvas(x, y, this.width, this.height);
 	}
 
@@ -28,9 +29,12 @@ export class Viewport {
 		this.canvas.resize(width, height);
 	}
 
-	public draw(models: Model[]): void {
+	public clear() {
 		this.canvas.ctx.clearRect(this.x, this.y, this.width, this.height);
-		this.camera.draw(this, this.canvas.ctx, models);
+	}
+
+	public draw(models: Model[], hud: boolean): void {
+		this.camera.draw(this, this.canvas.ctx, models, hud);
 	}
 
 }

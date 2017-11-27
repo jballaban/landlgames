@@ -31,9 +31,19 @@ export class Camera extends Entity {
 		this.setAttribute("rotateZ", -value);
 	}
 
-	public draw(viewport: Viewport, ctx: CanvasRenderingContext2D, models: Model[]): void {
-		for (let i: number = 0; i < models.length; i++) {
-			models[i].draw(ctx, this);
+	public draw(viewport: Viewport, ctx: CanvasRenderingContext2D, models: Model[], hud: boolean): void {
+		if (hud) {
+			ctx.translate(-this.origin.x, -this.origin.y);
+			for (let i: number = 0; i < models.length; i++) {
+				models[i].draw(ctx, this.origin, 1, 0);
+			}
+			ctx.translate(this.origin.x, this.origin.y);
+		} else {
+			ctx.translate(-this.origin.x, -this.origin.y);
+			for (let i: number = 0; i < models.length; i++) {
+				models[i].draw(ctx, this.origin, this.cameraScale, this.cameraRotateZ);
+			}
+			ctx.translate(this.origin.x, this.origin.y);
 		}
 	}
 

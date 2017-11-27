@@ -10,7 +10,12 @@ export abstract class Model extends Entity {
 	constructor() {
 		super();
 		this.alpha = 1;
+		this.layerIndex = 0;
 	}
+
+	public get layerIndex(): number { return this.getAttribute<number>("layerIndex"); }
+
+	public set layerIndex(value: number) { this.setAttribute("layerIndex", value); }
 
 	public get alpha(): number { return this.getAttribute<number>("alpha"); }
 
@@ -24,9 +29,9 @@ export abstract class Model extends Entity {
 
 	public abstract render(ctx: CanvasRenderingContext2D): void;
 
-	public draw(ctx: CanvasRenderingContext2D, camera: Camera): void {
-		let position: Vector3D = this.getEffectiveOrigin(camera.origin, camera.cameraScale, camera.cameraRotateZ);
-		let angle: number = this.getEffectiveRotateZ(camera.cameraRotateZ);
+	public draw(ctx: CanvasRenderingContext2D, cameraOrigin: Vector3D, cameraScale: number, cameraRotateZ: number): void {
+		let position: Vector3D = this.getEffectiveOrigin(cameraOrigin, cameraScale, cameraRotateZ);
+		let angle: number = this.getEffectiveRotateZ(cameraRotateZ);
 		ctx.save();
 		if (this.getEffectiveAlpha() !== 1) {
 			ctx.globalAlpha = this.getEffectiveAlpha();
@@ -35,7 +40,7 @@ export abstract class Model extends Entity {
 		if (angle !== 0) {
 			ctx.rotate(angle * Math.PI / 180);
 		}
-		let scale: number = this.getEffectiveScale(camera.cameraScale);
+		let scale: number = this.getEffectiveScale(cameraScale);
 		if (scale !== 1) {
 			ctx.scale(scale, scale);
 		}
