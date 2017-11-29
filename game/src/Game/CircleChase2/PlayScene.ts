@@ -19,16 +19,16 @@ export class PlayScene extends Scene {
 	constructor() {
 		let viewport: Viewport = new FullscreenViewport();
 		super([viewport]);
-		this.world = new World(1024 * 10, 768 * 10, this);
+		this.world = new World(1024 * 1, 768 * 1, this);
 		let camera: Camera = new Camera();
 		let dot: PrimitiveModel = new PrimitiveModel(new Circle(10), new Color(255, 55, 55));
-		dot.layerIndex = this.hudLayerIndex;
+		dot.layerIndex = 1
 		camera.registerEntity(dot);
 		let mask: PrimitiveModel = new PrimitiveModel(new Rectangle(-viewport.width / 2, -viewport.height / 2, viewport.width, 100), new Color(20, 199, 0));
-		mask.layerIndex = this.hudLayerIndex;
+		mask.layerIndex = 0
 		camera.registerEntity(mask);
 		camera.origin = new Vector3D(viewport.width / 2, viewport.height / 2, 0);
-		camera.cameraScale = 0.1;
+		//camera.cameraScale = 0.1;
 		viewport.camera = camera;
 		let background: ImageModel = new ImageModel("blackhole.png", 1024, 768);
 		let scale: number = 2;

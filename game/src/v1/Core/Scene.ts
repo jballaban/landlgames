@@ -1,8 +1,10 @@
 import { World } from "./World";
 import { Viewport } from "./Viewport";
-import { IUpdate, IPostUpdate, Entity, IFrameStart, IPreUpdate } from "./Entity";
+import { IUpdate, IPostUpdate, Entity, IFrameStart, IPreUpdate, IRender } from "./Entity";
 import { Model } from "./Model";
 import { Layer } from "./Layer";
+import { Vector3D } from "./Vector";
+import { Camera } from "./Camera";
 
 export class Scene {
 	public modelLayers: Layer[] = new Array<Layer>();
@@ -14,13 +16,8 @@ export class Scene {
 
 	constructor(
 		public viewports: Viewport[]
-	) {
-		this.modelLayers.push(new Layer(false)); // world
-		this.modelLayers.push(new Layer(true)); // hud
-	}
+	) { }
 
-	public worldLayerIndex: number = 0;
-	public hudLayerIndex: number = 1;
 
 	public destroy(): void {
 		for (let i: number = 0; i < this.viewports.length; i++) {
@@ -52,7 +49,7 @@ export class Scene {
 		}
 		for (let layer: number = 0; layer < this.modelLayers.length; layer++) {
 			for (let i: number = 0; i < this.viewports.length; i++) {
-				this.viewports[i].draw(this.modelLayers[layer].entities as Model[], this.modelLayers[layer].cameraIndependent);
+				this.viewports[i].draw(this.modelLayers[layer].entities as Model[]);
 			}
 		}
 	}
@@ -60,6 +57,9 @@ export class Scene {
 	public registerEvents(obj: any): void {
 		// tslint:disable-next-line:no-string-literal
 		if (obj instanceof Model) {
+			while (this.modelLayers.length <= obj.layerIndex) {
+				this.modelLayers.push(new Layer());
+			}
 			this.modelLayers[obj.layerIndex].entities.push(obj);
 		}
 		// tslint:disable-next-line:no-string-literal

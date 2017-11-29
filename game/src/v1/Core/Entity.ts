@@ -20,9 +20,14 @@ export interface IPostUpdate {
 	postUpdate(): void;
 }
 
+export interface IRender {
+	render(): void;
+}
+
 export class Entity {
 	public parent: Entity = null;
 	public components: Component[] = new Array<Component>();
+	private typedComponents = new Map<string, Component>();
 	public entities: Entity[] = new Array<Entity>();
 	private attributes: Map<string, any> = new Map<string, any>();
 
@@ -30,6 +35,10 @@ export class Entity {
 		this.setAttribute("origin", new Vector3D(0, 0, 0));
 		this.setAttribute("rotateZ", 0);
 		this.setAttribute("scale", 1);
+	}
+
+	public getComponent<T extends Component>(arg: any): T {
+		return this.typedComponents.get(typeof arg) as T;
 	}
 
 	public getEffectiveRotateZ(cameraRotateZ: number): number {

@@ -33,8 +33,8 @@ export class Viewport extends Entity {
 		this.canvas.ctx.clearRect(this.x, this.y, this.width, this.height);
 	}
 
-	public draw(models: Model[], hud: boolean): void {
-		this.camera.draw(this, this.canvas.ctx, models, hud);
+	public draw(models: Model[]): void {
+		this.camera.draw(this.canvas.ctx, models);
 	}
 
 }

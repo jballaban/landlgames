@@ -49,6 +49,10 @@ module.exports = function (grunt) {
 						dest: './dist/circlechase2/index.html',
 					},
 					{
+						src: './src/Game/CircleChase3/index.html.ejs',
+						dest: './dist/circlechase3/index.html',
+					},
+					{
 						cwd: './src/Game/CircleChase/asset/',
 						dest: './dist/circlechase/asset',
 						src: '**',
@@ -57,6 +61,12 @@ module.exports = function (grunt) {
 					{
 						cwd: './src/Game/CircleChase2/asset/',
 						dest: './dist/circlechase2/asset',
+						src: '**',
+						expand: true
+					},
+					{
+						cwd: './src/Game/CircleChase3/asset/',
+						dest: './dist/circlechase3/asset',
 						src: '**',
 						expand: true
 					},
