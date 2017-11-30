@@ -32,7 +32,7 @@ export class Camera extends Entity implements IEventManager {
 		return rootScale == null ? this.height : this.height * rootScale.y;
 	}
 
-	public registerEntity(entity: Entity): Entity {
+	public registerEntity<T extends Entity>(entity: T): T {
 		super.registerEntity(entity);
 		entity.registerRecursiveEvents(this);
 		return entity;

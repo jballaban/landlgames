@@ -27,6 +27,7 @@ export class Scene implements IEventManager {
 	}
 
 	public render(): void {
+		this.canvas.ctx.clearRect(this.canvas.x, this.canvas.y, this.canvas.width, this.canvas.height);
 		for (let i = 0; i < this.cameras.length; i++) {
 			this.cameras[i].renderer.render(this.canvas.ctx);
 		}
@@ -37,7 +38,7 @@ export class Scene implements IEventManager {
 		// todo
 	}
 
-	public registerEntity(entity: Entity): Entity {
+	public registerEntity<T extends Entity>(entity: T): T {
 		this.entities.push(entity);
 		entity.registerRecursiveEvents(this);
 		entity.onAttach(this);

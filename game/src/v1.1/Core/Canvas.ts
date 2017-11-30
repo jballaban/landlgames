@@ -1,7 +1,7 @@
 export class Canvas {
 	public ctx: CanvasRenderingContext2D;
 
-	public constructor(x: number, y: number, width: number, height: number) {
+	public constructor(public x: number, public y: number, public width: number, public height: number) {
 		var canv: HTMLCanvasElement = document.createElement("canvas");
 		document.body.appendChild(canv);
 		canv.style.left = x + "px";

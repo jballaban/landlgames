@@ -19,7 +19,7 @@ export class Entity {
 		return this.getComponent<TransformComponent>(TransformComponent);
 	}
 
-	public registerEntity(entity: Entity): Entity {
+	public registerEntity<T extends Entity>(entity: T): T {
 		this.entities.push(entity);
 		entity.onAttach(this);
 		this.events.fire("registerEntity", entity);
