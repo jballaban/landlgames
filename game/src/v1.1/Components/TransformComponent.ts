@@ -1,10 +1,26 @@
 import { Component } from "../Core/Component";
 import { Vector3D } from "../Core/Vector";
+import { Logger } from "../Utils/Logger";
 
 export class TransformComponent extends Component {
 	public origin: Vector3D = new Vector3D(0, 0, 0);
 	public scale: Vector3D = new Vector3D(1, 1, 1);
 	public rotate: Vector3D = new Vector3D(0, 0, 0);
+
+	public applyRecursive(ctx: CanvasRenderingContext2D): void {
+		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
+		if (ancestor != null) {
+			ancestor.applyRecursive(ctx);
+		}
+		this.apply(ctx);
+	}
+
+	public apply(ctx: CanvasRenderingContext2D): void {
+		ctx.translate(this.origin.x, this.origin.y);
+		ctx.scale(this.scale.x, this.scale.y);
+		ctx.rotate(this.rotate.z * Math.PI / 180);
+		//	ctx.translate(-this.origin.x, -this.origin.y);
+	}
 
 	public getEffectiveRotate(root: Vector3D): Vector3D {
 		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
@@ -17,15 +33,12 @@ export class TransformComponent extends Component {
 		return this.rotate.clone().add(ancestor.getEffectiveRotate(root));
 	}
 
-	public getEffectiveScale(root: Vector3D): Vector3D {
+	public getEffectiveScale(): Vector3D {
 		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
 		if (ancestor == null) {
-			if (root == null) {
-				return this.scale.clone();
-			}
-			return this.scale.clone().cross(root);
+			return this.scale.clone();
 		}
-		return this.scale.clone().cross(ancestor.getEffectiveScale(root));
+		return this.scale.clone().cross(ancestor.getEffectiveScale());
 	}
 
 	public getEffectiveOrigin(rootOrigin: Vector3D, rootScale: Vector3D, rootRotate: Vector3D): Vector3D {
@@ -46,7 +59,7 @@ export class TransformComponent extends Component {
 			origin.cross(rootScale);
 		}
 		else if (ancestor != null) {
-			origin.cross(ancestor.getEffectiveScale(rootScale));
+			origin.cross(ancestor.getEffectiveScale());
 		}
 		let rads: number = 0;
 		if (ancestor == null && rootRotate != null) {

@@ -10,9 +10,6 @@ export class Color extends Texture {
 	}
 
 	public apply(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number) {
-		//var grd = ctx.createLinearGradient(0, 0, this.width, this.height);
-		//grd.addColorStop(0, "rgba(255,0,0,.5)");
-		//grd.addColorStop(1, this.color);
 		ctx.fillStyle = this.toString();
 		ctx.fillRect(x, y, width, height);
 	}

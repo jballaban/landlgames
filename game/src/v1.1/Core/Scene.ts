@@ -40,11 +40,11 @@ export class Scene implements IEventManager {
 
 	public registerEntity<T extends Entity>(entity: T): T {
 		this.entities.push(entity);
-		entity.registerRecursiveEvents(this);
 		entity.onAttach(this);
 		if (entity instanceof Camera) {
 			this.cameras.push(entity);
 		}
+		entity.registerRecursiveEvents(this);
 		return entity;
 	}
 

@@ -50,6 +50,16 @@ export class Entity {
 		return this.components.get(type.name) as T;
 	}
 
+	public getAncestor<T extends Entity>(type: Function): T {
+		if (this.parent == null) {
+			return null;
+		}
+		if (this.parent instanceof type) {
+			return this.parent as T;
+		}
+		return this.parent.getAncestor<T>(type);
+	}
+
 	public getAncestorComponent<T extends Component>(type: Function): T {
 		if (this.parent == null) {
 			return null;

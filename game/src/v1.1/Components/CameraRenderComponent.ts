@@ -23,7 +23,44 @@ export class CameraRenderComponent extends RenderComponent {
 
 	private get camera(): Camera { return this.entity as Camera; }
 
-	public render(ctx: CanvasRenderingContext2D, cameraOrigin?: Vector3D, cameraScale?: Vector3D, cameraRotate?: Vector3D) {
+	public render(ctx: CanvasRenderingContext2D) {
+		ctx.save();
+		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
+		if (ancestor != null)
+			ancestor.applyRecursive(ctx);
+		ctx.beginPath();
+		ctx.rect(
+			this.entity.transform.origin.x - this.camera.width / 2,
+			this.entity.transform.origin.y - this.camera.height / 2,
+			this.camera.width,
+			this.camera.height);
+		ctx.clip();
+
+		ctx.save();
+		this.entity.transform.apply(ctx);
+
+		let scale = ancestor == null ? new Vector3D(1, 1, 1) : ancestor.getEffectiveScale();
+		//	scale = this.entity.transform.scale;
+		ctx.translate(-this.camera.width / 2, -this.camera.height / 2);
+		//	ctx.translate((-this.camera.width * scale.x) / 2, (-this.camera.height * scale.y) / 2);
+		//this.entity.transform.applyRecursive(ctx);
+		//this.entity.transform.apply(ctx);
+		//	let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
+		//	let scale = ancestor == null ? new Vector3D(1, 1, 1) : ancestor.scale;
+		//ctx.translate(-this.camera.width / 2, -this.camera.height / 2);
+		this.camera.events.fire("render", ctx, null, null, null);
+		ctx.restore();
+
+		this.camera.events.fire("renderChild", ctx, null, null, null);
+		ctx.strokeStyle = "rgb(213,38,181)";
+		ctx.lineWidth = 3;
+		ctx.strokeRect(
+			this.entity.transform.origin.x - this.camera.width / 2,
+			this.entity.transform.origin.y - this.camera.height / 2,
+			this.camera.width - 1,
+			this.camera.height - 1);
+		ctx.restore();
+		/* 
 		let scale = this.entity.transform.getEffectiveScale(cameraScale);
 		let width = this.camera.getEffectiveWidth(cameraScale);
 		Logger.log("camera width " + width);
@@ -34,14 +71,12 @@ export class CameraRenderComponent extends RenderComponent {
 		let offset: Vector3D = this.getEffectiveOffset(scale);
 		//Logger.log(offset + " scale" + scale);
 		ctx.save();
-		//ctx.beginPath();
-		//	ctx.rect(origin.x - width / 2, origin.y - height / 2, width, height);
-		//	ctx.clip();
+	
 		ctx.translate(origin.x, origin.y);
 		ctx.rotate(rotate.z * Math.PI / 180);
 		//ctx.scale(scale.x, scale.y);
 		ctx.translate(-width / 2 - offset.x, -height / 2 - offset.y);
 		this.camera.events.fire("render", ctx, origin, scale, null);
-		ctx.restore();
+		ctx.restore(); */
 	}
 }

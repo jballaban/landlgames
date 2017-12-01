@@ -17,7 +17,7 @@ export class Gradient extends Texture {
 			grd.addColorStop(this.stops[i].percent / 100, this.stops[i].color.toString());
 		}
 		ctx.fillStyle = grd
-		ctx.fillRect(0, 0, width, height);
+		ctx.fillRect(x, y, width, height);
 	}
 
 }

@@ -9,7 +9,6 @@ import { CameraRenderComponent } from "../Components/CameraRenderComponent";
 
 export class Camera extends Entity implements IEventManager {
 
-	private renders: RenderComponent[] = new Array<RenderComponent>();
 	constructor(
 		roots: Entity[],
 		public width: number,
@@ -24,14 +23,6 @@ export class Camera extends Entity implements IEventManager {
 
 	public get renderer(): CameraRenderComponent { return this.getComponent<CameraRenderComponent>(CameraRenderComponent); }
 
-	public getEffectiveWidth(rootScale: Vector3D): number {
-		return rootScale == null ? this.width : this.width * rootScale.x;
-	}
-
-	public getEffectiveHeight(rootScale: Vector3D): number {
-		return rootScale == null ? this.height : this.height * rootScale.y;
-	}
-
 	public registerEntity<T extends Entity>(entity: T): T {
 		super.registerEntity(entity);
 		entity.registerRecursiveEvents(this);
@@ -40,9 +31,14 @@ export class Camera extends Entity implements IEventManager {
 
 	public registerEvents(component: Component) {
 		const eventList = ["render"];
+		let isChild = component.entity.getAncestor<this>(this.constructor);
 		for (let i: number = 0; i < eventList.length; i++) {
 			if (component[eventList[i]]) {
-				this.events.listen(eventList[i], component[eventList[i]].bind(component));
+				if (!isChild) {
+					this.events.listen(eventList[i], component[eventList[i]].bind(component));
+				} else {
+					this.events.listen(eventList[i] + "Child", component[eventList[i]].bind(component));
+				}
 			}
 		}
 	}

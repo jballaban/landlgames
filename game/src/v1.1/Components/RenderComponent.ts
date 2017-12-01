@@ -5,5 +5,6 @@ import { Vector3D } from "../Core/Vector";
 
 export abstract class RenderComponent extends Component {
 
-	public abstract render(ctx: CanvasRenderingContext2D, cameraOrigin: Vector3D, cameraScale: Vector3D, cameraRotate: Vector3D);
+	public abstract render(ctx: CanvasRenderingContext2D);
+
 }
