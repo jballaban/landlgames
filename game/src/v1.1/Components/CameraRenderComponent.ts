@@ -54,10 +54,19 @@ export class CameraRenderComponent extends RenderComponent {
 		//	let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
 		//	let scale = ancestor == null ? new Vector3D(1, 1, 1) : ancestor.scale;
 		//ctx.translate(-this.camera.width / 2, -this.camera.height / 2);
-		this.camera.events.fire("render", ctx, null, null, null);
+
+		//ctx.save(); // need to organize this by enity
+		this.camera.events.fire("preRender", ctx);
+		this.camera.events.fire("render", ctx);
+		//ctx.restore();
+
 		ctx.restore();
 
-		this.camera.childEvents.fire("render", ctx, null, null, null);
+		//	ctx.save(); // todo make this entity based and remove save/restores
+		this.camera.childEvents.fire("preRender", ctx);
+		this.camera.childEvents.fire("render", ctx);
+		//	ctx.restore();
+
 		ctx.strokeStyle = "rgb(213,38,181)";
 		ctx.lineWidth = 3;
 		ctx.strokeRect(

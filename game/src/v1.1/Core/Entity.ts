@@ -3,7 +3,6 @@ import { Scene } from "./Scene";
 import { TransformComponent } from "../Components/TransformComponent";
 import { EventHandler } from "./EventHandler";
 import { Logger } from "../Utils/Logger";
-import { IEventManager } from "./IEventManager";
 
 export class Entity {
 	private components = new Map<string, Component>();

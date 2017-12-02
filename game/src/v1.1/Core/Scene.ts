@@ -2,7 +2,6 @@ import { Entity } from "./Entity";
 import { Component } from "./Component";
 import { Canvas } from "./Canvas";
 import { Camera } from "./Camera";
-import { IEventManager } from "./IEventManager";
 import { EventHandler } from "./EventHandler";
 
 export class Scene {

@@ -4,7 +4,6 @@ import { TransformComponent } from "./TransformComponent";
 import { Vector3D } from "../Core/Vector";
 import { RenderComponent } from "./RenderComponent";
 import { Texture } from "../Textures/Texture";
-import { IEventManager } from "../Core/IEventManager";
 import { EventHandler } from "../Core/EventHandler";
 
 export class RectRenderComponent extends Component {

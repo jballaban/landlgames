@@ -25,6 +25,7 @@ export class BounceComponent extends Component {
 			this.end = temp;
 		}
 	}
+
 	public fixedUpdate(): void {
 		let scale: Vector3D = this.entity.transform.scale;
 		scale.add(this.velocity);
