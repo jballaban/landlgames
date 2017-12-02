@@ -5,14 +5,19 @@ import { Vector3D } from "../Core/Vector";
 import { RenderComponent } from "./RenderComponent";
 import { Camera } from "../Core/Camera";
 import { Entity } from "../Core/Entity";
+import { EventHandler } from "../Core/EventHandler";
 
 export class CameraRenderComponent extends RenderComponent {
 
 	public offset: Vector3D = new Vector3D(0, 0, 0);
 
-	public getEffectiveOffset(rootScale: Vector3D): Vector3D {
-		return this.offset.clone().cross(rootScale);
+	public registerEvents(events: EventHandler): void {
+		events.listen("render", this.render.bind(this));
 	}
+
+	/* 	public getEffectiveOffset(rootScale: Vector3D): Vector3D {
+			return this.offset.clone().cross(rootScale);
+		} */
 
 	public onAttach(entity: Entity) {
 		if (entity instanceof Camera) {
@@ -52,7 +57,7 @@ export class CameraRenderComponent extends RenderComponent {
 		this.camera.events.fire("render", ctx, null, null, null);
 		ctx.restore();
 
-		this.camera.events.fire("renderChild", ctx, null, null, null);
+		this.camera.childEvents.fire("render", ctx, null, null, null);
 		ctx.strokeStyle = "rgb(213,38,181)";
 		ctx.lineWidth = 3;
 		ctx.strokeRect(

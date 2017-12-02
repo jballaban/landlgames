@@ -4,11 +4,17 @@ import { TransformComponent } from "./TransformComponent";
 import { Vector3D } from "../Core/Vector";
 import { RenderComponent } from "./RenderComponent";
 import { Texture } from "../Textures/Texture";
+import { IEventManager } from "../Core/IEventManager";
+import { EventHandler } from "../Core/EventHandler";
 
-export class RectRenderComponent extends RenderComponent {
+export class RectRenderComponent extends Component {
 
 	public constructor(public width: number, public height: number, public texture: Texture) {
 		super();
+	}
+
+	public registerEvents(events: EventHandler): void {
+		events.listen("render", this.render.bind(this));
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {

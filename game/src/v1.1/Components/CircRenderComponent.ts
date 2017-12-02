@@ -4,11 +4,16 @@ import { TransformComponent } from "./TransformComponent";
 import { Vector3D } from "../Core/Vector";
 import { RenderComponent } from "./RenderComponent";
 import { Texture } from "../Textures/Texture";
+import { EventHandler } from "../Core/EventHandler";
 
 export class CircRenderComponent extends RenderComponent {
 
 	public constructor(public radius: number, public texture: Texture) {
 		super();
+	}
+
+	public registerEvents(events: EventHandler): void {
+		events.listen("render", this.render.bind(this));
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {

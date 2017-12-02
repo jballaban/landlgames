@@ -1,11 +1,16 @@
 import { Component } from "../Core/Component";
 import { Vector3D } from "../Core/Vector";
 import { Logger } from "../Utils/Logger";
+import { EventHandler } from "../Core/EventHandler";
 
 export class PhysicsComponent extends Component {
 	constructor(private force: Vector3D, private min: Vector3D, private max: Vector3D) {
 		super();
 		Logger.log(this.force);
+	}
+
+	public registerEvents(events: EventHandler): void {
+		events.listen("fixedUpdate", this.fixedUpdate.bind(this));
 	}
 
 	public fixedUpdate(): void {

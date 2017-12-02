@@ -1,11 +1,11 @@
 import { Entity } from "./Entity";
 import { Component } from "./Component";
-import { EventHandler } from "../../v0/Core/EventHandler";
 import { Canvas } from "./Canvas";
 import { Camera } from "./Camera";
 import { IEventManager } from "./IEventManager";
+import { EventHandler } from "./EventHandler";
 
-export class Scene implements IEventManager {
+export class Scene {
 	private entities: Entity[] = new Array<Entity>();
 	private cameras: Camera[] = new Array<Camera>();
 	private events: EventHandler = new EventHandler();
@@ -44,17 +44,8 @@ export class Scene implements IEventManager {
 		if (entity instanceof Camera) {
 			this.cameras.push(entity);
 		}
-		entity.registerRecursiveEvents(this);
+		entity.registerRecursiveEvents(this.events);
 		return entity;
-	}
-
-	public registerEvents(component: Component): void {
-		const eventList = ["fixedUpdate", "update", "lateUpdate"];
-		for (let i: number = 0; i < eventList.length; i++) {
-			if (component[eventList[i]]) {
-				this.events.listen(eventList[i], component[eventList[i]].bind(component));
-			}
-		}
 	}
 
 }

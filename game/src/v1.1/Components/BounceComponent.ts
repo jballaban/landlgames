@@ -2,6 +2,7 @@ import { Component } from "../Core/Component";
 import { Entity } from "../Core/Entity";
 import { Vector3D } from "../Core/Vector";
 import { Logger } from "../Utils/Logger";
+import { EventHandler } from "../Core/EventHandler";
 
 export class BounceComponent extends Component {
 	private start: Vector3D;
@@ -10,6 +11,11 @@ export class BounceComponent extends Component {
 		super();
 		this.velocity = new Vector3D(velocity, velocity, 0);
 	}
+
+	public registerEvents(events: EventHandler): void {
+		events.listen("fixedUpdate", this.fixedUpdate.bind(this));
+	}
+
 	public onAttach(entity: Entity) {
 		super.onAttach(entity);
 		this.start = entity.transform.scale.clone();

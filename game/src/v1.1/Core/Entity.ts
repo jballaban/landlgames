@@ -26,18 +26,20 @@ export class Entity {
 		return entity;
 	}
 
-	public registerRecursiveEvents(eventmanager: IEventManager): void {
+	public registerRecursiveEvents(events: EventHandler): void {
 		let components: Component[] = Array.from(this.components.values());
 		for (let i = 0; i < components.length; i++) {
-			eventmanager.registerEvents(components[i]);
+			components[i].registerEvents(events);
 		}
 		for (let i = 0; i < this.entities.length; i++) {
-			this.entities[i].registerRecursiveEvents(eventmanager);// recursive
+			this.entities[i].registerRecursiveEvents(events);// recursive
 		}
-		this.events.listen("registerComponent", eventmanager.registerEvents.bind(eventmanager));
+		this.events.listen("registerComponent", function (component) {
+			component.registerEvents(events);
+		}.bind(events));
 		this.events.listen("registerEntity", function (entity) {
-			entity.registerRecursiveEvents(eventmanager);
-		}.bind(eventmanager));
+			entity.registerRecursiveEvents(events);
+		}.bind(events));
 	}
 
 	public onAttach(parent: Entity | Scene): void {

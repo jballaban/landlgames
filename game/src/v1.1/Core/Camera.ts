@@ -1,13 +1,15 @@
 import { Entity } from "./Entity";
 import { RenderComponent } from "../Components/RenderComponent";
-import { EventHandler } from "../../v0/Core/EventHandler";
 import { Component } from "./Component";
 import { IEventManager } from "./IEventManager";
 import { Vector3D } from "./Vector";
 import { Logger } from "../Utils/Logger";
 import { CameraRenderComponent } from "../Components/CameraRenderComponent";
+import { EventHandler } from "./EventHandler";
 
-export class Camera extends Entity implements IEventManager {
+export class Camera extends Entity {
+
+	public childEvents: EventHandler = new EventHandler();
 
 	constructor(
 		roots: Entity[],
@@ -17,7 +19,7 @@ export class Camera extends Entity implements IEventManager {
 		super();
 		this.registerComponent(new CameraRenderComponent());
 		for (let i: number = 0; i < roots.length; i++) {
-			roots[i].registerRecursiveEvents(this);
+			roots[i].registerRecursiveEvents(this.events);
 		}
 	}
 
@@ -25,21 +27,8 @@ export class Camera extends Entity implements IEventManager {
 
 	public registerEntity<T extends Entity>(entity: T): T {
 		super.registerEntity(entity);
-		entity.registerRecursiveEvents(this);
+		entity.registerRecursiveEvents(this.childEvents);
 		return entity;
 	}
 
-	public registerEvents(component: Component) {
-		const eventList = ["render"];
-		let isChild = component.entity.getAncestor<this>(this.constructor);
-		for (let i: number = 0; i < eventList.length; i++) {
-			if (component[eventList[i]]) {
-				if (!isChild) {
-					this.events.listen(eventList[i], component[eventList[i]].bind(component));
-				} else {
-					this.events.listen(eventList[i] + "Child", component[eventList[i]].bind(component));
-				}
-			}
-		}
-	}
 }
