@@ -38,10 +38,11 @@ export class CameraRenderComponent extends RenderComponent {
 
 		ctx.save();
 		this.entity.transform.apply(ctx);
-
-		let scale = ancestor == null ? new Vector3D(1, 1, 1) : ancestor.getEffectiveScale();
 		//	scale = this.entity.transform.scale;
 		ctx.translate(-this.camera.width / 2, -this.camera.height / 2);
+		let scale = this.entity.transform.scale;
+		ctx.translate(-this.offset.x, -this.offset.y);
+		//ctx.translate(-this.offset.x / scale.x, this.offset.y);
 		//	ctx.translate((-this.camera.width * scale.x) / 2, (-this.camera.height * scale.y) / 2);
 		//this.entity.transform.applyRecursive(ctx);
 		//this.entity.transform.apply(ctx);

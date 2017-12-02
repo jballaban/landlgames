@@ -11,6 +11,7 @@ import { Color } from "../../v1.1/Textures/Color";
 import { Gradient } from "../../v1.1/Textures/Gradient";
 import { CircRenderComponent } from "../../v1.1/Components/CircRenderComponent";
 import { BounceComponent } from "../../v1.1/Components/BounceComponent";
+import { PhysicsComponent } from "../../v1.1/Components/PhysicsComponent";
 
 export class PlayScene extends Scene {
 	constructor() {
@@ -27,10 +28,10 @@ export class PlayScene extends Scene {
 		//	hud.transform.origin = new Vector3D(leftpanewidth / 2, window.innerHeight / 4, 0);
 
 		// world
-		let worldsize = 500;
+		let worldsize = 1000;
 		let world = this.registerEntity(new Entity())
 		let objects = world.registerEntity(new Entity())
-			.registerComponent(new RectRenderComponent(worldsize, worldsize, new Gradient([
+			.registerComponent(new RectRenderComponent(worldsize, worldsize / 2, new Gradient([
 				{ percent: 0, color: new Color(10, 100, 10) },
 				{ percent: 100, color: new Color(200, 200, 200) }
 			])))
@@ -41,28 +42,36 @@ export class PlayScene extends Scene {
 			//.registerComponent(new LogRenderComponent(i.toString()))
 			//	.registerComponent(new RotateComponent())
 			//.entity;
-			entity.transform.origin = new Vector3D(i * ((worldsize) / 10) + 25, i * ((worldsize) / 10) + 25, 0);
+			entity.registerComponent(new PhysicsComponent(
+				new Vector3D(Math.random() * 2 - 1, Math.random() * 2 - 1, 0),
+				new Vector3D(0, 0, 0),
+				new Vector3D(worldsize, worldsize / 2, 0)
+			))
+
+
+			entity.transform.origin = new Vector3D(i * ((worldsize / 2) / 10) + 25, i * ((worldsize / 2) / 10) + 25, 0);
 			entity.registerEntity(new Entity())
 				.registerComponent(new CircRenderComponent(25, new Gradient([
 					{ percent: 0, color: Color.getRandom() },
 					{ percent: 100, color: Color.getRandom() }
 				])))
+
 			//.entity.transform.origin = new Vector3D(-25, -25, 0);
 		}
-		let mirror: Camera = world.registerEntity<Camera>(new Camera([objects], worldsize, 300))
+		let mirror: Camera = world.registerEntity<Camera>(new Camera([objects], worldsize, worldsize / 2))
 			.registerComponent(new CircRenderComponent(10, new Color(255, 0, 0)))
 			.entity as Camera;
-		mirror.transform.origin = new Vector3D(worldsize / 2, worldsize + 150, 0);
+		mirror.transform.origin = new Vector3D(mirror.width / 2, worldsize - mirror.height / 2, 0);
 		//mirror.registerComponent(new RotateComponent(.2));
 		//	mirror.renderer.offset.y += worldsize - 300;
 		mirror.transform.rotate.z = 180;
 		mirror.transform.scale = new Vector3D(-1, 1, 0);
 		let worldcamera: Camera = this.registerEntity<Camera>(new Camera([world], window.innerWidth - leftpanewidth, window.innerHeight));
-		worldcamera.registerComponent(new RotateComponent(.1));
-		//	worldcamera.renderer.offset = new Vector3D(400, 100, 0);
+		worldcamera.registerComponent(new RotateComponent(.2));
+		//	worldcamera.renderer.offset = new Vector3D(200, 0, 0);
 		worldcamera.transform.origin = new Vector3D(worldcamera.width / 2 + leftpanewidth, worldcamera.height / 2, 0);
+		worldcamera.transform.scale = new Vector3D(2, 2, 1);
 		worldcamera.registerComponent(new BounceComponent(.001, new Vector3D(.5, .5, 0)))
-		//worldcamera.transform.scale = new Vector3D(.5, 0.5, 1);
 		worldcamera.registerEntity(new Entity())
 			.registerComponent(new CircRenderComponent(10, new Color(255, 0, 0)))
 		//	worldcamera.transform.rotate.z = 90;
@@ -80,6 +89,7 @@ export class PlayScene extends Scene {
 		minicamera.transform.origin = new Vector3D(minicamera.width / 2 + cameraboxsize * .05, minicamera.height / 2 + cameraboxsize * .05, 0);
 		minicamera.transform.scale = new Vector3D(minicamera.width / worldsize, minicamera.height / worldsize, 0);
 		minicamera.registerComponent(new CircRenderComponent(10, new Color(255, 0, 0)))
+		minicamera.renderer.offset = new Vector3D(-minicamera.width / 2 + worldsize / 2, -minicamera.height / 2 + worldsize / 2, 0);
 		//	minicamera.registerComponent(new RotateComponent())
 	}
 }

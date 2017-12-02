@@ -6,7 +6,6 @@ export class Circle implements IShape {
 	) { }
 
 	public draw(ctx: CanvasRenderingContext2D, color: string): void {
-		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.arc(0, 0, this.r, 0, 2 * Math.PI);
 		ctx.fill();
