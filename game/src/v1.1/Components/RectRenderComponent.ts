@@ -5,11 +5,32 @@ import { Vector3D } from "../Core/Vector";
 import { RenderComponent } from "./RenderComponent";
 import { Texture } from "../Textures/Texture";
 import { EventHandler } from "../Core/EventHandler";
+import { MemoryCanvas } from "../Core/MemoryCanvas";
 
 export class RectRenderComponent extends Component {
 
+	private cache: CanvasRenderingContext2D;
+	private renderedCache: CanvasRenderingContext2D;
+	public renderCacheDirty: boolean = true;
+
 	public constructor(public width: number, public height: number, public texture: Texture) {
 		super();
+		this.cache = new MemoryCanvas(width, height).ctx;
+		this.renderedCache = new MemoryCanvas(width, height).ctx;
+		this.buildCache();
+	}
+
+	public buildCache() {
+		this.cache.clearRect(0, 0, this.cache.canvas.width, this.cache.canvas.height);
+		this.texture.apply(this.cache, 0, 0, this.width, this.height);
+	}
+
+	public buildRenderedCache() {
+		this.renderedCache.clearRect(0, 0, this.renderedCache.canvas.width, this.renderedCache.canvas.height);
+		this.entity.preRender(this.renderedCache);
+		this.entity.transform.apply(this.renderedCache);
+		this.renderedCache.drawImage(this.cache.canvas, 0, 0);
+		this.renderCacheDirty = false;
 	}
 
 	public registerEvents(events: EventHandler): void {
@@ -18,18 +39,17 @@ export class RectRenderComponent extends Component {
 
 	public render(ctx: CanvasRenderingContext2D): void {
 		ctx.save();
-		this.entity.transform.applyRecursive(ctx);
-		this.texture.apply(ctx, 0, 0, this.width, this.height);
+		if (this.renderCacheDirty) {
+			this.buildRenderedCache();
+		}
+		if (this.entity.parent != null) {
+			this.entity.parent.transform.applyRecursive(ctx);
+		}
+		ctx.drawImage(this.renderedCache.canvas, 0, 0);
+
+		/* 	this.entity.transform.applyRecursive(ctx);
+			this.entity.preRender(ctx);
+			ctx.drawImage(this.cache.canvas, 0, 0); */
 		ctx.restore();
-		//Logger.log(this.entity.transform.origin);
-		/* 	let origin = this.entity.transform.getEffectiveOrigin(cameraOrigin, cameraScale, cameraRotate);
-			let scale = this.entity.transform.getEffectiveScale(cameraScale);
-			let rotate = this.entity.transform.getEffectiveRotate(cameraRotate);
-			ctx.save();
-			ctx.translate(origin.x, origin.y);
-			ctx.rotate(rotate.z * Math.PI / 180);
-			//	ctx.translate(-this.width * scale.x / 2, -this.height * scale.y / 2);
-			this.texture.apply(ctx, 0, 0, this.width * scale.x, this.height * scale.y);
-			ctx.restore(); */
 	}
 }

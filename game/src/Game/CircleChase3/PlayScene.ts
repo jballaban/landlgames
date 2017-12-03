@@ -12,6 +12,8 @@ import { Gradient } from "../../v1.1/Textures/Gradient";
 import { CircRenderComponent } from "../../v1.1/Components/CircRenderComponent";
 import { BounceComponent } from "../../v1.1/Components/BounceComponent";
 import { PhysicsComponent } from "../../v1.1/Components/PhysicsComponent";
+import { AlphaComponent } from "../../v1.1/Components/AlphaComponent";
+import { ShadowComponent } from "../../v1.1/Components/ShadowComponent";
 
 export class PlayScene extends Scene {
 	constructor() {
@@ -28,15 +30,17 @@ export class PlayScene extends Scene {
 		//	hud.transform.origin = new Vector3D(leftpanewidth / 2, window.innerHeight / 4, 0);
 
 		// world
-		let worldsize = 1000;
+		let worldsize = 2000;
 		let world = this.registerEntity(new Entity())
+		world.registerComponent(new AlphaComponent(.5));
 		let objects = world.registerEntity(new Entity())
 			.registerComponent(new RectRenderComponent(worldsize, worldsize / 2, new Gradient([
 				{ percent: 0, color: new Color(10, 100, 10) },
 				{ percent: 100, color: new Color(200, 200, 200) }
 			])))
 			.entity;
-		for (let i = 0; i < 10; i++) {
+		let count: number = 1000;
+		for (let i = 0; i < count; i++) {
 			let entity =
 				objects.registerEntity(new Entity())
 			//.registerComponent(new LogRenderComponent(i.toString()))
@@ -47,9 +51,9 @@ export class PlayScene extends Scene {
 				new Vector3D(0, 0, 0),
 				new Vector3D(worldsize, worldsize / 2, 0)
 			))
+			entity.registerComponent(new ShadowComponent());
 
-
-			entity.transform.origin = new Vector3D(i * ((worldsize / 2) / 10) + 25, i * ((worldsize / 2) / 10) + 25, 0);
+			entity.transform.origin = new Vector3D(i * ((worldsize / 2) / count) + 25, i * ((worldsize / 2) / count) + 25, 0);
 			entity.registerEntity(new Entity())
 				.registerComponent(new CircRenderComponent(25, new Gradient([
 					{ percent: 0, color: Color.getRandom() },
@@ -70,15 +74,15 @@ export class PlayScene extends Scene {
 		worldcamera.registerComponent(new RotateComponent(.2));
 		//	worldcamera.renderer.offset = new Vector3D(200, 0, 0);
 		worldcamera.transform.origin = new Vector3D(worldcamera.width / 2 + leftpanewidth, worldcamera.height / 2, 0);
-		worldcamera.transform.scale = new Vector3D(2, 2, 1);
-		worldcamera.registerComponent(new BounceComponent(.001, new Vector3D(.5, .5, 0)))
+		worldcamera.transform.scale = new Vector3D(1, 1, 1);
+		worldcamera.registerComponent(new BounceComponent(.001, new Vector3D(.1, .1, 0)))
 		worldcamera.registerEntity(new Entity())
 			.registerComponent(new CircRenderComponent(10, new Color(255, 0, 0)))
 		//	worldcamera.transform.rotate.z = 90;
 		// hud camera
 		let hudcamera: Camera = this.registerEntity(new Camera([hud], window.innerWidth, window.innerHeight)) as Camera;
 		hudcamera.transform.origin = new Vector3D(window.innerWidth / 2, window.innerHeight / 2, 0);
-		hudcamera.transform.scale = new Vector3D(1, 1, 1);
+		//hudcamera.transform.scale = new Vector3D(1, 1, 1);
 		// mini cam
 		let cameraboxsize = leftpanewidth * .8;
 		let camerabox = hud.registerEntity(new Entity())

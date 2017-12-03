@@ -3,19 +3,17 @@ import { Scene } from "./Scene";
 import { TransformComponent } from "../Components/TransformComponent";
 import { EventHandler } from "./EventHandler";
 import { Logger } from "../Utils/Logger";
+import { AlphaComponent } from "../Components/AlphaComponent";
 
 export class Entity {
 	private components = new Map<string, Component>();
 	private entities: Entity[] = new Array<Entity>();
 	public events: EventHandler = new EventHandler();
-	protected parent: Entity = null;
+	public transform: TransformComponent;
+	public parent: Entity = null;
 
 	public constructor() {
-		this.registerComponent(new TransformComponent());
-	}
-
-	public get transform(): TransformComponent {
-		return this.getComponent<TransformComponent>(TransformComponent);
+		this.transform = this.registerComponent(new TransformComponent()) as TransformComponent;
 	}
 
 	public registerEntity<T extends Entity>(entity: T): T {
@@ -23,6 +21,14 @@ export class Entity {
 		entity.onAttach(this);
 		this.events.fire("registerEntity", entity);
 		return entity;
+	}
+
+	public preRender(ctx: CanvasRenderingContext2D): void {
+		//	this.transform.apply(ctx);
+		if (this.parent != null) {
+			this.parent.preRender(ctx);
+		}
+		this.events.fire("preRender", ctx);
 	}
 
 	public registerRecursiveEvents(events: EventHandler): void {
@@ -39,6 +45,7 @@ export class Entity {
 		this.events.listen("registerEntity", function (entity) {
 			entity.registerRecursiveEvents(events);
 		}.bind(events));
+
 	}
 
 	public onAttach(parent: Entity | Scene): void {
@@ -61,7 +68,12 @@ export class Entity {
 		return this.parent.getAncestor<T>(type);
 	}
 
-	public getAncestorComponent<T extends Component>(type: Function): T {
+	public getAncestorComponent<T extends Component>(type: Function, includeSelf?: boolean): T {
+		if (includeSelf != null && includeSelf) {
+			let result = this.getComponent<T>(type);
+			if (result != null)
+				return result;
+		}
 		if (this.parent == null) {
 			return null;
 		}
@@ -77,5 +89,6 @@ export class Entity {
 		this.events.fire("registerComponent", component);
 		return component;
 	}
+
 }
 

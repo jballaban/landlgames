@@ -6,7 +6,6 @@ import { EventHandler } from "../Core/EventHandler";
 export class PhysicsComponent extends Component {
 	constructor(private force: Vector3D, private min: Vector3D, private max: Vector3D) {
 		super();
-		Logger.log(this.force);
 	}
 
 	public registerEvents(events: EventHandler): void {
@@ -14,7 +13,6 @@ export class PhysicsComponent extends Component {
 	}
 
 	public fixedUpdate(): void {
-
 		this.entity.transform.origin.add(this.force);
 		if (this.entity.transform.origin.x > this.max.x || this.entity.transform.origin.x < this.min.x) {
 			this.force.x *= -1;

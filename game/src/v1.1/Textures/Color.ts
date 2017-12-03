@@ -10,6 +10,7 @@ export class Color extends Texture {
 	}
 
 	public apply(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number) {
+		x = Math.floor(x); y = Math.floor(y); width = Math.floor(width); height = Math.floor(height);
 		ctx.fillStyle = this.toString();
 		ctx.fillRect(x, y, width, height);
 	}

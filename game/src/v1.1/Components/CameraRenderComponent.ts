@@ -30,23 +30,23 @@ export class CameraRenderComponent extends RenderComponent {
 
 	public render(ctx: CanvasRenderingContext2D) {
 		ctx.save();
-		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
-		if (ancestor != null)
-			ancestor.applyRecursive(ctx);
+		if (this.entity.parent != null) {
+			this.entity.parent.transform.apply(ctx);
+		}
 		ctx.beginPath();
 		ctx.rect(
-			this.entity.transform.origin.x - this.camera.width / 2,
-			this.entity.transform.origin.y - this.camera.height / 2,
-			this.camera.width,
-			this.camera.height);
+			Math.floor(this.entity.transform.origin.x - (this.camera.width / 2)),
+			Math.floor(this.entity.transform.origin.y - (this.camera.height / 2)),
+			Math.floor(this.camera.width),
+			Math.floor(this.camera.height));
 		ctx.clip();
 
 		ctx.save();
 		this.entity.transform.apply(ctx);
 		//	scale = this.entity.transform.scale;
-		ctx.translate(-this.camera.width / 2, -this.camera.height / 2);
-		let scale = this.entity.transform.scale;
-		ctx.translate(-this.offset.x, -this.offset.y);
+		ctx.translate(-Math.floor(this.camera.width / 2), -Math.floor(this.camera.height / 2));
+		//let scale = this.entity.transform.scale;
+		ctx.translate(-Math.floor(this.offset.x), -Math.floor(this.offset.y));
 		//ctx.translate(-this.offset.x / scale.x, this.offset.y);
 		//	ctx.translate((-this.camera.width * scale.x) / 2, (-this.camera.height * scale.y) / 2);
 		//this.entity.transform.applyRecursive(ctx);
@@ -56,24 +56,24 @@ export class CameraRenderComponent extends RenderComponent {
 		//ctx.translate(-this.camera.width / 2, -this.camera.height / 2);
 
 		//ctx.save(); // need to organize this by enity
-		this.camera.events.fire("preRender", ctx);
+		//this.camera.events.fire("preRender", ctx);
 		this.camera.events.fire("render", ctx);
 		//ctx.restore();
 
 		ctx.restore();
 
 		//	ctx.save(); // todo make this entity based and remove save/restores
-		this.camera.childEvents.fire("preRender", ctx);
+		//	this.camera.childEvents.fire("preRender", ctx);
 		this.camera.childEvents.fire("render", ctx);
 		//	ctx.restore();
 
 		ctx.strokeStyle = "rgb(213,38,181)";
 		ctx.lineWidth = 3;
 		ctx.strokeRect(
-			this.entity.transform.origin.x - this.camera.width / 2,
-			this.entity.transform.origin.y - this.camera.height / 2,
-			this.camera.width - 1,
-			this.camera.height - 1);
+			Math.floor(this.entity.transform.origin.x - (this.camera.width / 2)),
+			Math.floor(this.entity.transform.origin.y - (this.camera.height / 2)),
+			Math.floor(this.camera.width - 1),
+			Math.floor(this.camera.height - 1));
 		ctx.restore();
 		/* 
 		let scale = this.entity.transform.getEffectiveScale(cameraScale);
