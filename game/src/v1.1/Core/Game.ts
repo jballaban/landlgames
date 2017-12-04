@@ -1,4 +1,5 @@
 import { Scene } from "./Scene";
+import { MouseHandler } from "./MouseHandler";
 
 export class Game {
 	public scene: Scene;
@@ -12,13 +13,15 @@ export class Game {
 
 	public lateUpdate(): void {
 		if (this.scene != null) {
-			this.scene.fixedUpdate();
+			this.scene.lateUpdate();
 		}
 	}
 
 	public update(): void {
 		if (this.scene != null) {
+			MouseHandler.update();
 			this.scene.update();
+			MouseHandler.cleanup();
 		}
 	}
 
@@ -29,6 +32,7 @@ export class Game {
 			}
 			this.scene = this.nextScene;
 			this.nextScene = null;
+			MouseHandler.reset();
 		}
 	}
 

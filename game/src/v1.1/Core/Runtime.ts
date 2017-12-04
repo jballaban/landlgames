@@ -1,5 +1,6 @@
 import { Game } from "./Game";
 import { Time } from "./Time";
+import { MouseHandler } from "./MouseHandler";
 
 export interface IRuntimeOptions {
 	showFPS: boolean;
@@ -38,6 +39,7 @@ export class Runtime {
 				smoothing: 0.8
 			});
 		}
+		MouseHandler.init();
 		requestAnimationFrame(Runtime.frame);
 	}
 
