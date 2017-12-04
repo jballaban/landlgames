@@ -14,6 +14,7 @@ import { BounceComponent } from "../../v1.1/Components/BounceComponent";
 import { PhysicsComponent } from "../../v1.1/Components/PhysicsComponent";
 import { AlphaComponent } from "../../v1.1/Components/AlphaComponent";
 import { ShadowComponent } from "../../v1.1/Components/ShadowComponent";
+import { Logger } from "../../v1.1/Utils/Logger";
 
 export class PlayScene extends Scene {
 	constructor() {
@@ -85,9 +86,11 @@ export class PlayScene extends Scene {
 		//hudcamera.transform.scale = new Vector3D(1, 1, 1);
 		// mini cam
 		let cameraboxsize = leftpanewidth * .8;
+		//Logger.log("camerabox: " + cameraboxsize);
 		let camerabox = hud.registerEntity(new Entity())
 			.registerComponent(new RectRenderComponent(cameraboxsize, cameraboxsize, new Color(200, 200, 200)))
 			.entity;
+		//camerabox.registerComponent(new LogRenderComponent(function () { return camerabox.getComponent<RectRenderComponent>(RectRenderComponent).width; }))
 		camerabox.transform.origin = new Vector3D(leftpanewidth * .1, 60, 0);
 		let minicamera: Camera = camerabox.registerEntity(new Camera([world], cameraboxsize * .9, cameraboxsize * .9)) as Camera;
 		minicamera.transform.origin = new Vector3D(minicamera.width / 2 + cameraboxsize * .05, minicamera.height / 2 + cameraboxsize * .05, 0);

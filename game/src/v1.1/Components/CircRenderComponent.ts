@@ -36,7 +36,7 @@ export class CircRenderComponent extends RenderComponent {
 	public buildRenderedCache(): void {
 		this.renderedCache.clearRect(0, 0, this.renderedCache.canvas.width, this.renderedCache.canvas.height);
 		this.entity.preRender(this.renderedCache);
-		this.entity.transform.apply(this.renderedCache);
+		this.entity.transform.apply(this.renderedCache, { origin: false, scale: true, rotate: true });
 		this.renderedCache.drawImage(this.cache.canvas, 0, 0);
 		this.renderCacheDirty = false;
 	}
@@ -49,6 +49,7 @@ export class CircRenderComponent extends RenderComponent {
 		if (this.entity.parent != null) {
 			this.entity.parent.transform.applyRecursive(ctx);
 		}
+		this.entity.transform.apply(ctx, { scale: false, rotate: false, origin: true });
 		ctx.translate(-Math.floor(this.radius), -Math.floor(this.radius));
 		ctx.drawImage(this.renderedCache.canvas, 0, 0);
 		ctx.restore();

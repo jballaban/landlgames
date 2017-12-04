@@ -28,7 +28,7 @@ export class RectRenderComponent extends Component {
 	public buildRenderedCache() {
 		this.renderedCache.clearRect(0, 0, this.renderedCache.canvas.width, this.renderedCache.canvas.height);
 		this.entity.preRender(this.renderedCache);
-		this.entity.transform.apply(this.renderedCache);
+		this.entity.transform.apply(this.renderedCache, { origin: false, scale: true, rotate: true });
 		this.renderedCache.drawImage(this.cache.canvas, 0, 0);
 		this.renderCacheDirty = false;
 	}
@@ -45,6 +45,7 @@ export class RectRenderComponent extends Component {
 		if (this.entity.parent != null) {
 			this.entity.parent.transform.applyRecursive(ctx);
 		}
+		this.entity.transform.apply(ctx, { origin: true, scale: false, rotate: false });
 		ctx.drawImage(this.renderedCache.canvas, 0, 0);
 
 		/* 	this.entity.transform.applyRecursive(ctx);

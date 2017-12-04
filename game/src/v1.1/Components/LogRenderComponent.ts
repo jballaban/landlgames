@@ -4,8 +4,9 @@ import { EventHandler } from "../Core/EventHandler";
 
 export class LogRenderComponent extends RenderComponent {
 
-	public constructor(private msg: string) {
+	public constructor(private lookup: Function) {
 		super();
+		lookup.bind(this);
 	}
 
 	public registerEvents(events: EventHandler): void {
@@ -13,6 +14,6 @@ export class LogRenderComponent extends RenderComponent {
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {
-		Logger.log(this.msg);
+		Logger.log(this.lookup());
 	}
 }

@@ -4,6 +4,12 @@ import { Logger } from "../Utils/Logger";
 import { EventHandler } from "../Core/EventHandler";
 import { PreRenderComponent } from "./PreRenderComponent";
 
+export interface TranslateOptions {
+	origin: boolean;
+	scale: boolean;
+	rotate: boolean;
+}
+
 export class TransformComponent extends Component {
 	public origin: Vector3D = new Vector3D(0, 0, 0);
 	public scale: Vector3D = new Vector3D(1, 1, 1);
@@ -13,19 +19,21 @@ export class TransformComponent extends Component {
 		// no events
 	}
 
-	public applyRecursive(ctx: CanvasRenderingContext2D): void {
+	public applyRecursive(ctx: CanvasRenderingContext2D, options?: TranslateOptions): void {
 		if (this.entity.parent != null) {
-			this.entity.parent.transform.applyRecursive(ctx);
+			this.entity.parent.transform.applyRecursive(ctx, options);
 		}
-		this.apply(ctx);
+		this.apply(ctx, options);
 	}
 
-	public apply(ctx: CanvasRenderingContext2D): void {
-		if (this.origin.x != 0 || this.origin.y != 0)
+	public apply(ctx: CanvasRenderingContext2D, options?: TranslateOptions): void {
+		if (options == null || options.origin && (this.origin.x != 0 || this.origin.y != 0)) {
 			ctx.translate(Math.floor(this.origin.x), Math.floor(this.origin.y));
-		if (this.scale.x != 1 || this.scale.y != 1)
+		}
+		if (options == null || options.scale && (this.scale.x != 1 || this.scale.y != 1)) {
 			ctx.scale(this.scale.x, this.scale.y);
-		if (this.rotate.z != 0)
+		}
+		if (options == null || options.rotate && this.rotate.z != 0)
 			ctx.rotate(this.rotate.z * Math.PI / 180);
 		//	ctx.translate(-this.origin.x, -this.origin.y);
 	}
