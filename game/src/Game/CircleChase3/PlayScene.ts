@@ -142,11 +142,9 @@ export class PlayScene extends Scene {
 					break;
 				case CursorState.moved:
 					if (cursors[i].data instanceof Camera) {
-						Logger.log(cursors[i].diffX);
 						cursors[i].data.renderer.offset.add(
 							cursors[i].data.transform.project(new Vector3D(cursors[i].diffX, cursors[i].diffY, 0))
 						);
-						//Logger.log(new Vector3D(cursors[i].x, cursors[i].y, 0) + "\n" + cursors[i].data.renderer.offset);
 						if (cursors[i].wheelY !== 0) {
 							let scale: number = cursors[i].wheelY / (150 * 50);
 							let force: ForcePhysicsComponent = (cursors[i].data as Entity).getComponent<ForcePhysicsComponent>(ForcePhysicsComponent);
