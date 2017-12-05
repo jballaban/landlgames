@@ -17,6 +17,7 @@ import { ShadowComponent } from "../../v1.1/Components/ShadowComponent";
 import { Logger } from "../../v1.1/Utils/Logger";
 import { Cursor, MouseHandler, CursorState } from "../../v1.1/Core/MouseHandler";
 import { ForcePhysicsComponent } from "../../v1.1/Components/ForcePhysicsComponent";
+import { KeyboardHandler } from "../../v1.1/Core/KeyboardHandler";
 
 export class Mirror extends Camera {
 	constructor(source: Entity, width: number, height: number) {
@@ -25,7 +26,7 @@ export class Mirror extends Camera {
 		this.transform.scale = new Vector3D(-1, 1, 0);
 		this.registerEntity(new Entity()).registerComponent(new RectRenderComponent(this.width, this.height, new Gradient([
 			{ percent: 0, color: new Color(0, 0, 0, 1) },
-			{ percent: 90, color: new Color(0, 0, 0, 0) }
+			{ percent: 100, color: new Color(0, 0, 0, 0) }
 		], GradientType.TopToDown)))
 			.entity.transform.origin = new Vector3D(-this.width / 2, -this.height / 2, 0);
 	}
@@ -69,11 +70,12 @@ export class World extends Entity {
 				new Vector3D(0, 0, 0),
 				new Vector3D(width, height, 0)
 			));
-			entity.registerComponent(new ShadowComponent());
+			//entity.registerComponent(new ShadowComponent());
+			let radius = Math.random() * 25 + 25;
 			entity.registerComponent(new AlphaComponent(.5));
-			entity.transform.origin = new Vector3D(i * (width / particles) + 25, i * (height / particles) + 25, 0);
+			entity.transform.origin = new Vector3D(i * (width / particles) + radius, i * (height / particles) + radius, 0);
 			entity.registerEntity(new Entity())
-				.registerComponent(new CircRenderComponent(25, new Gradient([
+				.registerComponent(new CircRenderComponent(radius, new Gradient([
 					{ percent: 0, color: Color.getRandom() },
 					{ percent: 100, color: Color.getRandom() }
 				])));
@@ -85,13 +87,13 @@ export class WorldCamera extends Camera {
 	constructor(entities: Entity[], width: number, height: number) {
 		super(entities, width, height);
 		this.registerComponent(new ForcePhysicsComponent(0, .1, .01, new Vector3D(.1, .1, 0), this.transform.scale));
-		this.registerEntity(new Entity())
-			.registerComponent(new CircRenderComponent(Math.max(this.width, this.height),
-				new Gradient(
-					[{ percent: 50, color: new Color(0, 0, 0, 0) },
-					{ percent: 60, color: new Color(0, 0, 0, 1) }],
-					GradientType.MiddleToOutCircle)
-			));
+		//this.registerEntity(new Entity())
+		/* this.registerComponent(new CircRenderComponent(Math.max(this.width, this.height),
+			new Gradient(
+				[{ percent: 50, color: new Color(0, 0, 0, 0) },
+				{ percent: 60, color: new Color(0, 0, 0, 1) }],
+				GradientType.MiddleToOutCircle)
+		)); */
 	}
 }
 
@@ -104,8 +106,8 @@ export class PlayScene extends Scene {
 	constructor() {
 		super();
 		let leftpanewidth: number = 200;
-		let mirrorheight: number = 200;
-		this.world = this.registerEntity(new World(2000, 2000, 100));
+		let mirrorheight: number = 100;
+		this.world = this.registerEntity(new World(3000, 3000, 200));
 		this.worldCamera = this.registerEntity(new WorldCamera(
 			[this.world],
 			window.innerWidth - leftpanewidth,
@@ -122,6 +124,12 @@ export class PlayScene extends Scene {
 	}
 
 	public update(): void {
+		if (KeyboardHandler.state.down.has("q")) {
+			this.worldCamera.transform.rotate.add(new Vector3D(0, 0, 1));
+		}
+		if (KeyboardHandler.state.down.has("e")) {
+			this.worldCamera.transform.rotate.add(new Vector3D(0, 0, -1));
+		}
 		let cursors: Cursor[] = Array.from(MouseHandler.cursors.values());
 		for (var i: number = 0; i < cursors.length; i++) {
 			switch (cursors[i].state) {
@@ -134,7 +142,11 @@ export class PlayScene extends Scene {
 					break;
 				case CursorState.moved:
 					if (cursors[i].data instanceof Camera) {
-						(cursors[i].data as Camera).renderer.offset = new Vector3D(cursors[i].x, cursors[i].y, 0);
+						Logger.log(cursors[i].diffX);
+						cursors[i].data.renderer.offset.add(
+							cursors[i].data.transform.project(new Vector3D(cursors[i].diffX, cursors[i].diffY, 0))
+						);
+						//Logger.log(new Vector3D(cursors[i].x, cursors[i].y, 0) + "\n" + cursors[i].data.renderer.offset);
 						if (cursors[i].wheelY !== 0) {
 							let scale: number = cursors[i].wheelY / (150 * 50);
 							let force: ForcePhysicsComponent = (cursors[i].data as Entity).getComponent<ForcePhysicsComponent>(ForcePhysicsComponent);

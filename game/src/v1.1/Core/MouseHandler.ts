@@ -13,11 +13,13 @@ export class Cursor {
 		public id: number,
 		public x: number,
 		public y: number,
+		public diffX: number,
+		public diffY: number,
 		public wheelY: number,
 		public state: CursorState) { }
 
 	public static fromTouch(e: Touch): Cursor {
-		return new Cursor(e.identifier, e.clientX, e.clientY, 0, CursorState.added);
+		return new Cursor(e.identifier, e.clientX, e.clientY, 0, 0, 0, CursorState.added);
 	}
 }
 
@@ -52,6 +54,8 @@ export class MouseHandler {
 		}
 		cursor.x += diffx;
 		cursor.y += diffy;
+		cursor.diffX += diffx;
+		cursor.diffY += diffy;
 	}
 
 	public static update(): void {
@@ -67,6 +71,8 @@ export class MouseHandler {
 							cursor.x,
 							cursor.y,
 							0,
+							0,
+							0,
 							CursorState.added
 						)
 					);
@@ -75,7 +81,11 @@ export class MouseHandler {
 					let realCursor: Cursor = MouseHandler.cursors.get(keys[i]);
 					realCursor.x = cursor.x;
 					realCursor.y = cursor.y;
+					realCursor.diffX = cursor.diffX;
+					realCursor.diffY = cursor.diffY;
 					realCursor.wheelY = cursor.wheelY;
+					cursor.diffX = 0;
+					cursor.diffY = 0;
 					cursor.wheelY = 0;
 					realCursor.state = CursorState.moved;
 					break;
@@ -137,6 +147,8 @@ export class MouseHandler {
 			if (cursor.state === CursorState.unchanged) {
 				cursor.state = CursorState.moved;
 			}
+			cursor.diffX += e.changedTouches[i].clientX - cursor.x;
+			cursor.diffY += e.changedTouches[i].clientY - cursor.y;
 			cursor.x = e.changedTouches[i].clientX;
 			cursor.y = e.changedTouches[i].clientY;
 		}
@@ -161,7 +173,7 @@ export class MouseHandler {
 
 	public static lockChanged(): void {
 		if (document.pointerLockElement != null) {
-			MouseHandler._cursors.set(0, new Cursor(0, MouseHandler.mouseX, MouseHandler.mouseY, 0, CursorState.added));
+			MouseHandler._cursors.set(0, new Cursor(0, MouseHandler.mouseX, MouseHandler.mouseY, 0, 0, 0, CursorState.added));
 			MouseHandler.locked = true;
 		} else if (MouseHandler.locked) {
 			MouseHandler.locked = false;

@@ -1,6 +1,7 @@
 import { Game } from "./Game";
 import { Time } from "./Time";
 import { MouseHandler } from "./MouseHandler";
+import { KeyboardHandler } from "./KeyboardHandler";
 
 export interface IRuntimeOptions {
 	showFPS: boolean;
@@ -40,6 +41,7 @@ export class Runtime {
 			});
 		}
 		MouseHandler.init();
+		KeyboardHandler.init();
 		requestAnimationFrame(Runtime.frame);
 	}
 

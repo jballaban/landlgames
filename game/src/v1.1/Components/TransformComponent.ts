@@ -19,6 +19,16 @@ export class TransformComponent extends Component {
 		// no events
 	}
 
+	public project(position: Vector3D): Vector3D {
+		let origin = position;//.clone().cross(this.scale);
+		let rads: number = -this.rotate.z * Math.PI / 180;
+		let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
+		let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
+		origin.x = x;
+		origin.y = y;
+		return origin;
+	}
+
 	public applyRecursive(ctx: CanvasRenderingContext2D, options?: TranslateOptions): void {
 		if (this.entity.parent != null) {
 			this.entity.parent.transform.applyRecursive(ctx, options);
@@ -37,40 +47,40 @@ export class TransformComponent extends Component {
 			ctx.rotate(this.rotate.z * Math.PI / 180);
 		//	ctx.translate(-this.origin.x, -this.origin.y);
 	}
-	/* 
-		public getEffectiveRotate(): Vector3D {
-			let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
-			if (ancestor == null) {
-				return this.rotate.clone();
-			}
-			return this.rotate.clone().add(ancestor.getEffectiveRotate());
+
+	public getEffectiveRotate(): Vector3D {
+		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
+		if (ancestor == null) {
+			return this.rotate.clone();
 		}
-	
-		public getEffectiveScale(): Vector3D {
-			let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
-			if (ancestor == null) {
-				return this.scale.clone();
-			}
-			return this.scale.clone().cross(ancestor.getEffectiveScale());
+		return this.rotate.clone().add(ancestor.getEffectiveRotate());
+	}
+
+	public getEffectiveScale(): Vector3D {
+		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
+		if (ancestor == null) {
+			return this.scale.clone();
 		}
-	
-		public getEffectiveOrigin(): Vector3D {
-			let origin = this.origin.clone();
-			let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
-			if (ancestor != null) {
-				origin.cross(ancestor.getEffectiveScale());
-			}
-			let rads: number = 0;
-			if (ancestor != null) {
-				rads = ancestor.getEffectiveRotate().z * Math.PI / 180;
-			}
-			let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
-			let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
-			origin.x = x;
-			origin.y = y;
-			if (ancestor != null) {
-				return origin.add(ancestor.getEffectiveOrigin());
-			}
-			return origin;
-		} */
+		return this.scale.clone().cross(ancestor.getEffectiveScale());
+	}
+
+	public getEffectiveOrigin(): Vector3D {
+		let origin = this.origin.clone();
+		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
+		if (ancestor != null) {
+			origin.cross(ancestor.getEffectiveScale());
+		}
+		let rads: number = 0;
+		if (ancestor != null) {
+			rads = ancestor.getEffectiveRotate().z * Math.PI / 180;
+		}
+		let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
+		let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
+		origin.x = x;
+		origin.y = y;
+		if (ancestor != null) {
+			return origin.add(ancestor.getEffectiveOrigin());
+		}
+		return origin;
+	}
 }

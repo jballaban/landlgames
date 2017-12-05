@@ -1,5 +1,6 @@
 import { Scene } from "./Scene";
 import { MouseHandler } from "./MouseHandler";
+import { KeyboardHandler } from "./KeyboardHandler";
 
 export class Game {
 	public scene: Scene;
@@ -20,6 +21,7 @@ export class Game {
 	public update(): void {
 		if (this.scene != null) {
 			MouseHandler.update();
+			KeyboardHandler.update();
 			this.scene.update();
 			MouseHandler.cleanup();
 		}
