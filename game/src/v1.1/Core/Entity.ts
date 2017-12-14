@@ -1,7 +1,7 @@
 import { Component } from "./Component";
 import { Scene } from "./Scene";
 import { TransformComponent } from "../Components/TransformComponent";
-import { EventHandler } from "./EventHandler";
+import { EventHandler, DependentEventHandler } from "./EventHandler";
 import { Logger } from "../Utils/Logger";
 import { AlphaComponent } from "../Components/AlphaComponent";
 
@@ -16,11 +16,35 @@ export class Entity {
 		this.transform = this.registerComponent(new TransformComponent()) as TransformComponent;
 	}
 
-	public registerEntity<T extends Entity>(entity: T): T {
+	public registerEntity(entity: Entity): void {
 		this.entities.push(entity);
 		entity.onAttach(this);
-		this.events.fire("registerEntity", entity);
-		return entity;
+	}
+
+	public onAttach(parent: Entity | Scene): void {
+		if (parent instanceof Entity) {
+			this.parent = parent;
+			for (var event in this.events.keys()) {
+
+			}
+		}
+	}
+
+	public deRegisterEntity(entity: Entity): void {
+		this.entities.splice(this.entities.indexOf(entity), 1);
+		entity.onDetach();
+	}
+
+	public onDetach(): void {
+		// do nothing
+	}
+
+
+	public registerComponent(component: Component): Component {
+		this.components.set(component.constructor.name, component);
+		component.onAttach(this);
+		this.events.fire("registerComponent", component);
+		return component;
 	}
 
 	public preRender(ctx: CanvasRenderingContext2D): void {
@@ -48,11 +72,7 @@ export class Entity {
 
 	}
 
-	public onAttach(parent: Entity | Scene): void {
-		if (parent instanceof Entity) {
-			this.parent = parent;
-		}
-	}
+
 
 	public getComponent<T extends Component>(type: Function): T {
 		return this.components.get(type.name) as T;
@@ -83,12 +103,7 @@ export class Entity {
 		return this.parent.getAncestorComponent<T>(type);
 	}
 
-	public registerComponent(component: Component): Component {
-		this.components.set(component.constructor.name, component);
-		component.onAttach(this);
-		this.events.fire("registerComponent", component);
-		return component;
-	}
+
 
 }
 
