@@ -58,8 +58,7 @@ export class World extends Entity {
 
 	constructor(public width: number, public height: number, particles: number) {
 		super();
-		let alpha: AlphaComponent = this.registerComponent(new AlphaComponent()) as AlphaComponent;
-		alpha.alpha = 0.5;
+		this.registerComponent(new AlphaComponent({ alpha: 0.5 })) as AlphaComponent;
 		this.registerComponent(new ShapeRenderComponent(new Rectangle(width, height), new Gradient([
 			{ percent: 0, color: new Color(10, 100, 10) },
 			{ percent: 100, color: new Color(200, 200, 200) }
@@ -67,10 +66,12 @@ export class World extends Entity {
 		for (let i: number = 0; i < particles; i++) {
 			let entity: Entity =
 				this.registerEntity(new Entity());
-			let physics: PhysicsComponent = entity.registerComponent(new PhysicsComponent()) as PhysicsComponent;
-			physics.force = new Vector3D(Math.random() * 2 - 1, Math.random() * 2 - 1, 0);
-			physics.maxX = width;
-			physics.maxY = height;
+			let physics: PhysicsComponent = entity.registerComponent(
+				new PhysicsComponent(null, {
+					maxX: width,
+					maxY: height,
+					force: new Vector3D(Math.random() * 2 - 1, Math.random() * 2 - 1, 0)
+				})) as PhysicsComponent;
 			entity.registerComponent(new ShadowComponent());
 			entity.registerComponent(new RotateComponent(1));
 			let radius = Math.random() * 25 + 25;

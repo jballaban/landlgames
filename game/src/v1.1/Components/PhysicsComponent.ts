@@ -5,6 +5,13 @@ import { EventHandler } from "../Core/EventHandler";
 import { Entity } from "../Core/Entity";
 import { Shape } from "../Core/Shape";
 
+export interface IPhysicsOptions {
+	maxX?: number;
+	maxY?: number;
+	force?: Vector3D;
+	mass?: number;
+}
+
 export class PhysicsComponent extends Component {
 
 	public maxX = 0;
@@ -13,10 +20,14 @@ export class PhysicsComponent extends Component {
 	public mass: number = 0;
 	public collisionArea: Shape;
 
-	/* constructor(collisionArea: Shape) {
+	constructor(collisionArea: Shape, options?: IPhysicsOptions) {
 		super();
 		this.collisionArea = collisionArea;
-	} */
+		if (options && options.maxX != null) { this.maxX = options.maxX; }
+		if (options && options.maxY != null) { this.maxY = options.maxY; }
+		if (options && options.force != null) { this.force = options.force; }
+		if (options && options.mass != null) { this.mass = options.mass; }
+	}
 
 	public onAttach(entity: Entity): void {
 		super.onAttach(entity);
