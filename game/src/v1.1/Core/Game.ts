@@ -35,6 +35,7 @@ export class Game {
 			this.scene = this.nextScene;
 			this.nextScene = null;
 			MouseHandler.reset();
+			this.scene.onStart();
 		}
 	}
 

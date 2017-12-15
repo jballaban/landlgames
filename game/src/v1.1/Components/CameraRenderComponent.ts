@@ -11,23 +11,12 @@ export class CameraRenderComponent extends RenderComponent {
 
 	public offset: Vector3D = new Vector3D(0, 0, 0);
 
-	public registerEvents(events: EventHandler): void {
-		events.listen("render", this.render.bind(this));
-	}
-
-	/* 	public getEffectiveOffset(rootScale: Vector3D): Vector3D {
-			return this.offset.clone().cross(rootScale);
-		} */
+	private camera: Camera;
 
 	public onAttach(entity: Entity): void {
-		if (entity instanceof Camera) {
-			super.onAttach(entity);
-		} else {
-			throw "Cannot attach CameraRenderComponent to non Camera entity";
-		}
+		super.onAttach(entity);
+		this.camera = entity as Camera;
 	}
-
-	private get camera(): Camera { return this.entity as Camera; }
 
 	public render(ctx: CanvasRenderingContext2D): void {
 		ctx.save();
@@ -46,10 +35,16 @@ export class CameraRenderComponent extends RenderComponent {
 		this.entity.transform.apply(ctx);
 		ctx.translate(-Math.floor(this.camera.width / 2), -Math.floor(this.camera.height / 2));
 		ctx.translate(-Math.floor(this.offset.x), -Math.floor(this.offset.y));
-		this.camera.events.fire("render", ctx);
+		for (let i: number = 0; i < this.camera.roots.length; i++) {
+			if (this.camera.roots[i] instanceof Camera) {
+				(this.camera.roots[i] as Camera).renderer.render(ctx);
+			} else {
+				this.camera.roots[i].events.fire("render", ctx);
+			}
+		}
 		ctx.restore();
 
-		this.camera.childEvents.fire("render", ctx);
+		this.camera.events.fire("render", ctx);
 
 		/* ctx.strokeStyle = "rgb(213,38,181)";
 		ctx.lineWidth = 3;

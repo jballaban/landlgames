@@ -1,92 +1,88 @@
 import { Component } from "./Component";
 import { Scene } from "./Scene";
 import { TransformComponent } from "../Components/TransformComponent";
-import { EventHandler, DependentEventHandler } from "./EventHandler";
+import { EventHandler, HierarchyEventHandler } from "./EventHandler";
 import { Logger } from "../Utils/Logger";
-import { AlphaComponent } from "../Components/AlphaComponent";
+import { PreRenderComponent } from "../Components/PreRenderComponent";
 
 export class Entity {
-	private components = new Map<string, Component>();
-	private entities: Entity[] = new Array<Entity>();
-	public events: EventHandler = new EventHandler();
-	public transform: TransformComponent;
 	public parent: Entity = null;
+	private entities: Entity[] = new Array<Entity>();
+	public events: HierarchyEventHandler = new HierarchyEventHandler();
+	private components: Set<Component> = new Set<Component>();
+	public transform: TransformComponent;
+	private prerenders: PreRenderComponent[] = new Array<PreRenderComponent>();
 
 	public constructor() {
 		this.transform = this.registerComponent(new TransformComponent()) as TransformComponent;
 	}
 
-	public registerEntity(entity: Entity): void {
-		this.entities.push(entity);
-		entity.onAttach(this);
+	public getAncestor<T extends Entity>(type: Function): T {
+		if (this.parent == null) { return null; }
+		if (this.parent instanceof type) { return this.parent as T; }
+		return this.parent.getAncestor<T>(type);
 	}
 
-	public onAttach(parent: Entity | Scene): void {
-		if (parent instanceof Entity) {
-			this.parent = parent;
-			for (var event in this.events.keys()) {
-
+	public getChildren<T extends Entity>(type: Function): T[] {
+		let result: T[] = new Array<T>();
+		for (let i = 0; i < this.entities.length; i++) {
+			if (this.entities[i] instanceof type) {
+				result.push(this.entities[i] as T);
 			}
 		}
+		return result;
 	}
 
-	public deRegisterEntity(entity: Entity): void {
-		this.entities.splice(this.entities.indexOf(entity), 1);
-		entity.onDetach();
+	public registerEntity(entity: Entity): any {
+		this.entities.push(entity);
+		entity.onAttach(this);
+		return entity;
 	}
 
-	public onDetach(): void {
-		// do nothing
-	}
-
-
-	public registerComponent(component: Component): Component {
-		this.components.set(component.constructor.name, component);
-		component.onAttach(this);
-		this.events.fire("registerComponent", component);
-		return component;
+	public onAttach(parent: Entity): void {
+		this.parent = parent;
+		this.events.registerParent(parent.events);
 	}
 
 	public preRender(ctx: CanvasRenderingContext2D): void {
-		//	this.transform.apply(ctx);
 		if (this.parent != null) {
 			this.parent.preRender(ctx);
 		}
-		this.events.fire("preRender", ctx);
+		for (let i = 0; i < this.prerenders.length; i++) {
+			this.prerenders[i].apply(ctx);
+		}
 	}
 
-	public registerRecursiveEvents(events: EventHandler): void {
-		let components: Component[] = Array.from(this.components.values());
-		for (let i = 0; i < components.length; i++) {
-			components[i].registerEvents(events);
+	public registerComponent(component: Component): Component {
+		this.components.add(component);
+		component.onAttach(this);
+		if (component instanceof PreRenderComponent) {
+			this.prerenders.push(component);
 		}
-		for (let i = 0; i < this.entities.length; i++) {
-			this.entities[i].registerRecursiveEvents(events);// recursive
-		}
-		this.events.listen("registerComponent", function (component) {
-			component.registerEvents(events);
-		}.bind(events));
-		this.events.listen("registerEntity", function (entity) {
-			entity.registerRecursiveEvents(events);
-		}.bind(events));
-
+		return component;
 	}
-
-
 
 	public getComponent<T extends Component>(type: Function): T {
-		return this.components.get(type.name) as T;
+		let values: Component[] = Array.from(this.components.values());
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] instanceof type) {
+				return values[i] as T;
+			}
+		}
+		return null;
 	}
 
-	public getAncestor<T extends Entity>(type: Function): T {
-		if (this.parent == null) {
-			return null;
+	public getComponents<T extends Component>(type: Function): T[] {
+		let values: Component[] = Array.from(this.components.values());
+		let result: Component[] = new Array<Component>();
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] instanceof type) {
+				result.push(values[i]);
+			}
 		}
-		if (this.parent instanceof type) {
-			return this.parent as T;
-		}
-		return this.parent.getAncestor<T>(type);
+		return result as T[];
 	}
+
 
 	public getAncestorComponent<T extends Component>(type: Function, includeSelf?: boolean): T {
 		if (includeSelf != null && includeSelf) {
@@ -103,7 +99,4 @@ export class Entity {
 		return this.parent.getAncestorComponent<T>(type);
 	}
 
-
-
 }
-

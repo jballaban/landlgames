@@ -15,10 +15,6 @@ export class TransformComponent extends Component {
 	public scale: Vector3D = new Vector3D(1, 1, 1);
 	public rotate: Vector3D = new Vector3D(0, 0, 0);
 
-	public registerEvents(events: EventHandler): void {
-		// no events
-	}
-
 	public project(position: Vector3D): Vector3D {
 		let origin = position;//.clone().cross(this.scale);
 		let rads: number = -this.rotate.z * Math.PI / 180;

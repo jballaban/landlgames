@@ -6,11 +6,7 @@ export class RotateComponent extends Component {
 		super();
 	}
 
-	public registerEvents(events: EventHandler): void {
-		events.listen("fixedUpdate", this.fixedUpdate.bind(this));
-	}
-
-	fixedUpdate(): void {
+	public fixedUpdate(): void {
 		this.entity.transform.rotate.z += this.velocity;
 	}
 }

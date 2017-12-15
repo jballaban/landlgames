@@ -6,6 +6,7 @@ import { RenderComponent } from "./RenderComponent";
 import { Texture } from "../Textures/Texture";
 import { EventHandler } from "../Core/EventHandler";
 import { MemoryCanvas } from "../Core/MemoryCanvas";
+import { Entity } from "../Core/Entity";
 
 export class RectRenderComponent extends Component {
 
@@ -20,6 +21,11 @@ export class RectRenderComponent extends Component {
 		this.buildCache();
 	}
 
+	public onAttach(entity: Entity): void {
+		super.onAttach(entity);
+		entity.events.listen("render", this.render.bind(this));
+	}
+
 	public buildCache() {
 		this.cache.clearRect(0, 0, this.cache.canvas.width, this.cache.canvas.height);
 		this.texture.apply(this.cache, 0, 0, this.width, this.height);
@@ -31,10 +37,6 @@ export class RectRenderComponent extends Component {
 		this.entity.transform.apply(this.renderedCache, { origin: false, scale: true, rotate: true });
 		this.renderedCache.drawImage(this.cache.canvas, 0, 0);
 		this.renderCacheDirty = false;
-	}
-
-	public registerEvents(events: EventHandler): void {
-		events.listen("render", this.render.bind(this));
 	}
 
 	public render(ctx: CanvasRenderingContext2D): void {

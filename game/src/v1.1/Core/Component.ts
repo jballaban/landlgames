@@ -4,9 +4,7 @@ import { EventHandler } from "./EventHandler";
 
 export abstract class Component {
 	public entity: Entity;
-	public onAttach(entity: Entity) {
+	public onAttach(entity: Entity): void {
 		this.entity = entity;
 	}
-
-	public abstract registerEvents(events: EventHandler): void;
 }

@@ -1,3 +1,5 @@
+import { Logger } from "../Utils/Logger";
+
 export enum CursorState {
 	added,
 	moved,
@@ -83,14 +85,18 @@ export class MouseHandler {
 					realCursor.y = cursor.y;
 					realCursor.diffX = cursor.diffX;
 					realCursor.diffY = cursor.diffY;
-					realCursor.wheelY = cursor.wheelY;
 					cursor.diffX = 0;
 					cursor.diffY = 0;
+					realCursor.wheelY = cursor.wheelY;
 					cursor.wheelY = 0;
 					realCursor.state = CursorState.moved;
 					break;
 				case CursorState.remove:
-					MouseHandler.cursors.get(keys[i]).state = CursorState.remove;
+					if (MouseHandler.cursors.get(keys[i]).state === CursorState.remove) {
+						MouseHandler.cursors.delete(keys[i]);
+					} else {
+						MouseHandler.cursors.get(keys[i]).state = CursorState.remove;
+					}
 					break;
 			}
 			cursor.state = CursorState.unchanged;
@@ -157,6 +163,9 @@ export class MouseHandler {
 	public static onMouseMove(e: MouseEvent): void {
 		e.preventDefault();
 		if (MouseHandler.locked) {
+			if (Math.abs(e.movementX) > 100 || Math.abs(e.movementY) > 100) {
+				return; // todo there is a bug in chrome that is causing weird large values to randomly get sent, hack fix
+			}
 			MouseHandler.inc(0, e.movementX, e.movementY);
 		} else {
 			MouseHandler.mouseX = e.clientX;

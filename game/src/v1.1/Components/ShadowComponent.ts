@@ -8,8 +8,4 @@ export class ShadowComponent extends PreRenderComponent {
 		ctx.shadowColor = "rgb(0,0,0)";
 	}
 
-	public registerEvents(events: EventHandler): void {
-		// nothing special
-	}
-
 }

@@ -33,6 +33,7 @@ export class EventHandler {
 
 export class HierarchyEventHandler extends EventHandler {
 	private parent: HierarchyEventHandler;
+
 	public registerParent(parent: HierarchyEventHandler): void {
 		this.parent = parent;
 		for (let key of this._mappings.keys()) {
@@ -41,6 +42,7 @@ export class HierarchyEventHandler extends EventHandler {
 			}
 		}
 	}
+
 	public listen(name: string, fn: Function): void {
 		super.listen(name, fn);
 		if (this.parent != null) {
@@ -56,7 +58,7 @@ export class HierarchyEventHandler extends EventHandler {
 	}
 
 }
-
+/* 
 export class DependentEventHandler extends EventHandler {
 	private dependentHandlers: EventHandler[] = new Array<EventHandler>();
 
@@ -74,4 +76,4 @@ export class DependentEventHandler extends EventHandler {
 			this.dependentHandlers[i].fire(name, args);
 		}
 	}
-}
+} */

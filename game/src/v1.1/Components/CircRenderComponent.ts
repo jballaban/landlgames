@@ -7,6 +7,7 @@ import { Texture } from "../Textures/Texture";
 import { EventHandler } from "../Core/EventHandler";
 import { Canvas } from "../Core/Canvas";
 import { MemoryCanvas } from "../Core/MemoryCanvas";
+import { Entity } from "../Core/Entity";
 
 export class CircRenderComponent extends RenderComponent {
 
@@ -21,8 +22,9 @@ export class CircRenderComponent extends RenderComponent {
 		this.buildCache();
 	}
 
-	public registerEvents(events: EventHandler): void {
-		events.listen("render", this.render.bind(this));
+	public onAttach(entity: Entity): void {
+		super.onAttach(entity);
+		entity.events.listen("render", this.render.bind(this));
 	}
 
 	public buildCache(): void {
