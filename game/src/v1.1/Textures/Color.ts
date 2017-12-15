@@ -21,6 +21,8 @@ export class Color extends Texture {
 		return "rgba(" + this.red + "," + this.green + "," + this.blue + "," + this.alpha + ")";
 	}
 
+	public static Black: Color = new Color(0, 0, 0);
+
 	public static getRandom(): Color {
 		return new Color(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), 1);
 	}

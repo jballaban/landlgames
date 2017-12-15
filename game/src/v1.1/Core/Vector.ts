@@ -7,9 +7,7 @@ export class Vector3D {
 		public z: number
 	) { }
 
-	public static Zero(): Vector3D {
-		return new Vector3D(0, 0, 0);
-	}
+	public static Zero: Vector3D = new Vector3D(0, 0, 0);
 
 	public clone(): Vector3D {
 		return new Vector3D(this.x, this.y, this.z);

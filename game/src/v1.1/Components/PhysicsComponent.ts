@@ -3,13 +3,20 @@ import { Vector3D } from "../Core/Vector";
 import { Logger } from "../Utils/Logger";
 import { EventHandler } from "../Core/EventHandler";
 import { Entity } from "../Core/Entity";
+import { Shape } from "../Core/Shape";
 
 export class PhysicsComponent extends Component {
 
 	public maxX = 0;
 	public maxY = 0;
-	public force: Vector3D = Vector3D.Zero();
+	public force: Vector3D = Vector3D.Zero.clone();
 	public mass: number = 0;
+	public collisionArea: Shape;
+
+	/* constructor(collisionArea: Shape) {
+		super();
+		this.collisionArea = collisionArea;
+	} */
 
 	public onAttach(entity: Entity): void {
 		super.onAttach(entity);

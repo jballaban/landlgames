@@ -5,25 +5,26 @@ import { TransformComponent } from "../../v1.1/Components/TransformComponent";
 import { Entity } from "../../v1.1/Core/Entity";
 import { RenderComponent } from "../../v1.1/Components/RenderComponent";
 import { Vector3D } from "../../v1.1/Core/Vector";
-import { RectRenderComponent } from "../../v1.1/Components/RectRenderComponent";
 import { LogRenderComponent } from "../../v1.1/Components/LogRenderComponent";
 import { RotateComponent } from "../../v1.1/Components/RotateComponent";
 import { Color } from "../../v1.1/Textures/Color";
 import { Gradient, GradientType } from "../../v1.1/Textures/Gradient";
-import { CircRenderComponent } from "../../v1.1/Components/CircRenderComponent";
 import { PhysicsComponent } from "../../v1.1/Components/PhysicsComponent";
 import { ShadowComponent } from "../../v1.1/Components/ShadowComponent";
 import { Logger } from "../../v1.1/Utils/Logger";
 import { Cursor, MouseHandler, CursorState } from "../../v1.1/Core/MouseHandler";
 import { KeyboardHandler } from "../../v1.1/Core/KeyboardHandler";
 import { Physics } from "../../v0/Core/Physics";
+import { AlphaComponent } from "../../v1.1/Components/AlphaComponent";
+import { Circle, Rectangle } from "../../v1.1/Core/Shape";
+import { ShapeRenderComponent } from "../../v1.1/Components/ShapeRenderComponent";
 
 export class Mirror extends Camera {
 	constructor(source: Entity, width: number, height: number) {
 		super([source], width, height);
 		this.transform.rotate.z = 180;
 		this.transform.scale = new Vector3D(-1, 1, 0);
-		this.registerEntity(new Entity()).registerComponent(new RectRenderComponent(this.width, this.height, new Gradient([
+		this.registerEntity(new Entity()).registerComponent(new ShapeRenderComponent(new Rectangle(this.width, this.height), new Gradient([
 			{ percent: 0, color: new Color(0, 0, 0, 1) },
 			{ percent: 100, color: new Color(0, 0, 0, 0) }
 		], GradientType.TopToDown)))
@@ -34,13 +35,13 @@ export class Mirror extends Camera {
 export class Hud extends Entity {
 	constructor(leftpanewidth: number, mirrorpaneheight: number, world: World, worldCamera: WorldCamera) {
 		super();
-		this.registerComponent(new RectRenderComponent(leftpanewidth, window.innerHeight, new Gradient([
+		this.registerComponent(new ShapeRenderComponent(new Rectangle(leftpanewidth, window.innerHeight), new Gradient([
 			{ percent: 0, color: new Color(10, 10, 255) },
 			{ percent: 100, color: new Color(10, 10, 100) }
 		])));
 		let cameraboxsize: number = leftpanewidth * .8;
 		let camerabox: Entity = this.registerEntity(new Entity())
-			.registerComponent(new RectRenderComponent(cameraboxsize, cameraboxsize, new Color(200, 200, 200)))
+			.registerComponent(new ShapeRenderComponent(new Rectangle(cameraboxsize, cameraboxsize), new Color(200, 200, 200)))
 			.entity;
 		camerabox.transform.origin = new Vector3D(leftpanewidth * .1, 60, 0);
 		let minicamera: Camera = camerabox.registerEntity(new Camera([world], cameraboxsize * .9, cameraboxsize * .9)) as Camera;
@@ -57,7 +58,9 @@ export class World extends Entity {
 
 	constructor(public width: number, public height: number, particles: number) {
 		super();
-		this.registerComponent(new RectRenderComponent(width, height, new Gradient([
+		let alpha: AlphaComponent = this.registerComponent(new AlphaComponent()) as AlphaComponent;
+		alpha.alpha = 0.5;
+		this.registerComponent(new ShapeRenderComponent(new Rectangle(width, height), new Gradient([
 			{ percent: 0, color: new Color(10, 100, 10) },
 			{ percent: 100, color: new Color(200, 200, 200) }
 		])));
@@ -69,13 +72,23 @@ export class World extends Entity {
 			physics.maxX = width;
 			physics.maxY = height;
 			entity.registerComponent(new ShadowComponent());
+			entity.registerComponent(new RotateComponent(1));
 			let radius = Math.random() * 25 + 25;
 			entity.transform.origin = new Vector3D(i * (width / particles) + radius, i * (height / particles) + radius, 0);
-			entity.registerEntity(new Entity())
-				.registerComponent(new CircRenderComponent(radius, new Gradient([
-					{ percent: 0, color: Color.getRandom() },
-					{ percent: 100, color: Color.getRandom() }
-				])));
+			if (Math.random() > 0.5) {
+				entity.registerEntity(new Entity())
+					.registerComponent(new ShapeRenderComponent(new Circle(radius), new Gradient([
+						{ percent: 0, color: Color.getRandom() },
+						{ percent: 100, color: Color.getRandom() }
+					])))
+			} else {
+				entity.registerEntity(new Entity())
+					.registerComponent(new ShapeRenderComponent(new Rectangle(radius * 2, radius), new Gradient([
+						{ percent: 0, color: Color.getRandom() },
+						{ percent: 100, color: Color.getRandom() }
+					])))
+					.entity.transform.origin = new Vector3D(-radius * 2 / 2, -radius / 2, 0);
+			}
 		}
 	}
 }
