@@ -2,6 +2,7 @@ import { Game } from "./Game";
 import { Time } from "./Time";
 import { MouseHandler } from "./MouseHandler";
 import { KeyboardHandler } from "./KeyboardHandler";
+import { Logger } from "../Utils/Logger";
 
 export interface IRuntimeOptions {
 	showFPS: boolean;
@@ -57,6 +58,10 @@ export class Runtime {
 			Runtime.game.changeScene();
 			// proceesInput
 			while (Time.delta > 0 && Runtime.lag >= Time.step) {
+				if (Runtime.lag > 10) {
+					Logger.log("Runtime: lag: " + Runtime.lag);
+					Runtime.lag = Time.step; // if we are too lagged behind lets catch up
+				}
 				Time.gameTime += Time.delta;
 				if (Runtime.updateTime != null) { Runtime.updateTime.tickStart(); }
 				Runtime.game.fixedUpdate();

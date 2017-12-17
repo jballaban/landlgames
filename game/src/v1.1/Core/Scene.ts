@@ -46,7 +46,7 @@ export class Scene {
 	}
 
 	public checkCollisions(): void {
-		Logger.log(this.root.collisions.length);
+
 	}
 
 	public destroy(): void {
