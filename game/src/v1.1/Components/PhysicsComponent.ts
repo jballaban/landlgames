@@ -4,6 +4,7 @@ import { Logger } from "../Utils/Logger";
 import { EventHandler } from "../Core/EventHandler";
 import { Entity } from "../Core/Entity";
 import { Shape, Rectangle } from "../Core/Shape";
+import { RootEntity } from "../Core/Scene";
 
 export interface IPhysicsOptions {
 	maxX?: number;
@@ -29,9 +30,18 @@ export class PhysicsComponent extends Component {
 		if (options && options.mass != null) { this.mass = options.mass; }
 	}
 
+	public registerCollision(): void {
+		if (this.entity.top() instanceof RootEntity) {
+			(this.entity.top() as RootEntity).collisions.push(this);
+		} else {
+			this.entity.top().events.listen("onAttach", this.registerCollision.bind(this));
+		}
+	}
+
 	public onAttach(entity: Entity): void {
 		super.onAttach(entity);
 		entity.events.listen("fixedUpdate", this.fixedUpdate.bind(this));
+		this.registerCollision();
 		//entity.events.listen("render", this.collisionArea.render.bind(this.collisionArea));
 	}
 

@@ -32,7 +32,11 @@
 	</style>
 	<script>
 		require(["Game/CircleChase3/Game", "v1.1/Core/Runtime"], function (game, runtime) {
-			runtime.Runtime.init({ showFPS: true, showUpdatesPerFrame: true, showDrawTime: true });
+			runtime.Runtime.init({
+				showFPS: true,
+				showUpdatesPerFrame: true,
+				showDrawTime: true
+			});
 			runtime.Runtime.game = new game.Game();
 		});
 	</script>

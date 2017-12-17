@@ -4,10 +4,18 @@ import { Canvas } from "./Canvas";
 import { Camera } from "./Camera";
 import { EventHandler } from "./EventHandler";
 import { Logger } from "../Utils/Logger";
+import { PhysicsComponent } from "../Components/PhysicsComponent";
+import { Physics } from "../../v0/Core/Physics";
+import { Collision } from "../../v0/Util/Collision";
+
+export class RootEntity extends Entity {
+	public collisions: PhysicsComponent[] = new Array<PhysicsComponent>();
+}
 
 export class Scene {
-	public root: Entity = new Entity();
+	public root: RootEntity = new RootEntity();
 	private cameras: Camera[] = new Array<Camera>();
+
 	private canvas: Canvas;
 	public constructor() {
 		this.canvas = new Canvas(0, 0, window.innerWidth, window.innerHeight);
@@ -19,6 +27,7 @@ export class Scene {
 
 	public fixedUpdate(): void {
 		this.root.events.fire("fixedUpdate");
+		this.checkCollisions();
 	}
 
 	public update(): void {
@@ -34,6 +43,10 @@ export class Scene {
 		for (let i = 0; i < this.cameras.length; i++) {
 			this.cameras[i].renderer.render(this.canvas.ctx);
 		}
+	}
+
+	public checkCollisions(): void {
+		Logger.log(this.root.collisions.length);
 	}
 
 	public destroy(): void {

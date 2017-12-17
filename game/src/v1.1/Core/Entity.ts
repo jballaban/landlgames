@@ -17,6 +17,10 @@ export class Entity {
 		this.transform = this.registerComponent(new TransformComponent()) as TransformComponent;
 	}
 
+	public top(): Entity {
+		return this.parent == null ? this : this.parent.top();
+	}
+
 	public getAncestor<T extends Entity>(type: Function): T {
 		if (this.parent == null) { return null; }
 		if (this.parent instanceof type) { return this.parent as T; }
@@ -42,6 +46,7 @@ export class Entity {
 	public onAttach(parent: Entity): void {
 		this.parent = parent;
 		this.events.registerParent(parent.events);
+		this.events.fire("onAttach", parent);
 	}
 
 	public preRenderInit(ctx: CanvasRenderingContext2D): void {
