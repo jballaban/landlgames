@@ -22,6 +22,7 @@ export class Color extends Texture {
 	}
 
 	public static Black: Color = new Color(0, 0, 0);
+	public static White: Color = new Color(255, 255, 255);
 
 	public static getRandom(): Color {
 		return new Color(Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), 1);

@@ -16,8 +16,8 @@ export class TransformComponent extends Component {
 	public rotate: Vector3D = new Vector3D(0, 0, 0);
 
 	public project(position: Vector3D): Vector3D {
-		let origin = position;//.clone().cross(this.scale);
-		let rads: number = -this.rotate.z * Math.PI / 180;
+		let origin = position;//.cross(this.scale);
+		let rads: number = -this.getEffectiveRotate().z * Math.PI / 180;
 		let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
 		let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
 		origin.x = x;

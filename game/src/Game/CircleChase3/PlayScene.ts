@@ -16,7 +16,7 @@ import { Cursor, MouseHandler, CursorState } from "../../v1.1/Core/MouseHandler"
 import { KeyboardHandler } from "../../v1.1/Core/KeyboardHandler";
 import { Physics } from "../../v0/Core/Physics";
 import { AlphaComponent } from "../../v1.1/Components/AlphaComponent";
-import { Circle, Rectangle } from "../../v1.1/Core/Shape";
+import { Circle, Rectangle, Shape } from "../../v1.1/Core/Shape";
 import { ShapeRenderComponent } from "../../v1.1/Components/ShapeRenderComponent";
 
 export class Mirror extends Camera {
@@ -58,37 +58,39 @@ export class World extends Entity {
 
 	constructor(public width: number, public height: number, particles: number) {
 		super();
-		this.registerComponent(new AlphaComponent({ alpha: 0.5 })) as AlphaComponent;
-		this.registerComponent(new ShapeRenderComponent(new Rectangle(width, height), new Gradient([
-			{ percent: 0, color: new Color(10, 100, 10) },
-			{ percent: 100, color: new Color(200, 200, 200) }
-		])));
+		this.registerComponent(new ShadowComponent());
+		this.registerEntity(new Entity())
+			//.registerComponent(new ShadowComponent({ color: new Color(15, 150, 15), depth: 100 }))
+			//.entity
+			.registerComponent(new ShapeRenderComponent(new Rectangle(width, height), new Gradient([
+				{ percent: 0, color: new Color(10, 100, 10) },
+				{ percent: 100, color: new Color(200, 200, 200) }
+			])));
 		for (let i: number = 0; i < particles; i++) {
 			let entity: Entity =
-				this.registerEntity(new Entity());
-			let physics: PhysicsComponent = entity.registerComponent(
-				new PhysicsComponent(null, {
+				this.registerEntity(new Entity())
+					.registerComponent(new AlphaComponent({ alpha: 0.5 }))
+					.entity;
+			let radius = Math.random() * 25 + 25;
+			let shape: Shape = Math.random() > 0.5 ? new Circle(radius) : new Rectangle(radius * 2, radius);
+			entity.registerComponent(
+				new PhysicsComponent(shape, {
 					maxX: width,
 					maxY: height,
 					force: new Vector3D(Math.random() * 2 - 1, Math.random() * 2 - 1, 0)
-				})) as PhysicsComponent;
-			entity.registerComponent(new ShadowComponent());
+				}));
+
 			entity.registerComponent(new RotateComponent(1));
-			let radius = Math.random() * 25 + 25;
+
 			entity.transform.origin = new Vector3D(i * (width / particles) + radius, i * (height / particles) + radius, 0);
-			if (Math.random() > 0.5) {
-				entity.registerEntity(new Entity())
-					.registerComponent(new ShapeRenderComponent(new Circle(radius), new Gradient([
-						{ percent: 0, color: Color.getRandom() },
-						{ percent: 100, color: Color.getRandom() }
-					])))
-			} else {
-				entity.registerEntity(new Entity())
-					.registerComponent(new ShapeRenderComponent(new Rectangle(radius * 2, radius), new Gradient([
-						{ percent: 0, color: Color.getRandom() },
-						{ percent: 100, color: Color.getRandom() }
-					])))
-					.entity.transform.origin = new Vector3D(-radius * 2 / 2, -radius / 2, 0);
+
+			let renderEntity: Entity = entity.registerEntity(new Entity())
+				.registerComponent(new ShapeRenderComponent(shape, new Gradient([
+					{ percent: 0, color: Color.getRandom() },
+					{ percent: 100, color: Color.getRandom() }
+				]))).entity;
+			if (shape instanceof Rectangle) {
+				renderEntity.transform.origin = new Vector3D(-radius * 2 / 2, -radius / 2, 0);
 			}
 		}
 	}
@@ -97,14 +99,6 @@ export class World extends Entity {
 export class WorldCamera extends Camera {
 	constructor(entities: Entity[], width: number, height: number) {
 		super(entities, width, height);
-		//	this.registerComponent(new ForcePhysicsComponent(0, .1, .01, new Vector3D(.1, .1, 0), this.transform.scale));
-		//this.registerEntity(new Entity())
-		/* this.registerComponent(new CircRenderComponent(Math.max(this.width, this.height),
-			new Gradient(
-				[{ percent: 50, color: new Color(0, 0, 0, 0) },
-				{ percent: 60, color: new Color(0, 0, 0, 1) }],
-				GradientType.MiddleToOutCircle)
-		)); */
 	}
 }
 

@@ -9,7 +9,7 @@ import { MemoryCanvas } from "../Core/MemoryCanvas";
 import { Entity } from "../Core/Entity";
 import { Shape } from "../Core/Shape";
 
-export class ShapeRenderComponent extends Component {
+export class ShapeRenderComponent extends RenderComponent {
 
 	private cache: CanvasRenderingContext2D;
 	private renderedCache: CanvasRenderingContext2D;
@@ -17,8 +17,8 @@ export class ShapeRenderComponent extends Component {
 
 	public constructor(public shape: Shape, public texture: Texture) {
 		super();
-		this.cache = new MemoryCanvas(shape.right(), shape.bottom()).ctx;
-		this.renderedCache = new MemoryCanvas(shape.right(), shape.bottom()).ctx;
+		this.cache = new MemoryCanvas(shape.right() - shape.left(), shape.bottom() - shape.top()).ctx;
+		this.renderedCache = new MemoryCanvas(shape.right() - shape.left(), shape.bottom() - shape.top()).ctx;
 		this.buildCache();
 	}
 
@@ -35,7 +35,8 @@ export class ShapeRenderComponent extends Component {
 
 	public buildRenderedCache() {
 		this.renderedCache.clearRect(0, 0, this.renderedCache.canvas.width, this.renderedCache.canvas.height);
-		this.entity.preRender(this.renderedCache);
+		this.entity.preRenderInit(this.renderedCache);
+		this.entity.preRenderApply(this.renderedCache);
 		this.entity.transform.apply(this.renderedCache, { origin: false, scale: true, rotate: true });
 		this.renderedCache.drawImage(this.cache.canvas, 0, 0);
 		this.renderCacheDirty = false;
@@ -43,6 +44,7 @@ export class ShapeRenderComponent extends Component {
 
 	public render(ctx: CanvasRenderingContext2D): void {
 		ctx.save();
+
 		if (this.renderCacheDirty) {
 			this.buildRenderedCache();
 		}
@@ -50,6 +52,8 @@ export class ShapeRenderComponent extends Component {
 			this.entity.parent.transform.applyRecursive(ctx);
 		}
 		this.entity.transform.apply(ctx, { origin: true, scale: false, rotate: false });
+		ctx.fillStyle = "rgb(255,0,0)";
+		ctx.fillRect(-2, -2, 5, 5);
 		if (this.shape.centered()) {
 			ctx.translate(-Math.floor(this.renderedCache.canvas.width / 2), -Math.floor(this.renderedCache.canvas.height / 2));
 		} else {
@@ -60,9 +64,6 @@ export class ShapeRenderComponent extends Component {
 		}
 		ctx.drawImage(this.renderedCache.canvas, 0, 0);
 
-		/* 	this.entity.transform.applyRecursive(ctx);
-			this.entity.preRender(ctx);
-			ctx.drawImage(this.cache.canvas, 0, 0); */
 		ctx.restore();
 	}
 }

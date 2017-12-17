@@ -3,7 +3,7 @@ import { Vector3D } from "../Core/Vector";
 import { Logger } from "../Utils/Logger";
 import { EventHandler } from "../Core/EventHandler";
 import { Entity } from "../Core/Entity";
-import { Shape } from "../Core/Shape";
+import { Shape, Rectangle } from "../Core/Shape";
 
 export interface IPhysicsOptions {
 	maxX?: number;
@@ -32,15 +32,33 @@ export class PhysicsComponent extends Component {
 	public onAttach(entity: Entity): void {
 		super.onAttach(entity);
 		entity.events.listen("fixedUpdate", this.fixedUpdate.bind(this));
+		//entity.events.listen("render", this.collisionArea.render.bind(this.collisionArea));
 	}
 
 	public fixedUpdate(): void {
 		this.entity.transform.origin.add(this.force);
-		if (this.entity.transform.origin.x > this.maxX || this.entity.transform.origin.x < 0) {
+		let x1, y1, x2, y2: number;
+		if (this.collisionArea instanceof Rectangle) {
+			let topleft: Vector3D = this.entity.transform.project(new Vector3D(this.collisionArea.left(), this.collisionArea.top(), 0));
+			let topright: Vector3D = this.entity.transform.project(new Vector3D(this.collisionArea.right(), this.collisionArea.top(), 0));
+			let bottomleft: Vector3D = this.entity.transform.project(new Vector3D(this.collisionArea.left(), this.collisionArea.bottom(), 0));
+			let bottomright: Vector3D = this.entity.transform.project(new Vector3D(this.collisionArea.right(), this.collisionArea.bottom(), 0));
+			x1 = Math.min(topleft.x, topright.x, bottomleft.x, bottomright.x);
+			y1 = Math.min(topleft.y, topright.y, bottomleft.y, bottomright.y);
+			x2 = Math.max(topleft.x, topright.x, bottomleft.x, bottomright.x);
+			y2 = Math.max(topleft.y, topright.y, bottomleft.y, bottomright.y);
+		} else {
+			x1 = this.collisionArea.left();
+			y1 = this.collisionArea.top();
+			x2 = this.collisionArea.right();
+			y2 = this.collisionArea.bottom();
+		}
+
+		if (this.entity.transform.origin.x + x2 > this.maxX || this.entity.transform.origin.x + x1 < 0) {
 			this.force.x *= -1;
 			this.entity.transform.origin.x += this.force.x;
 		}
-		if (this.entity.transform.origin.y > this.maxY || this.entity.transform.origin.y < 0) {
+		if (this.entity.transform.origin.y + y2 > this.maxY || this.entity.transform.origin.y + y1 < 0) {
 			this.force.y *= -1;
 			this.entity.transform.origin.y += this.force.y;
 		}

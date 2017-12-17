@@ -1,6 +1,7 @@
 import { PreRenderComponent } from "./PreRenderComponent";
 import { EventHandler } from "../Core/EventHandler";
 import { Color } from "../Textures/Color";
+import { Logger } from "../Utils/Logger";
 
 export interface IAlphaOptions {
 	alpha?: number;

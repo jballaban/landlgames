@@ -44,11 +44,16 @@ export class Entity {
 		this.events.registerParent(parent.events);
 	}
 
-	public preRender(ctx: CanvasRenderingContext2D): void {
-		if (this.parent != null) {
-			this.parent.preRender(ctx);
+	public preRenderInit(ctx: CanvasRenderingContext2D): void {
+		if (this.parent != null) { this.parent.preRenderInit(ctx); }
+		for (let i: number = 0; i < this.prerenders.length; i++) {
+			this.prerenders[i].init(ctx);
 		}
-		for (let i = 0; i < this.prerenders.length; i++) {
+	}
+
+	public preRenderApply(ctx: CanvasRenderingContext2D): void {
+		if (this.parent != null) { this.parent.preRenderApply(ctx); }
+		for (let i: number = 0; i < this.prerenders.length; i++) {
 			this.prerenders[i].apply(ctx);
 		}
 	}
