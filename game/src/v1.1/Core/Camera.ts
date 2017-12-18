@@ -1,7 +1,6 @@
 import { Entity } from "./Entity";
 import { RenderComponent } from "../Components/RenderComponent";
 import { Component } from "./Component";
-import { Vector3D } from "./Vector";
 import { Logger } from "../Utils/Logger";
 import { CameraRenderComponent } from "../Components/CameraRenderComponent";
 import { EventHandler } from "./EventHandler";

@@ -1,7 +1,7 @@
 import { Component } from "../Core/Component";
 import { Logger } from "../Utils/Logger";
 import { TransformComponent } from "./TransformComponent";
-import { Vector3D } from "../Core/Vector";
+import { Vector2D } from "../Core/Vector";
 import { RenderComponent } from "./RenderComponent";
 import { Camera } from "../Core/Camera";
 import { Entity } from "../Core/Entity";
@@ -9,7 +9,7 @@ import { EventHandler } from "../Core/EventHandler";
 
 export class CameraRenderComponent extends RenderComponent {
 
-	public offset: Vector3D = new Vector3D(0, 0, 0);
+	public offset: Vector2D = new Vector2D(0, 0);
 
 	private camera: Camera;
 

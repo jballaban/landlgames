@@ -14,6 +14,6 @@ export class RotateComponent extends Component {
 	}
 
 	public fixedUpdate(): void {
-		this.entity.transform.rotate.z += this.velocity;
+		this.entity.transform.rotate += this.velocity;
 	}
 }

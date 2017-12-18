@@ -3,6 +3,7 @@ import { Time } from "./Time";
 import { MouseHandler } from "./MouseHandler";
 import { KeyboardHandler } from "./KeyboardHandler";
 import { Logger } from "../Utils/Logger";
+import { ImpulseMath } from "./ImpulseMath";
 
 export interface IRuntimeOptions {
 	showFPS: boolean;
@@ -43,6 +44,7 @@ export class Runtime {
 		}
 		MouseHandler.init();
 		KeyboardHandler.init();
+		ImpulseMath.initialize();
 		requestAnimationFrame(Runtime.frame);
 	}
 

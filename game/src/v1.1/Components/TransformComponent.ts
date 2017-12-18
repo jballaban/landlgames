@@ -1,5 +1,5 @@
 import { Component } from "../Core/Component";
-import { Vector3D } from "../Core/Vector";
+import { Vector2D } from "../Core/Vector";
 import { Logger } from "../Utils/Logger";
 import { EventHandler } from "../Core/EventHandler";
 import { PreRenderComponent } from "./PreRenderComponent";
@@ -11,13 +11,13 @@ export interface TranslateOptions {
 }
 
 export class TransformComponent extends Component {
-	public origin: Vector3D = new Vector3D(0, 0, 0);
-	public scale: Vector3D = new Vector3D(1, 1, 1);
-	public rotate: Vector3D = new Vector3D(0, 0, 0);
+	public origin: Vector2D = new Vector2D();
+	public scale: Vector2D = new Vector2D(1, 1);
+	public rotate: number = 0;
 
-	public project(position: Vector3D): Vector3D {
+	public project(position: Vector2D): Vector2D {
 		let origin = position;//.cross(this.scale);
-		let rads: number = -this.getEffectiveRotate().z * Math.PI / 180;
+		let rads: number = -this.getEffectiveRotate() * Math.PI / 180;
 		let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
 		let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);
 		origin.x = x;
@@ -39,28 +39,28 @@ export class TransformComponent extends Component {
 		if (options == null || options.scale && (this.scale.x != 1 || this.scale.y != 1)) {
 			ctx.scale(this.scale.x, this.scale.y);
 		}
-		if (options == null || options.rotate && this.rotate.z != 0)
-			ctx.rotate(this.rotate.z * Math.PI / 180);
+		if (options == null || options.rotate && this.rotate != 0)
+			ctx.rotate(this.rotate * Math.PI / 180);
 		//	ctx.translate(-this.origin.x, -this.origin.y);
 	}
 
-	public getEffectiveRotate(): Vector3D {
+	public getEffectiveRotate(): number {
 		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
 		if (ancestor == null) {
-			return this.rotate.clone();
+			return this.rotate;
 		}
-		return this.rotate.clone().add(ancestor.getEffectiveRotate());
+		return this.rotate + ancestor.getEffectiveRotate();
 	}
 
-	public getEffectiveScale(): Vector3D {
+	public getEffectiveScale(): Vector2D {
 		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
 		if (ancestor == null) {
 			return this.scale.clone();
 		}
-		return this.scale.clone().cross(ancestor.getEffectiveScale());
+		return this.scale.clone().multiply(ancestor.getEffectiveScale());
 	}
 
-	public getEffectiveOrigin(): Vector3D {
+	public getEffectiveOrigin(): Vector2D {
 		let origin = this.origin.clone();
 		let ancestor = this.entity.getAncestorComponent<TransformComponent>(TransformComponent);
 		if (ancestor != null) {
@@ -68,7 +68,7 @@ export class TransformComponent extends Component {
 		}
 		let rads: number = 0;
 		if (ancestor != null) {
-			rads = ancestor.getEffectiveRotate().z * Math.PI / 180;
+			rads = ancestor.getEffectiveRotate() * Math.PI / 180;
 		}
 		let x: number = origin.x * Math.cos(rads) - origin.y * Math.sin(rads);
 		let y: number = origin.x * Math.sin(rads) + origin.y * Math.cos(rads);

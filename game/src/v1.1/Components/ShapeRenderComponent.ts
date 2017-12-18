@@ -1,7 +1,6 @@
 import { Component } from "../Core/Component";
 import { Logger } from "../Utils/Logger";
 import { TransformComponent } from "./TransformComponent";
-import { Vector3D } from "../Core/Vector";
 import { RenderComponent } from "./RenderComponent";
 import { Texture } from "../Textures/Texture";
 import { EventHandler } from "../Core/EventHandler";
@@ -17,8 +16,8 @@ export class ShapeRenderComponent extends RenderComponent {
 
 	public constructor(public shape: Shape, public texture: Texture) {
 		super();
-		this.cache = new MemoryCanvas(shape.right() - shape.left(), shape.bottom() - shape.top()).ctx;
-		this.renderedCache = new MemoryCanvas(shape.right() - shape.left(), shape.bottom() - shape.top()).ctx;
+		this.cache = new MemoryCanvas(shape.width(), shape.height()).ctx;
+		this.renderedCache = new MemoryCanvas(shape.width(), shape.height()).ctx;
 		this.buildCache();
 	}
 
@@ -62,6 +61,7 @@ export class ShapeRenderComponent extends RenderComponent {
 				-Math.floor((this.renderedCache.canvas.height - this.cache.canvas.height) / 2)
 			);
 		}
+
 		ctx.drawImage(this.renderedCache.canvas, 0, 0);
 
 		ctx.restore();
