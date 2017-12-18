@@ -16,7 +16,7 @@ export class Scene {
 	public root: RootEntity = new RootEntity();
 	private cameras: Camera[] = new Array<Camera>();
 
-	private canvas: Canvas;
+	protected canvas: Canvas;
 	public constructor() {
 		this.canvas = new Canvas(0, 0, window.innerWidth, window.innerHeight);
 	}
@@ -40,13 +40,13 @@ export class Scene {
 
 	public render(): void {
 		this.canvas.ctx.clearRect(this.canvas.x, this.canvas.y, this.canvas.width, this.canvas.height);
-		for (let i = 0; i < this.cameras.length; i++) {
+		for (let i: number = 0; i < this.cameras.length; i++) {
 			this.cameras[i].renderer.render(this.canvas.ctx);
 		}
 	}
 
 	public checkCollisions(): void {
-
+		// todo
 	}
 
 	public destroy(): void {

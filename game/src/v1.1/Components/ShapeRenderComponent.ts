@@ -26,13 +26,13 @@ export class ShapeRenderComponent extends RenderComponent {
 		entity.events.listen("render", this.render.bind(this));
 	}
 
-	public buildCache() {
+	public buildCache(): void {
 		this.cache.clearRect(0, 0, this.cache.canvas.width, this.cache.canvas.height);
 		this.shape.render(this.cache);
 		this.texture.apply(this.cache, 0, 0, this.cache.canvas.width, this.cache.canvas.height);
 	}
 
-	public buildRenderedCache() {
+	public buildRenderedCache(): void {
 		this.renderedCache.clearRect(0, 0, this.renderedCache.canvas.width, this.renderedCache.canvas.height);
 		this.entity.preRenderInit(this.renderedCache);
 		this.entity.preRenderApply(this.renderedCache);

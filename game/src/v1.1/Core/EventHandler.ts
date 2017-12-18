@@ -58,7 +58,7 @@ export class HierarchyEventHandler extends EventHandler {
 	}
 
 }
-/* 
+/*
 export class DependentEventHandler extends EventHandler {
 	private dependentHandlers: EventHandler[] = new Array<EventHandler>();
 

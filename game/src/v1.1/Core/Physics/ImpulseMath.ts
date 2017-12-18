@@ -1,4 +1,4 @@
-import { Vector2D } from "./Vector";
+import { Vector2D } from "../Vector";
 
 export class ImpulseMath {
 
@@ -21,7 +21,7 @@ export class ImpulseMath {
 		ImpulseMath.BIAS_ABSOLUTE = 0.01;
 		ImpulseMath.DT = 1.0 / 60.0;
 		ImpulseMath.GRAVITY = new Vector2D(0.0, 50.0);
-		ImpulseMath.RESTING = ImpulseMath.GRAVITY.multiplyScalar(ImpulseMath.DT).lengthSquared() + ImpulseMath.EPSILON;
+		ImpulseMath.RESTING = ImpulseMath.GRAVITY.clone().multiplyScalar(ImpulseMath.DT).lengthSquared() + ImpulseMath.EPSILON;
 		ImpulseMath.PENETRATION_ALLOWANCE = 0.05;
 		ImpulseMath.PENETRATION_CORRETION = 0.4;
 	}

@@ -1,5 +1,4 @@
-import { S_IFBLK } from "constants";
-import { ImpulseMath } from "./ImpulseMath";
+import { ImpulseMath } from "./Physics/ImpulseMath";
 
 
 export class Vector2D {
@@ -9,9 +8,10 @@ export class Vector2D {
 		public y: number = 0
 	) { }
 
-	public set(x: number, y: number): void {
+	public set(x: number, y: number): Vector2D {
 		this.x = x;
 		this.y = y;
+		return this;
 	}
 
 	public clone(): Vector2D { return new Vector2D(this.x, this.y); }

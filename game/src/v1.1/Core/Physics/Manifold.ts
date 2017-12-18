@@ -1,6 +1,8 @@
+// tslint:disable:comment-format
 import { Body } from "./Body";
-import { Vector2D } from "./Vector";
+import { Vector2D } from "../Vector";
 import { ImpulseMath } from "./ImpulseMath";
+import { Collisions } from "./Collisions";
 
 export class Manifold {
 
@@ -14,7 +16,7 @@ export class Manifold {
 	public df: number;
 	public sf: number;
 
-	public Manifold(a: Body, b: Body) {
+	constructor(a: Body, b: Body) {
 		this.A = a;
 		this.B = b;
 	}
@@ -23,7 +25,7 @@ export class Manifold {
 		let ia: number = this.A.shape.type;
 		let ib: number = this.B.shape.type;
 
-		//	Collisions.dispatch[ia][ib].handleCollision(this, this.A, this.B);
+		Collisions.dispatch[ia][ib].handleCollision(this, this.A, this.B);
 	}
 
 	public initialize(): void {
@@ -53,9 +55,9 @@ export class Manifold {
 				.subi(Vec2.cross(A.angularVelocity, ra, new Vec2())
 				); */
 
-			let n: Vector2D = rb.crossScalar(this.B.angularVelocity);
-			let m: Vector2D = ra.crossScalar(this.A.angularVelocity);
-			let rv: Vector2D = this.B.velocity.add(n).subtract(this.A.velocity).subtract(m);
+			let n: Vector2D = rb.clone().crossScalar(this.B.angularVelocity);
+			let m: Vector2D = ra.clone().crossScalar(this.A.angularVelocity);
+			let rv: Vector2D = this.B.velocity.clone().add(n).subtract(this.A.velocity).subtract(m);
 
 			// Determine if we should perform a resting collision or not
 			// The idea is if the only thing moving this object is gravity,
@@ -89,8 +91,8 @@ export class Manifold {
 				Vec2.cross(B.angularVelocity, rb, new Vec2()))
 				.subi(A.velocity)
 				.subi(Vec2.cross(A.angularVelocity, ra, new Vec2())); */
-			let m: Vector2D = ra.crossScalar(this.A.angularVelocity);
-			let n: Vector2D = rb.crossScalar(this.B.angularVelocity);
+			let m: Vector2D = ra.clone().crossScalar(this.A.angularVelocity);
+			let n: Vector2D = rb.clone().crossScalar(this.B.angularVelocity);
 			let rv: Vector2D = this.B.velocity.clone().add(n).subtract(this.A.velocity).subtract(m);
 
 			// Relative velocity along the normal
@@ -120,69 +122,74 @@ export class Manifold {
 
 			// Apply impulse
 			let impulse: Vector2D = this.normal.clone().multiplyScalar(j);
-			A.applyImpulse(impulse.neg(), ra);
-			B.applyImpulse(impulse, rb);
+			this.A.applyImpulse(impulse.clone().negate(), ra);
+			this.B.applyImpulse(impulse, rb);
 
 			// Friction impulse
 			// rv = B->velocity + Cross( B->angularVelocity, rb ) -
 			// A->velocity - Cross( A->angularVelocity, ra );
-			rv = B.velocity.add(Vec2.cross(B.angularVelocity, rb, new Vec2())).subi(A.velocity).subi(Vec2.cross(A.angularVelocity, ra, new Vec2()));
+			/* rv = B.velocity.add(Vec2.cross(B.angularVelocity, rb, new Vec2())).subi(A.velocity)
+			.subi(Vec2.cross(A.angularVelocity, ra, new Vec2())); */
+
+			m = ra.clone().crossScalar(this.A.angularVelocity);
+			n = rb.clone().crossScalar(this.B.angularVelocity);
+			rv = this.B.velocity.clone().add(n).subtract(this.A.velocity).subtract(m);
 
 			// Vec2 t = rv - (normal * Dot( rv, normal ));
 			// t.Normalize( );
-			Vec2 t = new Vec2(rv);
-			t.addsi(normal, -Vec2.dot(rv, normal));
+			let t: Vector2D = rv.clone();
+			t.addVectorWithScalar(this.normal, -rv.dot(this.normal));
 			t.normalize();
 
 			// j tangent magnitude
-			float jt = -Vec2.dot(rv, t);
+			let jt: number = -rv.dot(t);
 			jt /= invMassSum;
-			jt /= contactCount;
+			jt /= this.contactCount;
 
 			// Don't apply tiny friction impulses
-			if (ImpulseMath.equal(jt, 0.0f)) {
+			if (ImpulseMath.equal(jt, 0.0)) {
 				return;
 			}
 
 			// Coulumb's law
-			Vec2 tangentImpulse;
+			let tangentImpulse: Vector2D;
 			// if(std::abs( jt ) < j * sf)
-			if (StrictMath.abs(jt) < j * sf) {
+			if (Math.abs(jt) < j * this.sf) {
 				// tangentImpulse = t * jt;
-				tangentImpulse = t.mul(jt);
-			}
-			else {
+				tangentImpulse = t.clone().multiplyScalar(jt);
+			} else {
 				// tangentImpulse = t * -j * df;
-				tangentImpulse = t.mul(j).muli(-df);
+				tangentImpulse = t.clone().multiplyScalar(j).multiplyScalar(-this.df);
 			}
 
 			// Apply friction impulse
 			// A->ApplyImpulse( -tangentImpulse, ra );
 			// B->ApplyImpulse( tangentImpulse, rb );
-			A.applyImpulse(tangentImpulse.neg(), ra);
-			B.applyImpulse(tangentImpulse, rb);
+			this.A.applyImpulse(tangentImpulse.clone().negate(), ra);
+			this.B.applyImpulse(tangentImpulse, rb);
 		}
 	}
 
-	public void positionalCorrection()
-{
-	// const real k_slop = 0.05f; // Penetration allowance
-	// const real percent = 0.4f; // Penetration percentage to correct
-	// Vec2 correction = (std::max( penetration - k_slop, 0.0f ) / (A->im +
-	// B->im)) * normal * percent;
-	// A->position -= correction * A->im;
-	// B->position += correction * B->im;
+	public positionalCorrection(): void {
+		// const real k_slop = 0.05f; // Penetration allowance
+		// const real percent = 0.4f; // Penetration percentage to correct
+		// Vec2 correction = (std::max( penetration - k_slop, 0.0f ) / (A->im +
+		// B->im)) * normal * percent;
+		// A->position -= correction * A->im;
+		// B->position += correction * B->im;
 
-	float correction = StrictMath.max(penetration - ImpulseMath.PENETRATION_ALLOWANCE, 0.0f) / (A.invMass + B.invMass) * ImpulseMath.PENETRATION_CORRETION;
+		let correction: number =
+			Math.max(this.penetration - ImpulseMath.PENETRATION_ALLOWANCE, 0.0)
+			/ (this.A.invMass + this.B.invMass)
+			* ImpulseMath.PENETRATION_CORRETION;
 
-	A.position.addsi(normal, -A.invMass * correction);
-	B.position.addsi(normal, B.invMass * correction);
-}
+		this.A.position.addVectorWithScalar(this.normal, -this.A.invMass * correction);
+		this.B.position.addVectorWithScalar(this.normal, this.B.invMass * correction);
+	}
 
-	public void infiniteMassCorrection()
-{
-	A.velocity.set(0, 0);
-	B.velocity.set(0, 0);
-}
+	public infiniteMassCorrection(): void {
+		this.A.velocity.set(0, 0);
+		this.B.velocity.set(0, 0);
+	}
 
 }

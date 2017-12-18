@@ -18,6 +18,10 @@ import { Physics } from "../../v0/Core/Physics";
 import { AlphaComponent } from "../../v1.1/Components/AlphaComponent";
 import { Circle, Rectangle, Shape } from "../../v1.1/Core/Shape";
 import { ShapeRenderComponent } from "../../v1.1/Components/ShapeRenderComponent";
+import { PhysicsEngine } from "../../v1.1/Core/Physics/PhysicsEngine";
+import { ImpulseMath } from "../../v1.1/Core/Physics/ImpulseMath";
+import { PhysicalCircle } from "../../v1.1/Core/Physics/PhysicalShape";
+import { Body } from "../../v1.1/Core/Physics/Body";
 
 export class Mirror extends Camera {
 	constructor(source: Entity, width: number, height: number) {
@@ -66,12 +70,12 @@ export class World extends Entity {
 				{ percent: 0, color: new Color(10, 100, 10) },
 				{ percent: 100, color: new Color(200, 200, 200) }
 			])));
-		for (let i: number = 0; i < particles; i++) {
+		/* for (let i: number = 0; i < particles; i++) {
 			let entity: Entity =
 				this.registerEntity(new Entity())
 					.registerComponent(new AlphaComponent({ alpha: 0.5 }))
 					.entity;
-			let radius = Math.random() * 25 + 25;
+			let radius: number = Math.random() * 25 + 25;
 			let shape: Shape = Math.random() >= 0 ? new Circle(radius) : new Rectangle(radius * 2, radius);
 			entity.registerComponent(
 				new PhysicsComponent(shape, {
@@ -92,7 +96,7 @@ export class World extends Entity {
 			if (shape instanceof Rectangle) {
 				renderEntity.transform.origin = new Vector2D(-radius * 2 / 2, -radius / 2);
 			}
-		}
+		} */
 	}
 }
 
@@ -107,24 +111,75 @@ export class PlayScene extends Scene {
 	private worldCamera: WorldCamera;
 	private hud: Hud;
 	private hudCamera: Camera;
+	private physics: PhysicsEngine;
 
 	constructor() {
 		super();
 		let leftpanewidth: number = 200;
 		let mirrorheight: number = 100;
-		this.world = this.root.registerEntity(new World(3000, 3000, 200));
-		this.worldCamera = this.root.registerEntity(new WorldCamera(
-			[this.world],
-			window.innerWidth - leftpanewidth,
-			window.innerHeight - mirrorheight)
-		);
-		this.worldCamera.transform.origin = new Vector2D(
-			this.worldCamera.width / 2 + leftpanewidth,
-			this.worldCamera.height / 2
-		);
-		this.hud = this.root.registerEntity(new Hud(leftpanewidth, mirrorheight, this.world, this.worldCamera));
+		/* 	this.world = this.root.registerEntity(new World(3000, 3000, 200));
+			this.worldCamera = this.root.registerEntity(new WorldCamera(
+				[this.world],
+				window.innerWidth - leftpanewidth,
+				window.innerHeight - mirrorheight)
+			);
+			this.worldCamera.transform.origin = new Vector2D(
+				this.worldCamera.width / 2 + leftpanewidth,
+				this.worldCamera.height / 2
+			); */
+		/* this.hud = this.root.registerEntity(new Hud(leftpanewidth, mirrorheight, this.world, this.worldCamera));
 		this.hudCamera = this.root.registerEntity(new Camera([this.hud], window.innerWidth, window.innerHeight));
-		this.hudCamera.transform.origin = new Vector2D(this.hudCamera.width / 2, this.hudCamera.height / 2);
+		this.hudCamera.transform.origin = new Vector2D(this.hudCamera.width / 2, this.hudCamera.height / 2); */
+		this.physics = new PhysicsEngine(ImpulseMath.DT, 1);
+		// floor
+		for (let w: number = 0 + 25; w < window.innerWidth; w += 100) {
+			let c: PhysicalCircle = new PhysicalCircle(50);
+			c.color = new Color(0, 0, 255).toString();
+			let b: Body = this.physics.add(c, w, window.innerHeight - 25);
+			b.setStatic();
+			b.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
+			b.restitution = 0.2;
+			b.dynamicFriction = 0.2;
+			b.staticFriction = 0.4;
+		}
+		// barriers
+		for (let i: number = 0; i < 100; i++) {
+			let c: PhysicalCircle = new PhysicalCircle(Math.random() * 25);
+			c.color = new Color(0, 255, 255).toString();
+			let b: Body = this.physics.add(
+				c, Math.random() * window.innerWidth, Math.random() * (window.innerHeight - 200) + 200);
+			b.setStatic();
+			b.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
+			b.restitution = 0.2;
+			b.dynamicFriction = 0.2;
+			b.staticFriction = 0.4;
+		}
+		for (let l: number = 0; l < 10; l++) {
+			// falling objects
+			for (let i: number = 10; i < window.innerWidth; i += 20) {
+				let c: PhysicalCircle = new PhysicalCircle(10);
+				c.color = Color.getRandom().toString();
+				let a: Body = this.physics.add(c, i, l * 20);
+				a.setOrient(0);
+			}
+		}
+
+	}
+
+	public render(): void {
+		super.render();
+		for (let i: number = 0; i < this.physics.bodies.size; i++) {
+			let b: Body = this.physics.bodies[i];
+			this.canvas.ctx.save();
+			this.canvas.ctx.translate(b.position.x - b.shape.width() / 2, b.position.y - b.shape.height() / 2);
+			b.shape.render(this.canvas.ctx);
+			this.canvas.ctx.restore();
+		}
+	}
+
+	public checkCollisions(): void {
+		super.checkCollisions();
+		this.physics.step();
 	}
 
 	public update(): void {

@@ -4,6 +4,6 @@ import { TransformComponent } from "./TransformComponent";
 
 export abstract class RenderComponent extends Component {
 
-	public abstract render(ctx: CanvasRenderingContext2D);
+	public abstract render(ctx: CanvasRenderingContext2D): void;
 
 }
