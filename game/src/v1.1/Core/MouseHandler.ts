@@ -7,6 +7,18 @@ export enum CursorState {
 	unchanged
 }
 
+export enum ButtonState {
+	pressed,
+	released,
+	inactive
+}
+
+export class Button {
+	public data: any;
+
+	constructor(public x: number, public y: number, public state: ButtonState) { }
+}
+
 export class Cursor {
 
 	public data: any;
@@ -31,16 +43,20 @@ export class MouseHandler {
 	private static mouseX: number = 0;
 	private static mouseY: number = 0;
 	public static cursors: Map<number, Cursor> = new Map<number, Cursor>();
+	public static _leftButton: Button = new Button(0, 0, ButtonState.inactive);
+	public static leftButton: Button = new Button(0, 0, ButtonState.inactive);
+	public static MOUSECURSOR: number = 0;
 
 	public static init(): void {
 		document.addEventListener("mousedown", MouseHandler.onMouseDown);
+		document.addEventListener("mouseup", MouseHandler.onMouseUp);
 		document.addEventListener("mousemove", MouseHandler.onMouseMove);
 		document.addEventListener("touchstart", MouseHandler.onTouchStart);
 		document.addEventListener("touchend", MouseHandler.onTouchEnd);
 		document.addEventListener("touchcancel", MouseHandler.onTouchEnd);
 		document.addEventListener("touchmove", MouseHandler.onTouchMove);
 		document.addEventListener("pointerlockchange", MouseHandler.lockChanged);
-		document.addEventListener("wheel", MouseHandler.onWheel)
+		document.addEventListener("wheel", MouseHandler.onWheel);
 	}
 
 	public static reset(): void {
@@ -61,6 +77,10 @@ export class MouseHandler {
 	}
 
 	public static update(): void {
+		// mousebutton
+		MouseHandler.leftButton.state = MouseHandler._leftButton.state;
+		MouseHandler.leftButton.x = MouseHandler._leftButton.x;
+		MouseHandler.leftButton.y = MouseHandler._leftButton.y;
 		// sync _cursors to cursors
 		var keys: number[] = Array.from(MouseHandler._cursors.keys());
 		for (var i: number = 0; i < keys.length; i++) {
@@ -166,10 +186,19 @@ export class MouseHandler {
 			if (Math.abs(e.movementX) > 100 || Math.abs(e.movementY) > 100) {
 				return; // todo there is a bug in chrome that is causing weird large values to randomly get sent, hack fix
 			}
-			MouseHandler.inc(0, e.movementX, e.movementY);
+			MouseHandler.inc(MouseHandler.MOUSECURSOR, e.movementX, e.movementY);
 		} else {
 			MouseHandler.mouseX = e.clientX;
 			MouseHandler.mouseY = e.clientY;
+		}
+	}
+
+	public static onMouseUp(e: MouseEvent): void {
+		e.preventDefault();
+		if (MouseHandler.locked) {
+			MouseHandler._leftButton.x = e.clientX;
+			MouseHandler._leftButton.y = e.clientY;
+			MouseHandler._leftButton.state = ButtonState.released;
 		}
 	}
 
@@ -177,16 +206,20 @@ export class MouseHandler {
 		e.preventDefault();
 		if (!MouseHandler.locked) {
 			document.body.requestPointerLock();
+		} else {
+			MouseHandler._leftButton.state = ButtonState.pressed;
 		}
 	}
 
 	public static lockChanged(): void {
 		if (document.pointerLockElement != null) {
-			MouseHandler._cursors.set(0, new Cursor(0, MouseHandler.mouseX, MouseHandler.mouseY, 0, 0, 0, CursorState.added));
+			MouseHandler._cursors.set(0, new Cursor(MouseHandler.MOUSECURSOR, MouseHandler.mouseX, MouseHandler.mouseY, 0, 0, 0, CursorState.added));
 			MouseHandler.locked = true;
+			MouseHandler._leftButton.state = ButtonState.pressed;
 		} else if (MouseHandler.locked) {
 			MouseHandler.locked = false;
 			MouseHandler._cursors.get(0).state = CursorState.remove;
+			MouseHandler._leftButton.state = ButtonState.released;
 		}
 	}
 

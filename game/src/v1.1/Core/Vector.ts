@@ -1,4 +1,5 @@
 import { ImpulseMath } from "./Physics/ImpulseMath";
+import { Matrix } from "./Physics/Matrix";
 
 
 export class Vector2D {
@@ -43,6 +44,14 @@ export class Vector2D {
 	public multiply(v: Vector2D): Vector2D {
 		this.x *= v.x;
 		this.y *= v.y;
+		return this;
+	}
+
+	public multiplyMatrix(u: Matrix): Vector2D {
+		let dx: number = u.m00 * this.x + u.m01 * this.y;
+		let dy: number = u.m10 * this.x + u.m11 * this.y;
+		this.x = dx;
+		this.y = dy;
 		return this;
 	}
 

@@ -1,0 +1,12 @@
+{
+	"extends": "tslint:recommended",
+	"rules": {
+		"comment-format": false,
+		"indent": false,
+		"prefer-const": false,
+		"ordered-imports": false,
+		"eofline": false,
+		"trailing-comma": false,
+		"max-classes-per-file": false
+	}
+}

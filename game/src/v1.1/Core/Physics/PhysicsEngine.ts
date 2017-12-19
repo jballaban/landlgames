@@ -79,6 +79,10 @@ export class PhysicsEngine {
 		return this.bodies.add(new Body(shape, x, y));
 	}
 
+	public remove(body: Body): void {
+		this.bodies.removeAt(this.bodies.indexOf(body));
+	}
+
 	public clear(): void {
 		this.contacts.clear();
 		this.bodies.clear();

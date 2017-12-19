@@ -4,7 +4,8 @@ import { ImpulseMath } from "./ImpulseMath";
 import { Logger } from "../../Utils/Logger";
 
 export enum ShapeType {
-	Circle = 0
+	Circle = 0,
+	Polygon = 1
 }
 
 export interface IPhysicalShape {

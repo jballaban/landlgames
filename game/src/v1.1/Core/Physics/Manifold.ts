@@ -36,8 +36,12 @@ export class Manifold {
 		// Calculate static and dynamic friction
 		// sf = std::sqrt( A->staticFriction * A->staticFriction );
 		// df = std::sqrt( A->dynamicFriction * A->dynamicFriction );
-		this.sf = Math.sqrt(this.A.staticFriction * this.A.staticFriction + this.B.staticFriction * this.B.staticFriction);
-		this.df = Math.sqrt(this.A.dynamicFriction * this.A.dynamicFriction + this.B.dynamicFriction * this.B.dynamicFriction);
+		this.sf = Math.sqrt(
+			this.A.staticFriction * this.A.staticFriction +
+			this.B.staticFriction * this.B.staticFriction);
+		this.df = Math.sqrt(
+			this.A.dynamicFriction * this.A.dynamicFriction +
+			this.B.dynamicFriction * this.B.dynamicFriction);
 
 		for (let i: number = 0; i < this.contactCount; ++i) {
 			// Calculate radii from COM to contact

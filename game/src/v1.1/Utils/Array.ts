@@ -13,4 +13,12 @@ export class EnhancedArray<T> extends Array<T> {
 		this[this.size++] = value;
 		return value;
 	}
+
+	public removeAt(i: number): void {
+		for (let j: number = i + 1; j < this.size; j++) {
+			this[j - 1] = this[j];
+		}
+		this[this.size] = null;
+		this.size--;
+	}
 }

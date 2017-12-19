@@ -12,7 +12,7 @@ import { Gradient, GradientType } from "../../v1.1/Textures/Gradient";
 import { PhysicsComponent } from "../../v1.1/Components/PhysicsComponent";
 import { ShadowComponent } from "../../v1.1/Components/ShadowComponent";
 import { Logger } from "../../v1.1/Utils/Logger";
-import { Cursor, MouseHandler, CursorState } from "../../v1.1/Core/MouseHandler";
+import { Cursor, MouseHandler, CursorState, ButtonState } from "../../v1.1/Core/MouseHandler";
 import { KeyboardHandler } from "../../v1.1/Core/KeyboardHandler";
 import { Physics } from "../../v0/Core/Physics";
 import { AlphaComponent } from "../../v1.1/Components/AlphaComponent";
@@ -22,16 +22,18 @@ import { PhysicsEngine } from "../../v1.1/Core/Physics/PhysicsEngine";
 import { ImpulseMath } from "../../v1.1/Core/Physics/ImpulseMath";
 import { PhysicalCircle } from "../../v1.1/Core/Physics/PhysicalShape";
 import { Body } from "../../v1.1/Core/Physics/Body";
+import { PhysicalPolygon } from "../../v1.1/Core/Physics/PhysicalPolygon";
 
 export class Mirror extends Camera {
 	constructor(source: Entity, width: number, height: number) {
 		super([source], width, height);
 		this.transform.rotate = 180;
 		this.transform.scale = new Vector2D(-1, 1);
-		this.registerEntity(new Entity()).registerComponent(new ShapeRenderComponent(new Rectangle(this.width, this.height), new Gradient([
-			{ percent: 0, color: new Color(0, 0, 0, 1) },
-			{ percent: 100, color: new Color(0, 0, 0, 0) }
-		], GradientType.TopToDown)))
+		this.registerEntity(new Entity())
+			.registerComponent(new ShapeRenderComponent(new Rectangle(this.width, this.height), new Gradient([
+				{ percent: 0, color: new Color(0, 0, 0, 1) },
+				{ percent: 100, color: new Color(0, 0, 0, 0) }
+			], GradientType.TopToDown)))
 			.entity.transform.origin = new Vector2D(-this.width / 2, -this.height / 2);
 	}
 }
@@ -48,11 +50,17 @@ export class Hud extends Entity {
 			.registerComponent(new ShapeRenderComponent(new Rectangle(cameraboxsize, cameraboxsize), new Color(200, 200, 200)))
 			.entity;
 		camerabox.transform.origin = new Vector2D(leftpanewidth * .1, 60);
-		let minicamera: Camera = camerabox.registerEntity(new Camera([world], cameraboxsize * .9, cameraboxsize * .9)) as Camera;
-		minicamera.transform.origin = new Vector2D(minicamera.width / 2 + cameraboxsize * .05, minicamera.height / 2 + cameraboxsize * .05);
+		let minicamera: Camera = camerabox.registerEntity(
+			new Camera([world], cameraboxsize * .9, cameraboxsize * .9)
+		) as Camera;
+		minicamera.transform.origin =
+			new Vector2D(minicamera.width / 2 + cameraboxsize * .05, minicamera.height / 2 + cameraboxsize * .05);
 		minicamera.transform.scale = new Vector2D(minicamera.width / world.width, minicamera.height / world.height);
-		minicamera.renderer.offset = new Vector2D(-minicamera.width / 2 + world.width / 2, -minicamera.height / 2 + world.height / 2);
-		let mirror: Camera = this.registerEntity(new Mirror(worldCamera, window.innerWidth - leftpanewidth, mirrorpaneheight));
+		minicamera.renderer.offset =
+			new Vector2D(-minicamera.width / 2 + world.width / 2, -minicamera.height / 2 + world.height / 2);
+		let mirror: Camera = this.registerEntity(
+			new Mirror(worldCamera, window.innerWidth - leftpanewidth, mirrorpaneheight)
+		);
 		mirror.transform.origin = new Vector2D(mirror.width / 2 + leftpanewidth, window.innerHeight - mirror.height / 2);
 		mirror.renderer.offset = new Vector2D(leftpanewidth, worldCamera.height - mirrorpaneheight);
 	}
@@ -70,7 +78,7 @@ export class World extends Entity {
 				{ percent: 0, color: new Color(10, 100, 10) },
 				{ percent: 100, color: new Color(200, 200, 200) }
 			])));
-		/* for (let i: number = 0; i < particles; i++) {
+		for (let i: number = 0; i < particles; i++) {
 			let entity: Entity =
 				this.registerEntity(new Entity())
 					.registerComponent(new AlphaComponent({ alpha: 0.5 }))
@@ -96,7 +104,7 @@ export class World extends Entity {
 			if (shape instanceof Rectangle) {
 				renderEntity.transform.origin = new Vector2D(-radius * 2 / 2, -radius / 2);
 			}
-		} */
+		}
 	}
 }
 
@@ -117,22 +125,22 @@ export class PlayScene extends Scene {
 		super();
 		let leftpanewidth: number = 200;
 		let mirrorheight: number = 100;
-		/* 	this.world = this.root.registerEntity(new World(3000, 3000, 200));
-			this.worldCamera = this.root.registerEntity(new WorldCamera(
-				[this.world],
-				window.innerWidth - leftpanewidth,
-				window.innerHeight - mirrorheight)
-			);
-			this.worldCamera.transform.origin = new Vector2D(
-				this.worldCamera.width / 2 + leftpanewidth,
-				this.worldCamera.height / 2
-			); */
-		/* this.hud = this.root.registerEntity(new Hud(leftpanewidth, mirrorheight, this.world, this.worldCamera));
+		this.world = this.root.registerEntity(new World(3000, 3000, 200));
+		this.worldCamera = this.root.registerEntity(new WorldCamera(
+			[this.world],
+			window.innerWidth - leftpanewidth,
+			window.innerHeight - mirrorheight)
+		);
+		this.worldCamera.transform.origin = new Vector2D(
+			this.worldCamera.width / 2 + leftpanewidth,
+			this.worldCamera.height / 2
+		);
+		this.hud = this.root.registerEntity(new Hud(leftpanewidth, mirrorheight, this.world, this.worldCamera));
 		this.hudCamera = this.root.registerEntity(new Camera([this.hud], window.innerWidth, window.innerHeight));
-		this.hudCamera.transform.origin = new Vector2D(this.hudCamera.width / 2, this.hudCamera.height / 2); */
+		this.hudCamera.transform.origin = new Vector2D(this.hudCamera.width / 2, this.hudCamera.height / 2);
 		this.physics = new PhysicsEngine(ImpulseMath.DT, 1);
-		// floor
-		for (let w: number = 0 + 25; w < window.innerWidth; w += 100) {
+		/* // floor
+		for (let w: number = 0 + 25; w < window.innerWidth; w += 300) {
 			let c: PhysicalCircle = new PhysicalCircle(50);
 			c.color = new Color(0, 0, 255).toString();
 			let b: Body = this.physics.add(c, w, window.innerHeight - 25);
@@ -143,7 +151,7 @@ export class PlayScene extends Scene {
 			b.staticFriction = 0.4;
 		}
 		// barriers
-		for (let i: number = 0; i < 100; i++) {
+		for (let i: number = 0; i < 200; i++) {
 			let c: PhysicalCircle = new PhysicalCircle(Math.random() * 25);
 			c.color = new Color(0, 255, 255).toString();
 			let b: Body = this.physics.add(
@@ -153,17 +161,20 @@ export class PlayScene extends Scene {
 			b.restitution = 0.2;
 			b.dynamicFriction = 0.2;
 			b.staticFriction = 0.4;
-		}
-		for (let l: number = 0; l < 10; l++) {
+		} */
+		for (let l: number = 0; l < 1; l++) {
 			// falling objects
 			for (let i: number = 10; i < window.innerWidth; i += 20) {
-				let c: PhysicalCircle = new PhysicalCircle(10);
+				let c: PhysicalPolygon = PhysicalPolygon.rectangle(Math.random() * 20, Math.random() * 20);
 				c.color = Color.getRandom().toString();
 				let a: Body = this.physics.add(c, i, l * 20);
-				a.setOrient(0);
+				a.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
+				a.restitution = 0.2;
+				a.dynamicFriction = 0.2;
+				a.staticFriction = 0.4;
 			}
 		}
-
+		ImpulseMath.GRAVITY = new Vector2D(0, 10);
 	}
 
 	public render(): void {
@@ -183,11 +194,42 @@ export class PlayScene extends Scene {
 	}
 
 	public update(): void {
+		for (let i: number = 0; i < this.physics.bodies.size; i++) {
+			if (this.physics.bodies[i].position.y > window.innerHeight) {
+				this.physics.bodies[i].position.y = 0;
+			}
+			if (this.physics.bodies[i].position.x < 0 || this.physics.bodies[i].position.x > window.innerWidth) {
+				this.physics.bodies[i].position.x = Math.random() * window.innerWidth;
+				this.physics.bodies[i].position.y = 0;
+			}
+		}
 		if (KeyboardHandler.state.down.has("q")) {
 			this.worldCamera.transform.rotate++;
 		}
 		if (KeyboardHandler.state.down.has("e")) {
 			this.worldCamera.transform.rotate--;
+		}
+		if (MouseHandler.leftButton.state === ButtonState.pressed) {
+			if (MouseHandler.leftButton.data == null) {
+				let shape: PhysicalCircle = new PhysicalCircle(1);
+				shape.color = "rgb(255,0,0)";
+				let obj: Body = this.physics.add(
+					shape,
+					MouseHandler.cursors.get(MouseHandler.MOUSECURSOR).x,
+					MouseHandler.cursors.get(MouseHandler.MOUSECURSOR).y
+				);
+				obj.setStatic();
+				obj.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
+				obj.restitution = 0.2;
+				obj.dynamicFriction = 0.2;
+				obj.staticFriction = 0.4;
+				MouseHandler.leftButton.data = obj;
+			} else {
+				((MouseHandler.leftButton.data as Body).shape as PhysicalCircle).r++;
+			}
+		}
+		if (MouseHandler.leftButton.state === ButtonState.released && MouseHandler.leftButton.data != null) {
+			MouseHandler.leftButton.data = null;
 		}
 		let cursors: Cursor[] = Array.from(MouseHandler.cursors.values());
 		for (var i: number = 0; i < cursors.length; i++) {
@@ -197,10 +239,24 @@ export class PlayScene extends Scene {
 						.registerComponent(new CircRenderComponent(20, new Color(255, 255, 255)))
 						.entity;
 					cursor.transform.origin = new Vector3D(cursors[i].x, cursors[i].y, 0); */
-					cursors[i].data = this.worldCamera;
+					//cursors[i].data = this.worldCamera;
+					let shape: PhysicalCircle = new PhysicalCircle(20);
+					shape.color = "rgb(255,255,255)";
+					let obj: Body = this.physics.add(
+						shape,
+						cursors[i].x,
+						cursors[i].y
+					);
+					obj.setStatic();
+					obj.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
+					obj.restitution = 0.2;
+					obj.dynamicFriction = 0.2;
+					obj.staticFriction = 0.4;
+					cursors[i].data = obj;
 					break;
 				case CursorState.moved:
-					if (cursors[i].data instanceof Camera) {
+					(cursors[i].data as Body).position.set(cursors[i].x, cursors[i].y);
+					/* if (cursors[i].data instanceof Camera) {
 						cursors[i].data.renderer.offset.add(
 							cursors[i].data.transform.project(new Vector2D(cursors[i].diffX, cursors[i].diffY))
 						);
@@ -212,7 +268,7 @@ export class PlayScene extends Scene {
 						}
 					} else {
 						(cursors[i].data as Entity).transform.origin = new Vector2D(cursors[i].x, cursors[i].y);
-					}
+					} */
 					/* var x: number = Math.max(0, Math.min(this.camera.area.x2(), this.container.area.x2(), cursors[i].x));
 					var y: number = Math.max(0, Math.min(this.camera.area.y2(), this.container.area.y2(), cursors[i].y));
 					if (x !== cursors[i].x || y !== cursors[i].y) {
@@ -222,6 +278,7 @@ export class PlayScene extends Scene {
 					cursors[i].data.move("collision", x, y); */
 					break;
 				case CursorState.remove:
+					this.physics.remove(cursors[i].data);
 					/* 	this.container.deregister(cursors[i].data); */
 					break;
 			}
