@@ -162,21 +162,27 @@ export class PlayScene extends Scene {
 			b.dynamicFriction = 0.2;
 			b.staticFriction = 0.4;
 		} */
-		let box: PhysicalPolygon = PhysicalPolygon.rectangle(200, 10);
-		box.color = new Color(0, 255, 255).toString();
-		let boxbody: Body = this.physics.add(box, 400, 400);
+		let floor: PhysicalPolygon = PhysicalPolygon.rectangle(window.innerWidth, 20);
+		floor.color = new Color(255, 255, 255).toString();
+		let boxbody: Body = this.physics.add(floor, window.innerWidth / 2, window.innerHeight - 200);
 		boxbody.setStatic();
-		boxbody.setOrient(0 / 180 * Math.PI);
-		boxbody.restitution = 0.2;
-		boxbody.dynamicFriction = 0.2;
-		boxbody.staticFriction = 0.4;
-		for (let l: number = 0; l < 1; l++) {
+		boxbody.setOrient(0);
+
+		for (let c: number = 0; c < 10; c++) {
+			for (let x: number = 500; x < 520; x += 20) {
+				let box: PhysicalPolygon = PhysicalPolygon.rectangle(20, 10);
+				box.color = new Color(0, 255, 255).toString();
+				let boxbody: Body = this.physics.add(box, x + 10, floor.body.position.y - floor.height() / 2 - c * 10);
+			}
+		}
+
+		for (let l: number = 0; l < 0; l++) {
 			// falling objects
 			for (let i: number = 10; i < window.innerWidth; i += 40) {
 				let c: PhysicalPolygon = PhysicalPolygon.rectangle(Math.random() * 20, Math.random() * 20);
 				//let c: PhysicalCircle = new PhysicalCircle(Math.random() * 20);
 				c.color = Color.getRandom().toString();
-				let a: Body = this.physics.add(c, i, l * 20);
+				let a: Body = this.physics.add(c, i, 50 + l * 20);
 				a.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
 				a.restitution = 0.2;
 				a.dynamicFriction = 0.2;
@@ -191,7 +197,11 @@ export class PlayScene extends Scene {
 		for (let i: number = 0; i < this.physics.bodies.size; i++) {
 			let b: Body = this.physics.bodies[i];
 			this.canvas.ctx.save();
-			this.canvas.ctx.translate(b.position.x - b.shape.width() / 2, b.position.y - b.shape.height() / 2);
+
+			this.canvas.ctx.translate(b.position.x, b.position.y);
+			if (b.shape.centered()) {
+				this.canvas.ctx.translate(-b.shape.width() / 2, - b.shape.height() / 2);
+			}
 			b.shape.render(this.canvas.ctx);
 			this.canvas.ctx.restore();
 		}
@@ -236,11 +246,12 @@ export class PlayScene extends Scene {
 					MouseHandler.cursors.get(MouseHandler.MOUSECURSOR).x,
 					MouseHandler.cursors.get(MouseHandler.MOUSECURSOR).y
 				);
-				obj.setStatic();
-				obj.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
+				//obj.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
 				obj.restitution = 0.2;
 				obj.dynamicFriction = 0.2;
 				obj.staticFriction = 0.4;
+				Logger.log(obj.position.x + "," + MouseHandler.leftButton.x);
+				obj.applyImpulse(new Vector2D(5200, -500), obj.position);
 				MouseHandler.leftButton.data = obj;
 			} else {
 				if (MouseHandler.leftButton.data instanceof Body) {
@@ -261,22 +272,22 @@ export class PlayScene extends Scene {
 						.entity;
 					cursor.transform.origin = new Vector3D(cursors[i].x, cursors[i].y, 0); */
 					//cursors[i].data = this.worldCamera;
-					let shape: PhysicalCircle = new PhysicalCircle(20);
-					shape.color = "rgb(255,255,255)";
-					let obj: Body = this.physics.add(
-						shape,
-						cursors[i].x,
-						cursors[i].y
-					);
-					obj.setStatic();
-					obj.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
-					obj.restitution = 0.2;
-					obj.dynamicFriction = 0.2;
-					obj.staticFriction = 0.4;
-					cursors[i].data = obj;
+					/* 	let shape: PhysicalCircle = new PhysicalCircle(20);
+						shape.color = "rgb(255,255,255)";
+						let obj: Body = this.physics.add(
+							shape,
+							cursors[i].x,
+							cursors[i].y
+						);
+						obj.setStatic();
+						obj.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
+						obj.restitution = 0.2;
+						obj.dynamicFriction = 0.2;
+						obj.staticFriction = 0.4;
+						cursors[i].data = obj; */
 					break;
 				case CursorState.moved:
-					(cursors[i].data as Body).position.set(cursors[i].x, cursors[i].y);
+					//	(cursors[i].data as Body).position.set(cursors[i].x, cursors[i].y);
 					/* if (cursors[i].data instanceof Camera) {
 						cursors[i].data.renderer.offset.add(
 							cursors[i].data.transform.project(new Vector2D(cursors[i].diffX, cursors[i].diffY))
@@ -299,7 +310,7 @@ export class PlayScene extends Scene {
 					cursors[i].data.move("collision", x, y); */
 					break;
 				case CursorState.remove:
-					this.physics.remove(cursors[i].data);
+					//this.physics.remove(cursors[i].data);
 					/* 	this.container.deregister(cursors[i].data); */
 					break;
 			}

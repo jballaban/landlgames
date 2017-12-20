@@ -159,7 +159,6 @@ export class CollisionPolygonPolygon implements ICollisionCallback {
 			// Retrieve support point from B along -n
 			// Vec2 s = B->GetSupport( -n );
 			let s: Vector2D = B.getSupport(n.clone().negate());
-
 			// Retrieve vertex on face from A, transform into
 			// B's model space
 			// Vec2 v = A->m_vertices[i];

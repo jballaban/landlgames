@@ -17,9 +17,10 @@ export class PhysicalPolygon extends Polygon implements IPhysicalShape {
 		}
 	}
 
-	public static rectangle(hw: number, hh: number): PhysicalPolygon {
+	public static rectangle(w: number, h: number): PhysicalPolygon {
 		let out: PhysicalPolygon = new PhysicalPolygon();
-		out.setBox(hw, hh);
+		out.setBox(w, h);
+		out.setOrient(0);
 		return out;
 	}
 
@@ -95,16 +96,8 @@ export class PhysicalPolygon extends Polygon implements IPhysicalShape {
 		this.u.setRotation(radians);
 	}
 
-	public setBox(hw: number, hh: number): void {
-		this.vertexCount = 4;
-		this.vertices[0].set(-hw, -hh);
-		this.vertices[1].set(hw, -hh);
-		this.vertices[2].set(hw, hh);
-		this.vertices[3].set(-hw, hh);
-		this.normals[0].set(0.0, -1.0);
-		this.normals[1].set(1.0, 0.0);
-		this.normals[2].set(0.0, 1.0);
-		this.normals[3].set(-1.0, 0.0);
+	public setBox(w: number, h: number): void {
+		this.set([new Vector2D(0, 0), new Vector2D(w, 0), new Vector2D(w, h), new Vector2D(0, h)]);
 	}
 
 	public set(verts: Vector2D[]): void {

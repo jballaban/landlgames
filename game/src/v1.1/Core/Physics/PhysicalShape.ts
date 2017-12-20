@@ -16,6 +16,7 @@ export interface IPhysicalShape {
 	height(): number;
 	setOrient(radians: number): void;
 	render(ctx: CanvasRenderingContext2D): void;
+	centered(): boolean;
 }
 
 export class PhysicalCircle extends Circle implements IPhysicalShape {

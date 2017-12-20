@@ -1,10 +1,13 @@
-// tslint:disable:comment-format
 import { Manifold } from "./Manifold";
 import { Body } from "./Body";
 import { EnhancedArray } from "../../Utils/Array";
 import { IPhysicalShape } from "./PhysicalShape";
 import { ImpulseMath } from "./ImpulseMath";
 import { Logger } from "../../Utils/Logger";
+
+/*
+Based on: https://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-oriented-rigid-bodies--gamedev-8032
+*/
 
 export class PhysicsEngine {
 

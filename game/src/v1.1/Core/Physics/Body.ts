@@ -25,7 +25,7 @@ export class Body {
 		this.velocity.set(0, 0);
 		this.angularVelocity = 0;
 		this.torque = 0;
-		this.orient = ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false);
+		this.orient = 0;
 		this.force.set(0, 0);
 		this.staticFriction = 0.5;
 		this.dynamicFriction = 0.3;
