@@ -20,7 +20,7 @@ export class CollisionCirclePolygon implements ICollisionCallback {
 		// Vec2 center = a->position;
 		// center = B->u.Transpose( ) * (center - b->position);
 		let p: Vector2D = a.position.clone().subtract(b.position);
-		let center: Vector2D = B.u.clone().transpose().multiplyScalar(p.x, p.y);
+		let center: Vector2D = p.multiplyMatrix(B.u.clone().transpose());
 
 		// Find edge with minimum penetration
 		// Exact concept as using support points in Polygon vs Polygon
@@ -41,9 +41,9 @@ export class CollisionCirclePolygon implements ICollisionCallback {
 		}
 
 		// Grab face's vertices
-		let v1: Vector2D = B.vertices[faceNormal];
-		let i2: number = faceNormal + (1 < B.vertexCount ? faceNormal + 1 : 0);
-		let v2: Vector2D = B.vertices[i2];
+		let v1: Vector2D = B.vertices[faceNormal].clone();
+		let i2: number = (faceNormal + 1) < B.vertexCount ? (faceNormal + 1) : 0;
+		let v2: Vector2D = B.vertices[i2].clone();
 
 		// Check to see if center is within polygon
 		if (separation < ImpulseMath.EPSILON) {
@@ -101,7 +101,7 @@ export class CollisionCirclePolygon implements ICollisionCallback {
 			m.normal.set(v2.x, v2.y).subtract(center).multiplyMatrix(B.u).normalize();
 			m.contacts[0] = v2.clone().multiplyMatrix(B.u).add(b.position);
 		} else { 		// Closest to face
-			let n: Vector2D = B.normals[faceNormal];
+			let n: Vector2D = B.normals[faceNormal].clone();
 
 			if (center.clone().subtract(v1).dot(n) > A.r) {
 				return;

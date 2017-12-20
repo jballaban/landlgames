@@ -127,7 +127,7 @@ export class PlayScene extends Scene {
 		let mirrorheight: number = 100;
 		this.world = this.root.registerEntity(new World(3000, 3000, 200));
 		this.worldCamera = this.root.registerEntity(new WorldCamera(
-			[this.world],
+			[],
 			window.innerWidth - leftpanewidth,
 			window.innerHeight - mirrorheight)
 		);
@@ -138,7 +138,7 @@ export class PlayScene extends Scene {
 		this.hud = this.root.registerEntity(new Hud(leftpanewidth, mirrorheight, this.world, this.worldCamera));
 		this.hudCamera = this.root.registerEntity(new Camera([this.hud], window.innerWidth, window.innerHeight));
 		this.hudCamera.transform.origin = new Vector2D(this.hudCamera.width / 2, this.hudCamera.height / 2);
-		this.physics = new PhysicsEngine(ImpulseMath.DT, 1);
+		this.physics = new PhysicsEngine(ImpulseMath.DT, 10);
 		/* // floor
 		for (let w: number = 0 + 25; w < window.innerWidth; w += 300) {
 			let c: PhysicalCircle = new PhysicalCircle(50);
@@ -162,10 +162,19 @@ export class PlayScene extends Scene {
 			b.dynamicFriction = 0.2;
 			b.staticFriction = 0.4;
 		} */
+		let box: PhysicalPolygon = PhysicalPolygon.rectangle(200, 10);
+		box.color = new Color(0, 255, 255).toString();
+		let boxbody: Body = this.physics.add(box, 400, 400);
+		boxbody.setStatic();
+		boxbody.setOrient(0 / 180 * Math.PI);
+		boxbody.restitution = 0.2;
+		boxbody.dynamicFriction = 0.2;
+		boxbody.staticFriction = 0.4;
 		for (let l: number = 0; l < 1; l++) {
 			// falling objects
 			for (let i: number = 10; i < window.innerWidth; i += 40) {
 				let c: PhysicalPolygon = PhysicalPolygon.rectangle(Math.random() * 20, Math.random() * 20);
+				//let c: PhysicalCircle = new PhysicalCircle(Math.random() * 20);
 				c.color = Color.getRandom().toString();
 				let a: Body = this.physics.add(c, i, l * 20);
 				a.setOrient(ImpulseMath.random(-ImpulseMath.PI, ImpulseMath.PI, false));
@@ -174,7 +183,7 @@ export class PlayScene extends Scene {
 				a.staticFriction = 0.4;
 			}
 		}
-		ImpulseMath.GRAVITY = new Vector2D(0, 10);
+		//ImpulseMath.GRAVITY = new Vector2D(0, 10);
 	}
 
 	public render(): void {
@@ -185,6 +194,14 @@ export class PlayScene extends Scene {
 			this.canvas.ctx.translate(b.position.x - b.shape.width() / 2, b.position.y - b.shape.height() / 2);
 			b.shape.render(this.canvas.ctx);
 			this.canvas.ctx.restore();
+		}
+		for (let m: number = 0; m < this.physics.contacts.size; m++) {
+			for (let i: number = 0; i < this.physics.contacts[m].contactCount; i++) {
+				let v: Vector2D = this.physics.contacts[m].contacts[i];
+				let n: Vector2D = this.physics.contacts[m].normal;
+				this.canvas.ctx.fillStyle = "rgb(255,0,0)";
+				this.canvas.ctx.fillRect(v.x - 1, v.y - 1, 3, 3);
+			}
 		}
 	}
 
@@ -211,8 +228,9 @@ export class PlayScene extends Scene {
 		}
 		if (MouseHandler.leftButton.state === ButtonState.pressed) {
 			if (MouseHandler.leftButton.data == null) {
-				let shape: PhysicalCircle = new PhysicalCircle(1);
-				shape.color = "rgb(255,0,0)";
+				//let shape: PhysicalCircle = new PhysicalCircle(1);
+				let shape: PhysicalPolygon = PhysicalPolygon.rectangle(20, 20);
+				shape.color = "rgb(255,255,0)";
 				let obj: Body = this.physics.add(
 					shape,
 					MouseHandler.cursors.get(MouseHandler.MOUSECURSOR).x,
@@ -225,7 +243,10 @@ export class PlayScene extends Scene {
 				obj.staticFriction = 0.4;
 				MouseHandler.leftButton.data = obj;
 			} else {
-				((MouseHandler.leftButton.data as Body).shape as PhysicalCircle).r++;
+				if (MouseHandler.leftButton.data instanceof Body) {
+					((MouseHandler.leftButton.data as Body).shape as PhysicalCircle).r++;
+				}
+
 			}
 		}
 		if (MouseHandler.leftButton.state === ButtonState.released && MouseHandler.leftButton.data != null) {

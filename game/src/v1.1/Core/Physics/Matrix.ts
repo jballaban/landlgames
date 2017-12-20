@@ -44,30 +44,30 @@ export class Matrix {
 		return m;
 	}
 
-	/**
-	 * Sets the values of this matrix to their absolute value.
-	 */
-	public abs(): Matrix {
-		this.m00 = Math.abs(this.m00);
-		this.m01 = Math.abs(this.m01);
-		this.m10 = Math.abs(this.m10);
-		this.m11 = Math.abs(this.m11);
-		return this;
-	}
+	// /**
+	//  * Sets the values of this matrix to their absolute value.
+	//  */
+	// public abs(): Matrix {
+	// 	this.m00 = Math.abs(this.m00);
+	// 	this.m01 = Math.abs(this.m01);
+	// 	this.m10 = Math.abs(this.m10);
+	// 	this.m11 = Math.abs(this.m11);
+	// 	return this;
+	// }
 
-	/**
-	 * Sets out to the x-axis (1st column) of this matrix.
-	 */
-	public getAxisX(): Vector2D {
-		return new Vector2D(this.m00, this.m10);
-	}
+	// /**
+	//  * Sets out to the x-axis (1st column) of this matrix.
+	//  */
+	// public getAxisX(): Vector2D {
+	// 	return new Vector2D(this.m00, this.m10);
+	// }
 
-	/**
-	 * Sets out to the y-axis (2nd column) of this matrix.
-	 */
-	public getAxisY(): Vector2D {
-		return new Vector2D(this.m01, this.m11);
-	}
+	// /**
+	//  * Sets out to the y-axis (2nd column) of this matrix.
+	//  */
+	// public getAxisY(): Vector2D {
+	// 	return new Vector2D(this.m01, this.m11);
+	// }
 
 	/**
 	 * Sets the matrix to it's transpose.
@@ -77,16 +77,6 @@ export class Matrix {
 		this.m01 = this.m10;
 		this.m10 = t;
 		return this;
-	}
-
-	/**
-	 * Sets out the to transformation of {x,y} by this matrix.
-	 */
-	public multiplyScalar(x: number, y: number): Vector2D {
-		return new Vector2D(
-			this.m00 * x + this.m01 * y,
-			this.m10 * x + this.m11 * y
-		);
 	}
 
 	/**

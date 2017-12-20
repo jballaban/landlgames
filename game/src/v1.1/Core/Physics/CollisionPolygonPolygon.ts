@@ -67,9 +67,9 @@ export class CollisionPolygonPolygon implements ICollisionCallback {
 		// n : incident normal
 
 		// Setup reference face vertices
-		let v1: Vector2D = RefPoly.vertices[referenceIndex];
+		let v1: Vector2D = RefPoly.vertices[referenceIndex].clone();
 		referenceIndex = (referenceIndex + 1) === RefPoly.vertexCount ? 0 : (referenceIndex + 1);
-		let v2: Vector2D = RefPoly.vertices[referenceIndex];
+		let v2: Vector2D = RefPoly.vertices[referenceIndex].clone();
 
 		// Transform vertices to world space
 		// v1 = RefPoly->u * v1 + RefPoly->body->position;
@@ -193,15 +193,13 @@ export class CollisionPolygonPolygon implements ICollisionCallback {
 		IncPoly: PhysicalPolygon,
 		referenceIndex: number,
 	): void {
-		let referenceNormal: Vector2D = RefPoly.normals[referenceIndex];
+		let referenceNormal: Vector2D = RefPoly.normals[referenceIndex].clone();
 
 		// Calculate normal in incident's frame of reference
 		// referenceNormal = RefPoly->u * referenceNormal; // To world space
 		// referenceNormal = IncPoly->u.Transpose( ) * referenceNormal; // To
 		// incident's model space
 		referenceNormal.multiplyMatrix(RefPoly.u).multiplyMatrix(IncPoly.u.clone().transpose());
-		// model
-		// space
 
 		// Find most anti-normal face on incident polygon
 		let incidentFace: number = 0;
