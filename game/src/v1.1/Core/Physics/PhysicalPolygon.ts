@@ -1,4 +1,3 @@
-// tslint:disable:comment-format
 import { IPhysicalShape, ShapeType } from "./PhysicalShape";
 import { Vector2D } from "../Vector";
 import { Body } from "./Body";
@@ -12,10 +11,12 @@ export class PhysicalPolygon extends Polygon implements IPhysicalShape {
 	public type: ShapeType = ShapeType.Polygon;
 
 	constructor(vertices?: Vector2D[]) {
-		super(vertices);
+		super();
+		if (vertices != null) {
+			this.set(vertices);
+		}
 	}
 
-	// tslint:disable-next-line:member-ordering
 	public static rectangle(hw: number, hh: number): PhysicalPolygon {
 		let out: PhysicalPolygon = new PhysicalPolygon();
 		out.setBox(hw, hh);
@@ -60,7 +61,7 @@ export class PhysicalPolygon extends Polygon implements IPhysicalShape {
 			let p1: Vector2D = this.vertices[i];
 			let p2: Vector2D = this.vertices[(i + 1) % this.vertexCount];
 
-			let D: number = p1.clone().cross(p2);
+			let D: number = p1.cross(p2);
 			let triangleArea: number = 0.5 * D;
 
 			area += triangleArea;
@@ -146,8 +147,8 @@ export class PhysicalPolygon extends Polygon implements IPhysicalShape {
 				// record each counter clockwise third vertex and add
 				// to the output hull
 				// see : http://www.oocities.org/pcgpe/math2d.html
-				let e1: Vector2D = verts[nextHullIndex].subtract(verts[hull[outCount]]);
-				let e2: Vector2D = verts[i].subtract(verts[hull[outCount]]);
+				let e1: Vector2D = verts[nextHullIndex].clone().subtract(verts[hull[outCount]]);
+				let e2: Vector2D = verts[i].clone().subtract(verts[hull[outCount]]);
 				let c: number = e1.clone().cross(e2);
 				if (c < 0.0) {
 					nextHullIndex = i;
@@ -177,7 +178,7 @@ export class PhysicalPolygon extends Polygon implements IPhysicalShape {
 
 		// compute face normals
 		for (let i: number = 0; i < this.vertexCount; ++i) {
-			let face: Vector2D = this.vertices[(i + 1) % this.vertexCount].subtract(this.vertices[i]);
+			let face: Vector2D = this.vertices[(i + 1) % this.vertexCount].clone().subtract(this.vertices[i]);
 
 			// calculate normal with 2D cross product between vector and scalar
 			this.normals[i].set(face.y, -face.x);

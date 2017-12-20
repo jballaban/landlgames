@@ -7,15 +7,6 @@ export class Matrix {
 	public m10: number;
 	public m11: number;
 
-	/* 	public Mat2() {
-		}
-		public Mat2(float radians) {
-			set(radians);
-		}
-		public Mat2(float a, float b, float c, float d) {
-			set(a, b, c, d);
-		} */
-
 	/**
 	 * Sets this matrix to a rotation matrix with the given radians.
 	 */
@@ -92,19 +83,21 @@ export class Matrix {
 	 * Sets out the to transformation of {x,y} by this matrix.
 	 */
 	public multiplyScalar(x: number, y: number): Vector2D {
-		return new Vector2D(this.m00 * x + this.m01 * y, this.m10 * x + this.m11 * y);
+		return new Vector2D(
+			this.m00 * x + this.m01 * y,
+			this.m10 * x + this.m11 * y
+		);
 	}
 
 	/**
 	 * Multiplies this matrix by x.
 	 */
 	public multiply(x: Matrix): Matrix {
-		this.set(
+		return this.set(
 			this.m00 * x.m00 + this.m01 * x.m10,
 			this.m00 * x.m01 + this.m01 * x.m11,
 			this.m10 * x.m00 + this.m11 * x.m10,
 			this.m10 * x.m01 + this.m11 * x.m11);
-		return this;
 	}
 
 }

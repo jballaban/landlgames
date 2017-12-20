@@ -1,4 +1,3 @@
-// tslint:disable:comment-format
 import { Body } from "./Body";
 import { Vector2D } from "../Vector";
 import { ImpulseMath } from "./ImpulseMath";

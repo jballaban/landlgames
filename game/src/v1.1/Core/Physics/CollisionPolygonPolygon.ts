@@ -68,7 +68,7 @@ export class CollisionPolygonPolygon implements ICollisionCallback {
 
 		// Setup reference face vertices
 		let v1: Vector2D = RefPoly.vertices[referenceIndex];
-		referenceIndex = referenceIndex + 1 === RefPoly.vertexCount ? 0 : referenceIndex + 1;
+		referenceIndex = (referenceIndex + 1) === RefPoly.vertexCount ? 0 : (referenceIndex + 1);
 		let v2: Vector2D = RefPoly.vertices[referenceIndex];
 
 		// Transform vertices to world space
@@ -223,9 +223,7 @@ export class CollisionPolygonPolygon implements ICollisionCallback {
 		// v[1] = IncPoly->u * IncPoly->m_vertices[incidentFace] +
 		// IncPoly->body->position;
 		v[0] = IncPoly.vertices[incidentFace].clone().multiplyMatrix(IncPoly.u).add(IncPoly.body.position);
-		if (IncPoly.vertexCount > 1) {
-			incidentFace++;
-		}
+		incidentFace = (incidentFace + 1) >= IncPoly.vertexCount ? 0 : (incidentFace + 1);
 		v[1] = IncPoly.vertices[incidentFace].clone().multiplyMatrix(IncPoly.u).add(IncPoly.body.position);
 	}
 
@@ -255,7 +253,6 @@ export class CollisionPolygonPolygon implements ICollisionCallback {
 			// ++sp;
 
 			let alpha: number = d1 / (d1 - d2);
-
 			out[sp++].set(face[1].x, face[1].y).subtract(face[0]).multiplyScalar(alpha).add(face[0]);
 		}
 

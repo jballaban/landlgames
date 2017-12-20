@@ -164,7 +164,7 @@ export class PlayScene extends Scene {
 		} */
 		for (let l: number = 0; l < 1; l++) {
 			// falling objects
-			for (let i: number = 10; i < window.innerWidth; i += 20) {
+			for (let i: number = 10; i < window.innerWidth; i += 40) {
 				let c: PhysicalPolygon = PhysicalPolygon.rectangle(Math.random() * 20, Math.random() * 20);
 				c.color = Color.getRandom().toString();
 				let a: Body = this.physics.add(c, i, l * 20);

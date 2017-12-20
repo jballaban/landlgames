@@ -42,7 +42,7 @@ export class CollisionCirclePolygon implements ICollisionCallback {
 
 		// Grab face's vertices
 		let v1: Vector2D = B.vertices[faceNormal];
-		let i2: number = faceNormal + 1 < B.vertexCount ? faceNormal + 1 : 0;
+		let i2: number = faceNormal + (1 < B.vertexCount ? faceNormal + 1 : 0);
 		let v2: Vector2D = B.vertices[i2];
 
 		// Check to see if center is within polygon
@@ -54,7 +54,6 @@ export class CollisionCirclePolygon implements ICollisionCallback {
 
 			m.contactCount = 1;
 			m.normal = B.normals[faceNormal].clone().multiplyMatrix(B.u).negate();
-			//B.u.mul(B.normals[faceNormal], m.normal).negi();
 			m.contacts[0].set(m.normal.x, m.normal.y).multiplyScalar(A.r).add(a.position);
 			m.penetration = A.r;
 			return;
