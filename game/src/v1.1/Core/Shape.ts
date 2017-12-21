@@ -2,6 +2,7 @@ import { Body } from "./Physics/Body";
 import { Vector2D } from "./Vector";
 import { Matrix } from "./Physics/Matrix";
 import { Logger } from "../Utils/Logger";
+import { Color } from "../Textures/Color";
 
 export abstract class Shape {
 	public abstract width(): number;
@@ -38,26 +39,30 @@ export class Polygon extends Shape {
 
 	public width(): number {
 		let max: number = Number.MIN_VALUE;
+		let min: number = Number.MAX_VALUE;
 		for (let i: number = 0; i < this.vertexCount; i++) {
 			let v: Vector2D = this.vertices[i].clone().multiplyMatrix(this.u);
 			max = Math.max(max, v.x);
+			min = Math.min(min, v.x);
 		}
-		return max;
+		return max - min;
 	}
 
 	public height(): number {
 		let max: number = Number.MIN_VALUE;
+		let min: number = Number.MAX_VALUE;
 		for (let i: number = 0; i < this.vertexCount; i++) {
 			let v: Vector2D = this.vertices[i].clone().multiplyMatrix(this.u);
 			max = Math.max(max, v.y);
+			min = Math.min(min, v.y);
 		}
-		return max;
+		return max - min;
 	}
 
 	public centered(): boolean { return false; }
 
 	public render(ctx: CanvasRenderingContext2D): void {
-		ctx.fillStyle = this.color;
+		ctx.strokeStyle = this.color;
 		ctx.beginPath();
 		for (let i: number = 0; i < this.vertexCount; i++) {
 			let v: Vector2D = this.vertices[i].clone().multiplyMatrix(this.u);
@@ -68,7 +73,7 @@ export class Polygon extends Shape {
 			}
 		}
 		ctx.closePath();
-		ctx.fill();
+		ctx.stroke();
 	}
 }
 

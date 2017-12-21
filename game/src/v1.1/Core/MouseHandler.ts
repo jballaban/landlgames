@@ -9,6 +9,7 @@ export enum CursorState {
 
 export enum ButtonState {
 	pressed,
+	pressing,
 	released,
 	inactive
 }
@@ -78,7 +79,20 @@ export class MouseHandler {
 
 	public static update(): void {
 		// mousebutton
-		MouseHandler.leftButton.state = MouseHandler._leftButton.state;
+		if (MouseHandler._leftButton.state === ButtonState.pressed) {
+			switch (MouseHandler.leftButton.state) {
+				case ButtonState.pressed:
+					MouseHandler.leftButton.state = ButtonState.pressing;
+					break;
+				case ButtonState.pressing:
+					break;
+				default:
+					MouseHandler.leftButton.state = ButtonState.pressed;
+			}
+		} else {
+			MouseHandler.leftButton.state = MouseHandler._leftButton.state;
+		}
+
 		MouseHandler.leftButton.x = MouseHandler._leftButton.x;
 		MouseHandler.leftButton.y = MouseHandler._leftButton.y;
 		// sync _cursors to cursors

@@ -1,6 +1,7 @@
 import { Vector2D } from "../Vector";
 import { IPhysicalShape } from "./PhysicalShape";
 import { ImpulseMath } from "./ImpulseMath";
+import { Logger } from "../../Utils/Logger";
 
 export class Body {
 

@@ -115,9 +115,17 @@ export class PhysicsEngine {
 		}
 
 		let dts: number = dt * 0.5;
-
+		if (b.force.length() > 0) {
+			Logger.log(b.velocity + " " + b.force + " mass " + b.mass + " dts " + dts);
+		}
 		b.velocity.addVectorWithScalar(b.force, b.invMass * dts);
+		if (b.force.length() > 0) {
+			Logger.log("1" + b.velocity);
+		}
 		b.velocity.addVectorWithScalar(ImpulseMath.GRAVITY, dts);
+		if (b.force.length() > 0) {
+			Logger.log("2" + b.velocity);
+		}
 		b.angularVelocity += b.torque * b.invInertia * dts;
 	}
 

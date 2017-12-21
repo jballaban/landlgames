@@ -162,4 +162,11 @@ export class Vector2D {
 		return result;
 	}
 
+	public toString(whole?: boolean): string {
+		if (whole) {
+			return "[" + Math.floor(this.x) + "," + Math.floor(this.y) + "]";
+		}
+		return "[" + this.x + "," + this.y + "]";
+	}
+
 }
