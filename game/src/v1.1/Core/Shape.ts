@@ -9,6 +9,7 @@ export abstract class Shape {
 	public abstract height(): number;
 	public abstract centered(): boolean;
 	public abstract render(ctx: CanvasRenderingContext2D): void;
+	public orientation: number = 0;
 }
 
 export class Circle extends Shape {
@@ -27,6 +28,17 @@ export class Circle extends Shape {
 		ctx.arc(Math.floor(this.r), Math.floor(this.r), Math.floor(this.r), 0, 2 * Math.PI);
 		ctx.clip();
 		ctx.fillRect(0, 0, this.width(), this.height());
+		ctx.beginPath();
+		ctx.moveTo(this.r, this.r);
+		let sin: number = Math.sin(this.orientation);
+		let cos: number = Math.cos(this.orientation);
+		let dx: number = 0;
+		let dy: number = -this.r;
+		let rx: number = dx * cos - dy * sin;
+		let ry: number = dx * sin + dy * cos;
+		ctx.lineTo(rx + this.r, ry + this.r);
+		ctx.strokeStyle = "rgb(0,0,0)";
+		ctx.stroke();
 	}
 }
 

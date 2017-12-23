@@ -29,7 +29,7 @@ export class PhysicalCircle extends Circle implements IPhysicalShape {
 	}
 
 	public setOrient(radians: number): void {
-		// do nothing
+		super.orientation = radians;
 	}
 
 	public computeMass(density: number): void {

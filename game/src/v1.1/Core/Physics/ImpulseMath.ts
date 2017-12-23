@@ -11,7 +11,7 @@ export class ImpulseMath {
 	public static GRAVITY: Vector2D;
 	public static RESTING: number;
 	public static PENETRATION_ALLOWANCE: number;
-	public static PENETRATION_CORRETION: number;
+	public static PENETRATION_CORRECTION: number;
 
 	public static initialize(): void {
 		ImpulseMath.PI = Math.PI;
@@ -23,7 +23,7 @@ export class ImpulseMath {
 		ImpulseMath.GRAVITY = new Vector2D(0.0, 50.0);
 		ImpulseMath.RESTING = ImpulseMath.GRAVITY.clone().multiplyScalar(ImpulseMath.DT).lengthSquared() + ImpulseMath.EPSILON;
 		ImpulseMath.PENETRATION_ALLOWANCE = 0.05;
-		ImpulseMath.PENETRATION_CORRETION = 0.4;
+		ImpulseMath.PENETRATION_CORRECTION = 0.4;
 	}
 
 	public static equal(a: number, b: number): boolean {

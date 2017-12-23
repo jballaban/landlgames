@@ -2,6 +2,7 @@ import { Body } from "./Body";
 import { Vector2D } from "../Vector";
 import { ImpulseMath } from "./ImpulseMath";
 import { Collisions } from "./Collisions";
+import { Logger } from "../../Utils/Logger";
 
 export class Manifold {
 
@@ -184,7 +185,7 @@ export class Manifold {
 		let correction: number =
 			Math.max(this.penetration - ImpulseMath.PENETRATION_ALLOWANCE, 0.0)
 			/ (this.A.invMass + this.B.invMass)
-			* ImpulseMath.PENETRATION_CORRETION;
+			* ImpulseMath.PENETRATION_CORRECTION;
 
 		this.A.position.addVectorWithScalar(this.normal, -this.A.invMass * correction);
 		this.B.position.addVectorWithScalar(this.normal, this.B.invMass * correction);

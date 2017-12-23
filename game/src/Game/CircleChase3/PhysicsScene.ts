@@ -19,7 +19,7 @@ import { Circle, Rectangle, Shape } from "../../v1.1/Core/Shape";
 import { ShapeRenderComponent } from "../../v1.1/Components/ShapeRenderComponent";
 import { PhysicsEngine } from "../../v1.1/Core/Physics/PhysicsEngine";
 import { ImpulseMath } from "../../v1.1/Core/Physics/ImpulseMath";
-import { PhysicalCircle } from "../../v1.1/Core/Physics/PhysicalShape";
+import { PhysicalCircle, ShapeType } from "../../v1.1/Core/Physics/PhysicalShape";
 import { Body } from "../../v1.1/Core/Physics/Body";
 import { PhysicalPolygon } from "../../v1.1/Core/Physics/PhysicalPolygon";
 
@@ -31,21 +31,42 @@ export class PhysicsScene extends Scene {
 		this.physics = new PhysicsEngine(ImpulseMath.DT, 10);
 		let floor: PhysicalPolygon = PhysicalPolygon.rectangle(window.innerWidth, 20);
 		floor.color = new Color(255, 255, 255).toString();
-		let floorbody: Body = this.physics.add(floor, window.innerWidth / 2, window.innerHeight - 100);
+		let floorbody: Body = this.physics.add(floor, window.innerWidth / 2, window.innerHeight - 20);
 		floorbody.setStatic();
 		let wall: PhysicalPolygon = PhysicalPolygon.rectangle(20, window.innerHeight);
 		wall.color = new Color(255, 255, 255).toString();
 		let wallbody: Body = this.physics.add(wall, window.innerWidth - wall.width() / 2, window.innerHeight / 2);
 		wallbody.setStatic();
+		for (let c: number = 0; c < 0; c++) {
+			for (let l: number = 0; l < 8; l++) {
+				let box: PhysicalPolygon = PhysicalPolygon.rectangle(20, 20);
+				box.color = new Color(0, 255, 255).toString();
+				let boxbody = this.physics.add(
+					box,
+					800 + c * box.width(),
+					floorbody.position.y - floor.height() / 2 - box.height() / 2 - box.height() * l
+				);
+				boxbody.restitution = 1;
+				boxbody.staticFriction = 1;
+				boxbody.dynamicFriction = 1;
 
-		for (let l: number = 0; l < 5; l++) {
-			let box: PhysicalPolygon = PhysicalPolygon.rectangle(20, 20);
-			box.color = new Color(0, 255, 255).toString();
-			let boxbody = this.physics.add(
-				box,
-				800,
-				floorbody.position.y - floor.height() / 2 - box.height() / 2 - box.height() * l
-			);
+			}
+		}
+
+		for (let c: number = 0; c < 1; c++) {
+			for (let l: number = 0; l < 11; l++) {
+				let box: PhysicalPolygon = PhysicalPolygon.rectangle(80, 40);
+				box.color = new Color(0, 255, 255).toString();
+				let boxbody = this.physics.add(
+					box,
+					500 + c * box.width() + c,
+					floorbody.position.y - floor.height() / 2 - box.height() / 2 - box.height() * l - l
+				);
+				boxbody.restitution = 0;
+				boxbody.staticFriction = 1;
+				boxbody.dynamicFriction = 1;
+				box.computeMass(1);
+			}
 		}
 
 		for (let l: number = 0; l < 0; l++) {
@@ -75,6 +96,11 @@ export class PhysicsScene extends Scene {
 				this.canvas.ctx.translate(-b.shape.width() / 2, - b.shape.height() / 2);
 			}
 			b.shape.render(this.canvas.ctx);
+			/* 	if (b.shape.type === ShapeType.Polygon) {
+					for (let i = 0; i < (b.shape as PhysicalPolygon).vertexCount; i++) {
+						Logger.log(i + ":" + (b.shape as PhysicalPolygon).vertices[i]);
+					}
+				} */
 			this.canvas.ctx.restore();
 		}
 		for (let m: number = 0; m < this.physics.contacts.size; m++) {
