@@ -67,7 +67,7 @@ public class audio : MonoBehaviour
 	private int j;
 	private int k;
 	private int l;
-	public virtual void Start()
+	void Start()
 	{
 		bpm = 150.0F;
 		beatsPerMeasure = 4;
@@ -113,18 +113,7 @@ public class audio : MonoBehaviour
 		singleMeasureTime = AudioSettings.dspTime + 2.0F;
 		running = true;
 	}
-
-	public void forceIntro()
-	{
-		intro_isPlaying = true;
-		intro = true;
-		j = 50;
-		i = 0;
-		k = 0;
-		Intro();
-	}
-
-	public virtual void Update()
+	void Update()
 	{
 		if (!running)
 			return;
@@ -402,10 +391,10 @@ public class audio : MonoBehaviour
 		if (time + 1.0F > singleMeasureTime)
 		{
 
-			Debug.Log("The j int equals  " + j + " " + time);
-			Debug.Log("The i int equals  " + i + " " + time);
-			Debug.Log("The k int equals  " + k + " " + time);
-			Debug.Log("The l int equals  " + l + " " + time);
+			/* 	Debug.Log("The j int equals  " + j + " " + time);
+				Debug.Log("The i int equals  " + i + " " + time);
+				Debug.Log("The k int equals  " + k + " " + time);
+				Debug.Log("The l int equals  " + l + " " + time); */
 			if (j == 16)
 			{
 				j = 0;
@@ -432,7 +421,7 @@ public class audio : MonoBehaviour
 
 	}
 
-	public void Intro()
+	void Intro()
 	{
 		if (!exploration_soft_isPlaying & !exploration_loud_isPlaying & !battle1_isPlaying & !battle2_isPlaying & !battle3_isPlaying)
 		{
